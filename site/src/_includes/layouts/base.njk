@@ -2,15 +2,38 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{{ title | default("Exhibition Pal") }}</title>
+    <meta name="description" content="{{ pageDescription | default(metadata.defaultDescription) }}" />
+    <meta property="og:title" content="{{ title | default("Exhibition Pal") }}" />
+    <meta property="og:description" content="{{ pageDescription | default(metadata.defaultDescription) }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ metadata.siteUrl | default(metadata.siteUrl | default("https://exhibition.example.com")) }}{{ page.url | default("") }}" />
+    <meta property="og:image" content="{{ ogImage | default("https://cdn.example.com/placeholders/exhibition-og.jpg") }}" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="stylesheet" href="/styles/main.css" />
+    {% block head %}{% endblock %}
   </head>
   <body>
-    <header>
-      <h1>{{ title | default("Exhibition Pal") }}</h1>
+    <a class="skip-link" href="#main-content">本文へスキップ</a>
+    <header class="site-header">
+      <div class="container">
+        <p class="site-name"><a href="/">Exhibition Pal</a></p>
+        <nav aria-label="主要ナビゲーション">
+          <ul class="site-nav">
+            <li><a href="/exhibitions/">展示会一覧</a></li>
+          </ul>
+        </nav>
+      </div>
     </header>
-    <main>
+    <main id="main-content" tabindex="-1" class="site-main">
       {{ content | safe }}
     </main>
+    <footer class="site-footer">
+      <div class="container">
+        <small>&copy; Exhibition Pal. All rights reserved.</small>
+      </div>
+    </footer>
   </body>
 </html>

@@ -1,0 +1,289 @@
+import { URL } from "node:url";
+
+const HEADERS = {
+  id: "展示会ID",
+  title: "展示会名",
+  startDate: "開始日",
+  endDate: "終了日",
+  venue: "場所",
+  summary: "概要",
+  background: "開催経緯",
+  highlights: "見どころ",
+  officialUrl: "展示会概要URL",
+  inventoryUrl: "作品一覧ファイルリンク",
+  detailDocUrl: "展示会の詳細説明（Google Drive URL）",
+  relatedUrls: "展示会関連のURLリスト",
+  audioUrl: "音声化（stand fm url）",
+  noteUrl: "記事化（Note url）",
+  image: "image",
+};
+
+const WARNING_TYPES = {
+  DUPLICATE_ID: "DUPLICATE_ID",
+  INVALID_URL: "INVALID_URL",
+  INVALID_DATE: "INVALID_DATE",
+  MISSING_REQUIRED: "MISSING_REQUIRED",
+  MISSING_IMAGE: "MISSING_IMAGE",
+};
+
+const DATE_DISPLAY_FORMATTER = new Intl.DateTimeFormat("ja-JP", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+
+const FALLBACK_IMAGE =
+  process.env.IMAGE_FALLBACK_URL ||
+  "https://cdn.example.com/placeholders/exhibition.jpg";
+
+function buildHeaderIndex(headerRow) {
+  const map = new Map();
+  headerRow.forEach((value, index) => {
+    map.set(value, index);
+  });
+  return map;
+}
+
+function readCell(row, headerIndex, headerKey) {
+  const headerName = HEADERS[headerKey];
+  const index = headerIndex.get(headerName);
+  if (index === undefined) return "";
+  return (row[index] ?? "").trim();
+}
+
+function isValidHttpsUrl(value) {
+  if (!value) return false;
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "https:";
+  } catch (error) {
+    return false;
+  }
+}
+
+function normalizeDate(value) {
+  if (!value) return null;
+  const normalized = value.replace(/\./g, "/").replace(/-/g, "/");
+  const [year, month, day] = normalized
+    .split("/")
+    .map((part) => part.padStart(2, "0"));
+  if (!year || !month || !day) {
+    return null;
+  }
+  const iso = `${year}-${month}-${day}`;
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+  return iso;
+}
+
+function buildPeriod(startIso, endIso) {
+  if (!startIso && !endIso) {
+    return { start: null, end: null, display: null };
+  }
+  if (startIso && endIso) {
+    const startDate = new Date(startIso);
+    const endDate = new Date(endIso);
+    return {
+      start: startIso,
+      end: endIso,
+      display: `${DATE_DISPLAY_FORMATTER.format(
+        startDate
+      )}〜${DATE_DISPLAY_FORMATTER.format(endDate)}`,
+    };
+  }
+  const singleIso = startIso || endIso;
+  if (!singleIso) {
+    return { start: null, end: null, display: null };
+  }
+  const date = new Date(singleIso);
+  return {
+    start: startIso ?? null,
+    end: endIso ?? null,
+    display: DATE_DISPLAY_FORMATTER.format(date),
+  };
+}
+
+function buildRelatedUrls(listValue, audioUrl, warnings, rowId) {
+  const items = [];
+  const pushExternal = (url, label = "関連リンク") => {
+    if (!url) return;
+    if (!isValidHttpsUrl(url)) {
+      warnings.push({
+        id: rowId,
+        type: WARNING_TYPES.INVALID_URL,
+        message: `Invalid related URL: ${url}`,
+      });
+      return;
+    }
+    items.push({ url, label });
+  };
+
+  if (listValue) {
+    listValue
+      .split(",")
+      .map((entry) => entry.trim())
+      .filter((entry) => entry.length > 0)
+      .forEach((entry) => {
+        pushExternal(entry, determineLinkLabel(entry));
+      });
+  }
+
+  if (audioUrl) {
+    pushExternal(audioUrl, "音声解説");
+  }
+
+  return dedupeByUrl(items);
+}
+
+function determineLinkLabel(url) {
+  if (url.includes("stand.fm")) {
+    return "音声解説";
+  }
+  if (
+    url.includes("instagram.com") ||
+    url.includes("twitter.com") ||
+    url.includes("x.com")
+  ) {
+    return "関連SNS";
+  }
+  if (url.includes("media") || url.includes("note.com")) {
+    return "メディア掲載";
+  }
+  return "関連リンク";
+}
+
+function dedupeByUrl(list) {
+  const seen = new Set();
+  return list.filter((item) => {
+    if (seen.has(item.url)) return false;
+    seen.add(item.url);
+    return true;
+  });
+}
+
+export function normalizeSheet(sheetResponse) {
+  const warnings = [];
+  const values = sheetResponse?.values ?? [];
+  if (values.length <= 1) {
+    return { records: [], warnings };
+  }
+  const [headerRow, ...rows] = values;
+  const headerIndex = buildHeaderIndex(headerRow);
+  const seenIds = new Set();
+  const records = [];
+
+  for (let rowIdx = 0; rowIdx < rows.length; rowIdx += 1) {
+    const row = rows[rowIdx];
+    // console.log(`Processing row ${rowIdx + 2}:`, row);
+    const id = readCell(row, headerIndex, "id");
+    if (!id) {
+      warnings.push({
+        id: `row-${rowIdx + 2}`,
+        type: WARNING_TYPES.MISSING_REQUIRED,
+        message: "展示会IDが未入力のため行をスキップしました",
+      });
+      continue;
+    }
+
+    if (seenIds.has(id)) {
+      warnings.push({
+        id,
+        type: WARNING_TYPES.DUPLICATE_ID,
+        message: "Duplicate exhibition ID encountered; later row skipped.",
+      });
+      continue;
+    }
+
+    const title = readCell(row, headerIndex, "title");
+    const venue = readCell(row, headerIndex, "venue");
+    const summary = readCell(row, headerIndex, "summary");
+    const officialUrl = readCell(row, headerIndex, "officialUrl");
+    const imageUrl = readCell(row, headerIndex, "image");
+
+    if (!title || !venue || !summary || !officialUrl) {
+      warnings.push({
+        id,
+        type: WARNING_TYPES.MISSING_REQUIRED,
+        message: "必須項目が欠落しているため行をスキップしました",
+      });
+      continue;
+    }
+
+    if (!isValidHttpsUrl(officialUrl)) {
+      warnings.push({
+        id,
+        type: WARNING_TYPES.INVALID_URL,
+        message: "公式サイトURLがhttps形式ではないため行をスキップしました",
+      });
+      continue;
+    }
+
+    const startIso = normalizeDate(readCell(row, headerIndex, "startDate"));
+    const endIso = normalizeDate(readCell(row, headerIndex, "endDate"));
+    if (startIso && endIso) {
+      const startDate = new Date(startIso);
+      const endDate = new Date(endIso);
+      if (endDate < startDate) {
+        warnings.push({
+          id,
+          type: WARNING_TYPES.INVALID_DATE,
+          message: "終了日が開始日より前のため行をスキップしました",
+        });
+        continue;
+      }
+    }
+
+    let heroImage = imageUrl;
+    if (!isValidHttpsUrl(heroImage)) {
+      warnings.push({
+        id,
+        type: WARNING_TYPES.MISSING_IMAGE,
+        message: "画像URLが無効のためフォールバックを適用しました",
+      });
+      heroImage = FALLBACK_IMAGE;
+    }
+
+    const record = {
+      id,
+      title,
+      period: buildPeriod(startIso, endIso),
+      venue,
+      summary,
+      background: readCell(row, headerIndex, "background"),
+      highlights: readCell(row, headerIndex, "highlights"),
+      officialUrl,
+      relatedUrls: buildRelatedUrls(
+        readCell(row, headerIndex, "relatedUrls"),
+        readCell(row, headerIndex, "audioUrl"),
+        warnings,
+        id
+      ),
+      heroImage: {
+        src: heroImage,
+        alt: `${title} キービジュアル`,
+      },
+      internal: {
+        inventoryUrl: safeInternalUrl(
+          readCell(row, headerIndex, "inventoryUrl")
+        ),
+        detailDocUrl: safeInternalUrl(
+          readCell(row, headerIndex, "detailDocUrl")
+        ),
+        noteUrl: safeInternalUrl(readCell(row, headerIndex, "noteUrl")),
+      },
+    };
+
+    seenIds.add(id);
+    records.push(record);
+  }
+
+  return { records, warnings };
+}
+
+function safeInternalUrl(value) {
+  return value && value.trim().length > 0 ? value.trim() : null;
+}
+
+export { WARNING_TYPES };

@@ -1,0 +1,101 @@
+{
+  "list": [
+    {
+      "id": "expo-2025-spring",
+      "title": "春のアート展",
+      "period": {
+        "start": "2025-03-01",
+        "end": "2025-03-31",
+        "display": "2025年3月1日〜2025年3月31日"
+      },
+      "venue": "渋谷ギャラリー",
+      "summary": "春に開催される展示会です。",
+      "background": "地域活性化の一環として企画されました。",
+      "highlights": "大型インスタレーション、ワークショップ",
+      "officialUrl": "https://exhibition.example.com/spring-2025",
+      "relatedUrls": [
+        {
+          "url": "https://media.example.com/article-1",
+          "label": "メディア掲載"
+        },
+        {
+          "url": "https://instagram.com/exhibition",
+          "label": "関連SNS"
+        },
+        {
+          "url": "https://stand.fm/episodes/spring",
+          "label": "音声解説"
+        }
+      ],
+      "heroImage": {
+        "src": "https://cdn.example.com/images/spring-2025.jpg",
+        "alt": "春のアート展 キービジュアル"
+      }
+    },
+    {
+      "id": "expo-2025-autumn",
+      "title": "秋の工芸展",
+      "period": {
+        "start": null,
+        "end": null,
+        "display": null
+      },
+      "venue": "日本橋アートスペース",
+      "summary": "秋に開催予定の工芸展。",
+      "background": "地域の職人が参加予定。",
+      "highlights": "伝統工芸と現代アートの融合",
+      "officialUrl": "https://exhibition.example.com/autumn-2025",
+      "relatedUrls": [
+        {
+          "url": "https://media.example.com/article-2",
+          "label": "メディア掲載"
+        },
+        {
+          "url": "https://twitter.com/exhibition_autumn",
+          "label": "関連SNS"
+        },
+        {
+          "url": "https://stand.fm/episodes/autumn",
+          "label": "音声解説"
+        }
+      ],
+      "heroImage": {
+        "src": "https://cdn.example.com/images/autumn-2025.jpg",
+        "alt": "秋の工芸展 キービジュアル"
+      }
+    }
+  ],
+  "meta": {
+    "fetchedAt": "2025-10-05T04:00:00.000Z",
+    "sourceSpreadsheet": "spreadsheet-id",
+    "warnings": [
+      {
+        "id": "expo-2025-spring",
+        "type": "DUPLICATE_ID",
+        "message": "Duplicate exhibition ID encountered; later row skipped."
+      },
+      {
+        "id": "invalid-row",
+        "type": "INVALID_URL",
+        "message": "officialUrl is not a valid https URL."
+      },
+      {
+        "id": "invalid-row",
+        "type": "INVALID_DATE",
+        "message": "終了日が開始日より前です。"
+      }
+    ],
+    "internal": {
+      "expo-2025-spring": {
+        "inventoryUrl": "https://drive.google.com/file/d/INV123/view",
+        "detailDocUrl": "https://drive.google.com/file/d/DETAIL123/view",
+        "noteUrl": "https://note.com/curator/n/ne123"
+      },
+      "expo-2025-autumn": {
+        "inventoryUrl": "https://drive.google.com/file/d/INV456/view",
+        "detailDocUrl": "https://drive.google.com/file/d/DETAIL456/view",
+        "noteUrl": null
+      }
+    }
+  }
+}

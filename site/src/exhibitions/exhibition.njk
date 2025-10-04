@@ -1,0 +1,57 @@
+---
+layout: layouts/base.njk
+pagination:
+  data: exhibitions.list
+  size: 1
+  alias: exhibition
+  addAllPagesToCollections: true
+permalink: "/exhibitions/{{ exhibition.id }}/index.html"
+pageDescription: {{ exhibition.summary | safe }}
+ogImage: {{ exhibition.heroImage.src }}
+---
+
+<article class="exhibition-detail" aria-labelledby="exhibition-title">
+  <header class="exhibition-detail__header">
+    <h1 id="exhibition-title">{{ exhibition.title }}</h1>
+    {% if exhibition.period.display %}
+      <p class="exhibition-detail__period">開催期間: {{ exhibition.period.display }}</p>
+    {% endif %}
+    <p class="exhibition-detail__venue">会場: {{ exhibition.venue }}</p>
+    <figure class="exhibition-detail__hero">
+      <img src="{{ exhibition.heroImage.src }}" alt="{{ exhibition.heroImage.alt }}" loading="lazy" />
+      <figcaption>展示会公式ビジュアル</figcaption>
+    </figure>
+  </header>
+
+  <section class="exhibition-detail__section">
+    <h2>概要</h2>
+    <p>{{ exhibition.summary }}</p>
+  </section>
+
+  {% if exhibition.background %}
+    <section class="exhibition-detail__section">
+      <h2>開催経緯</h2>
+      <p>{{ exhibition.background }}</p>
+    </section>
+  {% endif %}
+
+  {% if exhibition.highlights %}
+    <section class="exhibition-detail__section">
+      <h2>見どころ</h2>
+      <p>{{ exhibition.highlights }}</p>
+    </section>
+  {% endif %}
+
+  <section class="exhibition-detail__section">
+    <h2>関連リンク</h2>
+    <ul class="exhibition-detail__links" data-related-links="pending-label-spec">
+    {# TODO: Clarify related link labeling and ordering per spreadsheet guidance #}
+      <li><a href="{{ exhibition.officialUrl }}" target="_blank" rel="noopener">公式サイト</a></li>
+      {% if exhibition.relatedUrls and exhibition.relatedUrls | length > 0 %}
+        {% for link in exhibition.relatedUrls %}
+          <li><a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.label }}</a></li>
+        {% endfor %}
+      {% endif %}
+    </ul>
+  </section>
+</article>

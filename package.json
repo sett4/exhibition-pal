@@ -4,11 +4,11 @@
   "description": "Static site initial setup for exhibition-pal",
   "main": "index.js",
   "scripts": {
-    "sync-data": "echo \"TODO: implement sync-data script\"",
+    "sync-data": "node scripts/sync-data.js",
     "build": "eleventy",
-    "test:contract": "echo \"TODO: add contract tests\"",
-    "test:integration": "echo \"TODO: add integration tests\"",
-    "test:experience": "echo \"TODO: add experience tests\"",
+    "test:contract": "vitest run tests/contract",
+    "test:integration": "vitest run tests/integration",
+    "test:experience": "vitest run tests/experience",
     "test": "npm run test:contract && npm run test:integration && npm run test:experience",
     "serve": "eleventy --serve"
   },
@@ -24,6 +24,20 @@
     "@11ty/eleventy": "^3.1.2",
     "@11ty/eleventy-fetch": "^5.1.0",
     "dotenv": "^17.2.3",
+    "googleapis": "^133.0.0",
     "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.8.3",
+    "@lhci/cli": "^0.12.0",
+    "@types/node": "^22.7.4",
+    "@vitest/coverage-v8": "^1.6.0",
+    "ajv": "^8.17.1",
+    "chrome-launcher": "^0.15.2",
+    "lighthouse": "^12.0.0",
+    "nyc": "^15.1.0",
+    "playwright": "^1.47.0",
+    "typescript": "^5.6.2",
+    "vitest": "^1.6.0"
   }
 }
