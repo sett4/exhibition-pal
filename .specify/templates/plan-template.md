@@ -47,7 +47,11 @@
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- Principle I – Plan documents the canonical exhibition data source and normalization path.
+- Principle II – Static build pipeline is identified; no runtime data fetching introduced.
+- Principle III – Contract/validation tests are scheduled to fail before implementation work.
+- Principle IV – Accessibility and performance budgets are captured with tasks or clarifications.
+- Principle V – Release artifacts (changelog, sample dataset, deployment checklist) are accounted for.
 
 ## Project Structure
 
@@ -63,50 +67,34 @@ specs/[###-feature]/
 ```
 
 ### Source Code (repository root)
-<!--
-  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
-  for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
--->
+<!-- ACTION REQUIRED: Replace the tree below with the concrete layout for this feature. -->
 ```
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
-src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+site/
+├── src/
+│   ├── _data/
+│   ├── components/
+│   ├── pages/
+│   └── styles/
+├── public/
+
+scripts/
+├── sync-data.ts
+├── validate-data.ts
+└── utilities/
 
 tests/
 ├── contract/
 ├── integration/
-└── unit/
+├── experience/
+└── fixtures/
 
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+docs/
+├── release-notes.md
+├── deployment.md
+└── runbooks/
 ```
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+**Structure Decision**: [Document the selected structure and reference the real directories captured above]
 
 ## Phase 0: Outline & Research
 1. **Extract unknowns from Technical Context** above:
@@ -132,24 +120,23 @@ directories captured above]
 ## Phase 1: Design & Contracts
 *Prerequisites: research.md complete*
 
-1. **Extract entities from feature spec** → `data-model.md`:
-   - Entity name, fields, relationships
-   - Validation rules from requirements
-   - State transitions if applicable
+1. **Map canonical data** from feature spec → `data-model.md`:
+   - Record spreadsheet sources, tabs, refresh cadence.
+   - Document entity fields, relationships, and normalization rules.
+   - Capture localization requirements and media assets.
 
-2. **Generate API contracts** from functional requirements:
-   - For each user action → endpoint
-   - Use standard REST/GraphQL patterns
-   - Output OpenAPI/GraphQL schema to `/contracts/`
+2. **Define data contracts & sync plan**:
+   - For each entity, create/update JSON Schema in `/contracts/`.
+   - Outline sync steps (fetch → normalize → persist) including error handling.
+   - Identify fixtures needed for tests and quickstart instructions.
 
-3. **Generate contract tests** from contracts:
-   - One test file per endpoint
-   - Assert request/response schemas
-   - Tests must fail (no implementation yet)
+3. **Generate failing tests**:
+   - Contract tests for each schema in `tests/contract/`.
+   - Integration tests covering page flows in `tests/integration/`.
+   - Experience tests (axe, Lighthouse, metadata) in `tests/experience/`.
 
-4. **Extract test scenarios** from user stories:
-   - Each story → integration test scenario
-   - Quickstart test = story validation steps
+4. **Document acceptance & release criteria** in quickstart.md:
+   - Include commands (`npm run sync-data`, `npm run build`) and validation steps.
 
 5. **Update agent file incrementally** (O(1) operation):
    - Run `.specify/scripts/bash/update-agent-context.sh codex`
@@ -168,14 +155,15 @@ directories captured above]
 **Task Generation Strategy**:
 - Load `.specify/templates/tasks-template.md` as base
 - Generate tasks from Phase 1 design docs (contracts, data model, quickstart)
-- Each contract → contract test task [P]
-- Each entity → model creation task [P] 
-- Each user story → integration test task
-- Implementation tasks to make tests pass
+- Each schema/fixture → contract validation + sync guard tasks
+- Each page/story → integration test + template implementation tasks
+- Each experience target → accessibility/performance validation tasks
+- Release artefacts → changelog, sample dataset, deployment checklist tasks
 
 **Ordering Strategy**:
-- TDD order: Tests before implementation 
-- Dependency order: Models before services before UI
+- Contracts & failing tests before template implementation
+- Static templates before experience validation
+- Experience validation before release documentation
 - Mark [P] for parallel execution (independent files)
 
 **Estimated Output**: 25-30 numbered, ordered tasks in tasks.md
@@ -216,4 +204,4 @@ directories captured above]
 - [ ] Complexity deviations documented
 
 ---
-*Based on Constitution v2.1.1 - See `/memory/constitution.md`*
+*Based on Constitution v1.0.0 - See `/memory/constitution.md`*

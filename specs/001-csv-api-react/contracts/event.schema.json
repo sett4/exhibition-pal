@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://exhibition-pal.specs/001-csv-api-react/event.schema.json",
+  "title": "Event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_id",
+    "title",
+    "description",
+    "start_at",
+    "end_at",
+    "venue",
+    "language_support",
+    "related_exhibit_ids",
+    "registration_url",
+    "state"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "pattern": "^event_[0-9a-f]{8}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "start_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "end_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "venue": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language_support": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["ja", "en", "zh", "ko", "fr", "es"]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "related_exhibit_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9\\-]+$"
+      },
+      "uniqueItems": true
+    },
+    "registration_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "state": {
+      "type": "string",
+      "enum": ["scheduled", "completed", "cancelled", "archived"]
+    },
+    "requires_translation": {
+      "type": "boolean"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "language_support": {
+            "contains": {
+              "const": "ja"
+            }
+          }
+        },
+        "required": ["language_support"]
+      },
+      "then": {
+        "properties": {
+          "requires_translation": {
+            "const": false
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "requires_translation": {
+            "const": true
+          }
+        },
+        "required": ["requires_translation"]
+      }
+    }
+  ]
+}

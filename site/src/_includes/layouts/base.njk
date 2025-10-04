@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>{{ title | default("Exhibition Pal") }}</title>
+    <link rel="stylesheet" href="/styles/main.css" />
+  </head>
+  <body>
+    <header>
+      <h1>{{ title | default("Exhibition Pal") }}</h1>
+    </header>
+    <main>
+      {{ content | safe }}
+    </main>
+  </body>
+</html>

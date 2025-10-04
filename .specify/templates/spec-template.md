@@ -31,6 +31,7 @@
 - ✅ Focus on WHAT users need and WHY
 - ❌ Avoid HOW to implement (no tech stack, APIs, code structure)
 - 👥 Written for business stakeholders, not developers
+- 📊 Identify canonical data sources and validation responsibilities up front.
 
 ### Section Requirements
 - **Mandatory sections**: Must be completed for every feature
@@ -92,6 +93,7 @@ When creating this spec from a user prompt:
 - [ ] Focused on user value and business needs
 - [ ] Written for non-technical stakeholders
 - [ ] All mandatory sections completed
+- [ ] Canonical data source documented or flagged for follow-up
 
 ### Requirement Completeness
 - [ ] No [NEEDS CLARIFICATION] markers remain
@@ -99,6 +101,8 @@ When creating this spec from a user prompt:
 - [ ] Success criteria are measurable
 - [ ] Scope is clearly bounded
 - [ ] Dependencies and assumptions identified
+- [ ] Static build constraints and release impacts captured
+- [ ] Accessibility and performance expectations captured or flagged
 
 ---
 

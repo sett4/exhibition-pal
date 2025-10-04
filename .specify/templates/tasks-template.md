@@ -7,28 +7,27 @@
 ```
 1. Load plan.md from feature directory
    → If not found: ERROR "No implementation plan found"
-   → Extract: tech stack, libraries, structure
+   → Extract canonical data source, build targets, accessibility budgets
 2. Load optional design documents:
-   → data-model.md: Extract entities → model tasks
-   → contracts/: Each file → contract test task
-   → research.md: Extract decisions → setup tasks
+   → data-model.md: Entities → data normalization + schema tasks
+   → contracts/: Each file → contract/validation test task
+   → research.md & quickstart.md: Decisions → setup + experience validation tasks
 3. Generate tasks by category:
-   → Setup: project init, dependencies, linting
-   → Tests: contract tests, integration tests
-   → Core: models, services, CLI commands
-   → Integration: DB, middleware, logging
-   → Polish: unit tests, performance, docs
+   → Data contracts & sync guards: schemas, fixtures, sync scripts, failing tests
+   → Static build implementation: templates, presenters, content collections
+   → Experience validation: accessibility, localization, performance budgets
+   → Release & documentation: changelog, sample datasets, deployment checklist
 4. Apply task rules:
-   → Different files = mark [P] for parallel
-   → Same file = sequential (no [P])
-   → Tests before implementation (TDD)
-5. Number tasks sequentially (T001, T002...)
+   → Contract/tests tasks MUST precede implementation work
+   → Static pages implemented only after corresponding failing test exists
+   → Mark [P] only when tasks touch distinct files with no shared side effects
+5. Number tasks sequentially (T001, T002…)
 6. Generate dependency graph
 7. Create parallel execution examples
 8. Validate task completeness:
-   → All contracts have tests?
-   → All entities have models?
-   → All endpoints implemented?
+   → Canonical data pipelines covered end-to-end
+   → Every new template/story has failing test before implementation
+   → Accessibility + performance coverage present
 9. Return: SUCCESS (tasks ready for execution)
 ```
 
@@ -37,91 +36,87 @@
 - Include exact file paths in descriptions
 
 ## Path Conventions
-- **Single project**: `src/`, `tests/` at repository root
-- **Web app**: `backend/src/`, `frontend/src/`
-- **Mobile**: `api/src/`, `ios/src/` or `android/src/`
-- Paths shown below assume single project - adjust based on plan.md structure
+- Data contracts live in `data/contracts/` (JSON Schema, validators)
+- Sync automation lives in `scripts/` (e.g., `scripts/sync-data.ts`)
+- Static site code lives in `site/src/` (templates, components, styles)
+- Tests live in `tests/contract/`, `tests/integration/`, `tests/experience/`
+- Content fixtures live in `site/src/data/` and `tests/fixtures/`
 
 ## Phase 3.1: Setup
-- [ ] T001 Create project structure per implementation plan
-- [ ] T002 Initialize [language] project with [framework] dependencies
-- [ ] T003 [P] Configure linting and formatting tools
+- [ ] T001 Initialize Node.js 22 + npm workspace dependencies via `npm install`
+- [ ] T002 Configure `.env.example` with source spreadsheet IDs and API keys
+- [ ] T003 [P] Add project scripts to `package.json` (`npm run sync-data`, `npm run build`, `npm test`)
 
-## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
-**CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
-- [ ] T004 [P] Contract test POST /api/users in tests/contract/test_users_post.py
-- [ ] T005 [P] Contract test GET /api/users/{id} in tests/contract/test_users_get.py
-- [ ] T006 [P] Integration test user registration in tests/integration/test_registration.py
-- [ ] T007 [P] Integration test auth flow in tests/integration/test_auth.py
+## Phase 3.2: Data Contracts & Sync Guards ⚠️ MUST COMPLETE BEFORE 3.3
+**CRITICAL: Contract + validation tests MUST exist and fail before implementation**
+- [ ] T004 [P] Define exhibitions schema in `data/contracts/exhibitions.schema.json`
+- [ ] T005 [P] Add failing contract test for exhibitions in `tests/contract/exhibitions.spec.ts`
+- [ ] T006 [P] Add failing contract test for artworks in `tests/contract/artworks.spec.ts`
+- [ ] T007 Normalize sample fixture in `tests/fixtures/exhibitions.raw.json`
+- [ ] T008 Implement sync guard task list in `scripts/sync-data.ts` (validate, normalize, write JSON)
 
-## Phase 3.3: Core Implementation (ONLY after tests are failing)
-- [ ] T008 [P] User model in src/models/user.py
-- [ ] T009 [P] UserService CRUD in src/services/user_service.py
-- [ ] T010 [P] CLI --create-user in src/cli/user_commands.py
-- [ ] T011 POST /api/users endpoint
-- [ ] T012 GET /api/users/{id} endpoint
-- [ ] T013 Input validation
-- [ ] T014 Error handling and logging
+## Phase 3.3: Static Build Implementation (ONLY after tests are failing)
+- [ ] T009 [P] Implement exhibitions collection loader in `site/src/_data/exhibitions.ts`
+- [ ] T010 Render exhibition index template in `site/src/pages/exhibitions/index.astro`
+- [ ] T011 Render exhibition detail template in `site/src/pages/exhibitions/[slug].astro`
+- [ ] T012 Render artwork detail template in `site/src/pages/artworks/[artworkId].astro`
+- [ ] T013 Wire localization strings in `site/src/i18n/messages.{ts,json}`
+- [ ] T014 Add build smoke test in `tests/integration/build.spec.ts`
 
-## Phase 3.4: Integration
-- [ ] T015 Connect UserService to DB
-- [ ] T016 Auth middleware
-- [ ] T017 Request/response logging
-- [ ] T018 CORS and security headers
+## Phase 3.4: Experience Validation
+- [ ] T015 [P] Audit accessibility with `axe` in `tests/experience/accessibility.spec.ts`
+- [ ] T016 Measure performance budget using `lighthouse-ci` script (`tests/experience/performance.spec.ts`)
+- [ ] T017 Verify metadata completeness (titles, descriptions, OG tags) in `tests/experience/metadata.spec.ts`
+- [ ] T018 Capture responsive screenshots via `tests/experience/responsive.spec.ts`
 
-## Phase 3.5: Polish
-- [ ] T019 [P] Unit tests for validation in tests/unit/test_validation.py
-- [ ] T020 Performance tests (<200ms)
-- [ ] T021 [P] Update docs/api.md
-- [ ] T022 Remove duplication
-- [ ] T023 Run manual-testing.md
+## Phase 3.5: Release & Compliance
+- [ ] T019 Generate sample snapshot `site/src/data/exhibitions.sample.json` for reviewers
+- [ ] T020 Update release notes in `docs/release-notes.md` with feature summary + validation
+- [ ] T021 [P] Update deployment checklist in `docs/deployment.md`
+- [ ] T022 Publish changelog entry in `CHANGELOG.md`
+- [ ] T023 Archive sync logs in `docs/runbooks/sync-data.md`
 
 ## Dependencies
-- Tests (T004-T007) before implementation (T008-T014)
-- T008 blocks T009, T015
-- T016 blocks T018
-- Implementation before polish (T019-T023)
+- Phase 3.2 tasks block Phase 3.3 implementation
+- T009 depends on T004-T008 (schemas + tests)
+- T010-T012 depend on T009 and T014
+- Experience validation (T015-T018) depends on successful build tasks (T010-T014)
+- Release tasks (T019-T023) depend on validation passing
 
 ## Parallel Example
 ```
-# Launch T004-T007 together:
-Task: "Contract test POST /api/users in tests/contract/test_users_post.py"
-Task: "Contract test GET /api/users/{id} in tests/contract/test_users_get.py"
-Task: "Integration test registration in tests/integration/test_registration.py"
-Task: "Integration test auth in tests/integration/test_auth.py"
+# Launch contract validation tasks together:
+Task: "Define exhibitions schema in data/contracts/exhibitions.schema.json"
+Task: "Add failing contract test for exhibitions in tests/contract/exhibitions.spec.ts"
+Task: "Add failing contract test for artworks in tests/contract/artworks.spec.ts"
 ```
 
 ## Notes
-- [P] tasks = different files, no dependencies
-- Verify tests fail before implementing
-- Commit after each task
-- Avoid: vague tasks, same file conflicts
+- Mark [P] only when files and side effects are isolated
+- Keep failing tests committed before implementing a passing solution
+- Document any deviations from principles in plan.md Complexity Tracking
 
 ## Task Generation Rules
 *Applied during main() execution*
 
-1. **From Contracts**:
-   - Each contract file → contract test task [P]
-   - Each endpoint → implementation task
-   
-2. **From Data Model**:
-   - Each entity → model creation task [P]
-   - Relationships → service layer tasks
-   
-3. **From User Stories**:
-   - Each story → integration test [P]
-   - Quickstart scenarios → validation tasks
-
+1. **From Data Contracts**:
+   - Each schema → contract test task [P]
+   - Each sync step → guardrail task (validation, error handling)
+2. **From Templates/Pages**:
+   - Each page/component → failing integration test → implementation task
+   - Localization updates → translation sync + fallback tasks
+3. **From Experience Goals**:
+   - Performance & accessibility budgets → automated test tasks
+   - Responsive + metadata requirements → verification tasks
 4. **Ordering**:
-   - Setup → Tests → Models → Services → Endpoints → Polish
-   - Dependencies block parallel execution
+   - Setup → Contracts/Tests → Static implementation → Experience validation → Release
+   - Break work into smallest verifiable increments that track to constitution principles
 
 ## Validation Checklist
 *GATE: Checked by main() before returning*
 
-- [ ] All contracts have corresponding tests
-- [ ] All entities have model tasks
-- [ ] All tests come before implementation
-- [ ] Parallel tasks truly independent
-- [ ] Each task specifies exact file path
-- [ ] No task modifies same file as another [P] task
+- [ ] Contract tests cover every schema and normalized dataset
+- [ ] Static pages only implemented after corresponding failing tests
+- [ ] Accessibility + performance validations present
+- [ ] Release documentation tasks captured
+- [ ] Parallel tasks avoid file collisions and shared state

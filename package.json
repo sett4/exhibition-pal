@@ -1,0 +1,29 @@
+{
+  "name": "exhibition-pal",
+  "version": "1.0.0",
+  "description": "Static site initial setup for exhibition-pal",
+  "main": "index.js",
+  "scripts": {
+    "sync-data": "echo \"TODO: implement sync-data script\"",
+    "build": "eleventy",
+    "test:contract": "echo \"TODO: add contract tests\"",
+    "test:integration": "echo \"TODO: add integration tests\"",
+    "test:experience": "echo \"TODO: add experience tests\"",
+    "test": "npm run test:contract && npm run test:integration && npm run test:experience",
+    "serve": "eleventy --serve"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "dependencies": {
+    "@11ty/eleventy": "^3.1.2",
+    "@11ty/eleventy-fetch": "^5.1.0",
+    "dotenv": "^17.2.3",
+    "node-fetch": "^3.3.2"
+  }
+}
