@@ -4,6 +4,7 @@ node_modules/
 .env.local
 .cache/
 .env
+_site/
 
 # Generated data files
 site/src/_data/exhibitions.normalized.json
