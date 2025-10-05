@@ -4,27 +4,46 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{ title | default("Exhibition Pal") }}</title>
-    <meta name="description" content="{{ pageDescription | default(metadata.defaultDescription) }}" />
-    <meta property="og:title" content="{{ title | default("Exhibition Pal") }}" />
-    <meta property="og:description" content="{{ pageDescription | default(metadata.defaultDescription) }}" />
+    {% set resolvedTitle = title | default("Exhibition Pal") %}
+    {% set resolvedDescription = pageDescription | default(metadata.defaultDescription) %}
+    {% set resolvedOgImage = ogImage or page.ogImage or metadata.defaultOgImage %}
+    <title>{{ resolvedTitle }}</title>
+    <meta name="description" content="{{ resolvedDescription }}" />
+    <meta property="og:title" content="{{ resolvedTitle }}" />
+    <meta property="og:description" content="{{ resolvedDescription }}" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="{{ metadata.siteUrl | default(metadata.siteUrl | default("https://exhibition.example.com")) }}{{ page.url | default("") }}" />
-    <meta property="og:image" content="{{ ogImage | default("https://cdn.example.com/placeholders/exhibition-og.jpg") }}" />
+    <meta property="og:url" content="{{ metadata.siteUrl | default("https://exhibition.example.com") }}{{ page.url | default("") }}" />
+    <meta property="og:image" content="{{ resolvedOgImage }}" />
     <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    {% set preloadImages = preloadImages or page.preloadImages or [] %}
+    {% for image in preloadImages %}
+      <link rel="preload"
+            as="image"
+            href="{{ image.href }}"
+            {% if image.imagesrcset %}imagesrcset="{{ image.imagesrcset }}"{% endif %}
+            {% if image.imagesizes %}imagesizes="{{ image.imagesizes }}"{% endif %}
+            {% if image.type %}type="{{ image.type }}"{% endif %}
+            {% if image.media %}media="{{ image.media }}"{% endif %} />
+    {% endfor %}
+    {% set preloadFonts = preloadFonts or page.preloadFonts or [] %}
+    {% for font in preloadFonts %}
+      <link rel="preload" as="font" href="{{ font.href }}" type="{{ font.type | default('font/woff2') }}" crossorigin />
+    {% endfor %}
+    <link rel="preload" as="font" href="/assets/exhibitions/fonts/fontawesome-webfont.woff2" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="/styles/main.css" />
     {% block head %}{% endblock %}
   </head>
-  <body>
-    <a class="skip-link" href="#main-content">本文へスキップ</a>
+  <body class="{{ bodyClass | default('') }}">
     <header class="site-header">
       <div class="container">
-        <p class="site-name"><a href="/">Exhibition Pal</a></p>
+        {# <p class="site-name"><a href="/">Exhibition Pal</a></p>
         <nav aria-label="主要ナビゲーション">
           <ul class="site-nav">
             <li><a href="/exhibitions/">展示会一覧</a></li>
           </ul>
-        </nav>
+        </nav> #}
       </div>
     </header>
     <main id="main-content" tabindex="-1" class="site-main">
@@ -35,5 +54,7 @@
         <small>&copy; Exhibition Pal. All rights reserved.</small>
       </div>
     </footer>
+    <script type="module" src="/scripts/exhibitions/slider.js" defer></script>
+    {% block scripts %}{% endblock %}
   </body>
 </html>

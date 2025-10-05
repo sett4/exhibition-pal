@@ -39,6 +39,7 @@ describe('artwork detail lookup', () => {
     expect(entry?.artwork.title).toBe('作品A');
     expect(entry?.artwork.introMediaUrl).toMatch(/^https:\/\//);
     expect(entry?.artwork.referenceUrl).toBe('https://example.com/art-001');
-    expect(entry?.artwork.image).toContain('art-001');
+    expect(entry?.artwork.image?.src).toContain('art-001');
+    expect(entry?.artwork.image?.sources?.length).toBeGreaterThanOrEqual(2);
   });
 });

@@ -88,11 +88,43 @@
           "pattern": "^https://"
         },
         "image": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "pattern": "^https://"
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^https://"
+            },
+            {
+              "type": "object",
+              "required": ["src", "alt", "sources"],
+              "additionalProperties": false,
+              "properties": {
+                "src": {
+                  "type": "string",
+                  "pattern": "^https://"
+                },
+                "alt": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sources": {
+                  "type": "array",
+                  "minItems": 2,
+                  "items": {
+                    "type": "object",
+                    "required": ["srcset", "type"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "srcset": { "type": "string", "minLength": 1 },
+                      "type": { "type": "string", "minLength": 1 }
+                    }
+                  }
+                }
+              }
+            }
+          ]
         },
         "inputDate": {
           "type": [
@@ -104,6 +136,26 @@
         "lastSyncedAt": {
           "type": "string",
           "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]+)?Z$"
+        },
+        "mediaType": {
+          "type": ["string", "null"],
+          "minLength": 1
+        },
+        "transcript": {
+          "type": "string",
+          "minLength": 1
+        },
+        "referenceLinks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["label", "url"],
+            "additionalProperties": false,
+            "properties": {
+              "label": { "type": "string", "minLength": 1 },
+              "url": { "type": "string", "pattern": "^https://" }
+            }
+          }
         }
       }
     }

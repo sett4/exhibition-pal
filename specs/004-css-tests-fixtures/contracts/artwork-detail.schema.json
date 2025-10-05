@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://exhibition-pal/specs/004-css-tests-fixtures/artwork-detail.schema.json",
+  "title": "Artwork detail page payload",
+  "type": "object",
+  "required": [
+    "meta",
+    "artwork",
+    "navigation",
+    "adjacent"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": [
+        "title",
+        "description",
+        "ogImage"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "ogImage": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "additionalProperties": false
+    },
+    "artwork": {
+      "type": "object",
+      "required": [
+        "artworkId",
+        "title",
+        "artistName",
+        "description",
+        "image",
+        "mediaType",
+        "transcript"
+      ],
+      "properties": {
+        "artworkId": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "artistName": {
+          "type": "string"
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "image": {
+          "type": "object",
+          "required": [
+            "src",
+            "alt",
+            "sources"
+          ],
+          "properties": {
+            "src": {
+              "type": "string",
+              "format": "uri"
+            },
+            "alt": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sources": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "object",
+                "required": [
+                  "srcset",
+                  "type"
+                ],
+                "properties": {
+                  "srcset": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "mediaType": {
+          "type": "string"
+        },
+        "transcript": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "audioUrl": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "referenceLinks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "label",
+              "url"
+            ],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "navigation": {
+      "type": "object",
+      "required": [
+        "breadcrumbs",
+        "returnToExhibition"
+      ],
+      "properties": {
+        "breadcrumbs": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "required": [
+              "label",
+              "url"
+            ],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "returnToExhibition": {
+          "type": "string",
+          "pattern": "^/exhibitions/[a-z0-9-]+/$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "adjacent": {
+      "type": "object",
+      "required": [
+        "previous",
+        "next"
+      ],
+      "properties": {
+        "previous": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "label": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "label",
+            "url"
+          ],
+          "additionalProperties": false
+        },
+        "next": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "label": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "label",
+            "url"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

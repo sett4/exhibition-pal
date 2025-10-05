@@ -5,6 +5,7 @@
   "type": "object",
   "required": [
     "id",
+    "slug",
     "title",
     "period",
     "venue",
@@ -12,13 +13,18 @@
     "officialUrl",
     "relatedUrls",
     "heroImage",
-    "artworkList"
+    "artworkList",
+    "detailUrl"
   ],
   "additionalProperties": false,
   "properties": {
     "id": {
       "type": "string",
       "minLength": 1
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$"
     },
     "title": {
       "type": "string",
@@ -75,6 +81,14 @@
         "null"
       ]
     },
+    "highlightsBlocks": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "default": []
+    },
     "officialUrl": {
       "type": "string",
       "pattern": "^https://"
@@ -104,7 +118,8 @@
       "type": "object",
       "required": [
         "src",
-        "alt"
+        "alt",
+        "focalPoint"
       ],
       "additionalProperties": false,
       "properties": {
@@ -115,6 +130,26 @@
         "alt": {
           "type": "string",
           "minLength": 1
+        },
+        "focalPoint": {
+          "type": "object",
+          "required": [
+            "x",
+            "y"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "x": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "y": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
         }
       }
     },
@@ -122,6 +157,123 @@
       "type": "array",
       "items": {
         "$ref": "https://exhibition-pal.example.com/schemas/artworks.json#/definitions/artwork"
+      }
+    },
+    "featuredArtworkIds": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "default": []
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "default": []
+    },
+    "detailUrl": {
+      "type": "string",
+      "pattern": "^/exhibitions/[a-z0-9-]+/$"
+    },
+    "slider": {
+      "type": ["object", "null"],
+      "properties": {
+        "autoplay": {
+          "type": "boolean"
+        },
+        "loop": {
+          "type": "boolean"
+        },
+        "prefersReducedMotion": {
+          "type": "boolean"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["artworkId", "image", "caption"],
+            "additionalProperties": false,
+            "properties": {
+              "artworkId": {
+                "type": "string"
+              },
+              "image": {
+                "type": "object",
+                "required": ["src", "alt"],
+                "properties": {
+                  "src": { "type": "string", "pattern": "^https://" },
+                  "alt": { "type": "string", "minLength": 1 }
+                },
+                "additionalProperties": false
+              },
+              "caption": {
+                "type": "string",
+                "minLength": 1
+              },
+              "audioUrl": {
+                "type": ["string", "null"],
+                "pattern": "^https://"
+              }
+            }
+          }
+        },
+        "controls": {
+          "type": "object",
+          "required": ["previousLabel", "nextLabel", "pauseLabel", "playLabel"],
+          "additionalProperties": false,
+          "properties": {
+            "previousLabel": { "type": "string" },
+            "nextLabel": { "type": "string" },
+            "pauseLabel": { "type": "string" },
+            "playLabel": { "type": "string" }
+          }
+        }
+      }
+    },
+    "navigation": {
+      "type": ["object", "null"],
+      "properties": {
+        "breadcrumbs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["label", "url"],
+            "additionalProperties": false,
+            "properties": {
+              "label": { "type": "string" },
+              "url": { "type": "string" }
+            }
+          }
+        },
+        "related": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cta": {
+          "type": "object",
+          "required": ["label", "url"],
+          "additionalProperties": false,
+          "properties": {
+            "label": {
+              "type": "object",
+              "required": ["ja"],
+              "properties": {
+                "ja": { "type": "string" },
+                "en": { "type": ["string", "null"] }
+              },
+              "additionalProperties": false
+            },
+            "url": {
+              "type": "string"
+            }
+          }
+        }
       }
     }
   }

@@ -14,7 +14,10 @@ const HEADERS = {
   referenceUrl: '参照URL',
   audioUrl: '音声化（stand fm url）',
   articleUrl: '記事化（Note url）',
-  image: 'image'
+  image: 'image',
+  imageAlt: '画像代替テキスト',
+  mediaType: 'メディア種別',
+  transcript: 'トランスクリプト'
 };
 
 export const WARNING_TYPES = {
@@ -87,6 +90,88 @@ function sanitizeUrl(value, warnings, context, label) {
   return value;
 }
 
+function guessMimeType(url) {
+  if (!url) {
+    return 'image/jpeg';
+  }
+  try {
+    const parsed = new URL(url);
+    const pathname = parsed.pathname ?? '';
+    const extensionMatch = pathname.match(/\.([a-zA-Z0-9]+)$/);
+    const extension = extensionMatch ? extensionMatch[1].toLowerCase() : '';
+    switch (extension) {
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+      case 'webp':
+        return 'image/webp';
+      case 'avif':
+        return 'image/avif';
+      case 'svg':
+        return 'image/svg+xml';
+      case 'jpg':
+      case 'jpeg':
+      default:
+        return 'image/jpeg';
+    }
+  } catch (error) {
+    return 'image/jpeg';
+  }
+}
+
+function buildResponsiveImage(url, altText) {
+  if (!url) {
+    return null;
+  }
+
+  const safeAlt = altText && altText.trim().length > 0 ? altText.trim() : '作品画像';
+  const mimeType = guessMimeType(url);
+  let webpVariant = null;
+  try {
+    const parsed = new URL(url);
+    const extensionMatch = parsed.pathname.match(/\.([a-zA-Z0-9]+)$/);
+    if (extensionMatch) {
+      const extension = extensionMatch[1];
+      parsed.pathname = parsed.pathname.replace(`.${extension}`, '.webp');
+      webpVariant = parsed.toString();
+    }
+  } catch (error) {
+    webpVariant = null;
+  }
+
+  const sources = [];
+  if (webpVariant) {
+    sources.push({ srcset: `${webpVariant} 1x`, type: 'image/webp' });
+  }
+  sources.push({ srcset: `${url} 1x`, type: mimeType });
+
+  if (sources.length === 1) {
+    // Duplicate entry to satisfy schema minItems while keeping deterministic behaviour.
+    sources.push({ srcset: `${url} 2x`, type: mimeType });
+  }
+
+  return {
+    src: url,
+    alt: safeAlt,
+    sources
+  };
+}
+
+function deriveMediaType(rawValue, imageAsset, audioUrl) {
+  const normalized = rawValue?.trim().toLowerCase();
+  if (normalized) {
+    return normalized;
+  }
+  if (audioUrl) {
+    return 'audio';
+  }
+  if (imageAsset) {
+    return 'image';
+  }
+  return 'unknown';
+}
+
 export function normalizeSheet(sheetResponse, options = {}) {
   const warnings = [];
   const values = sheetResponse?.values ?? [];
@@ -116,6 +201,12 @@ export function normalizeSheet(sheetResponse, options = {}) {
       return;
     }
 
+    const rawImageAlt = readCell(row, headerIndex, 'imageAlt');
+    const rawTranscript = readCell(row, headerIndex, 'transcript');
+
+    const imageUrl = sanitizeUrl(readCell(row, headerIndex, 'image'), warnings, { ...context, exhibitionId, artworkId }, 'image URL');
+    const imageAsset = buildResponsiveImage(imageUrl, rawImageAlt || `${title}${recordedArtistSuffix(readCell(row, headerIndex, 'artistName'))}`);
+
     const record = {
       artworkId,
       exhibitionId,
@@ -129,10 +220,13 @@ export function normalizeSheet(sheetResponse, options = {}) {
       referenceUrl: sanitizeUrl(readCell(row, headerIndex, 'referenceUrl'), warnings, { ...context, exhibitionId, artworkId }, '参照URL'),
       audioUrl: sanitizeUrl(readCell(row, headerIndex, 'audioUrl'), warnings, { ...context, exhibitionId, artworkId }, '音声化URL'),
       articleUrl: sanitizeUrl(readCell(row, headerIndex, 'articleUrl'), warnings, { ...context, exhibitionId, artworkId }, '記事化URL'),
-      image: sanitizeUrl(readCell(row, headerIndex, 'image'), warnings, { ...context, exhibitionId, artworkId }, 'image URL'),
       inputDate: normalizeDate(readCell(row, headerIndex, 'inputDate')),
       lastSyncedAt: syncedAt
     };
+
+    record.image = imageAsset;
+    record.mediaType = deriveMediaType(readCell(row, headerIndex, 'mediaType'), imageAsset, record.audioUrl);
+    record.transcript = toNullable(rawTranscript) || record.notes || record.description || null;
 
     const rawInputDate = readCell(row, headerIndex, 'inputDate');
     if (rawInputDate && !record.inputDate) {
@@ -151,3 +245,9 @@ export function normalizeSheet(sheetResponse, options = {}) {
   return { records, warnings };
 }
 
+function recordedArtistSuffix(artistName) {
+  if (!artistName) {
+    return '';
+  }
+  return ` — ${artistName}`;
+}

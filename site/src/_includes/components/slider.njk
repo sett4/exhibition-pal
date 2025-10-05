@@ -1,0 +1,50 @@
+{% macro render(slider, options = {}) %}
+  {% if slider and slider.items and slider.items | length > 0 %}
+    {% set autoplay = slider.autoplay | default(true) %}
+    <section
+      class="exhibition-slider"
+      data-exhibition-slider
+      data-test="exhibition-slider"
+      data-autoplay="{{ autoplay ? 'true' : 'false' }}"
+      data-reduced-motion="false"
+    >
+      <div class="exhibition-slider__viewport">
+        <div class="exhibition-slider__track" data-slider-track>
+          {% for item in slider.items %}
+            <article class="exhibition-slider__slide" data-slider-item data-slide-label="{{ item.caption }}">
+              <div class="exhibition-slider__media">
+                {% if item.image.sources %}
+                  <picture>
+                    {% for source in item.image.sources %}
+                      <source srcset="{{ source.srcset }}" type="{{ source.type }}" />
+                    {% endfor %}
+                    <img src="{{ item.image.src }}" alt="{{ item.image.alt }}" loading="lazy" decoding="async" />
+                  </picture>
+                {% else %}
+                  <img src="{{ item.image.src }}" alt="{{ item.image.alt }}" loading="lazy" decoding="async" />
+                {% endif %}
+              </div>
+              <div class="exhibition-slider__copy">
+                <p class="exhibition-slider__caption">{{ item.caption }}</p>
+                {% if item.audioUrl %}
+                  <a class="button" href="{{ item.audioUrl }}" target="_blank" rel="noopener">音声解説を再生</a>
+                {% endif %}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="exhibition-slider__meta">
+        <div class="exhibition-slider__indicators" data-slider-indicators></div>
+      </div>
+
+      <div class="exhibition-slider__controls" data-slider-controls data-test="slider-controls">
+        <button type="button" data-action="previous" aria-label="前のスライド">前へ</button>
+        <button type="button" data-action="next" aria-label="次のスライド">次へ</button>
+        <button type="button" data-action="pause" aria-label="自動再生を停止" aria-pressed="false">停止</button>
+        <button type="button" data-action="play" aria-label="自動再生を再開" aria-pressed="false">再生</button>
+      </div>
+    </section>
+  {% endif %}
+{% endmacro %}

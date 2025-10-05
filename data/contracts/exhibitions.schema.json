@@ -21,7 +21,8 @@
         "fetchedAt",
         "sourceSpreadsheet",
         "warnings",
-        "artworkSortKey"
+        "artworkSortKey",
+        "updatedAt"
       ],
       "additionalProperties": false,
       "properties": {
@@ -74,6 +75,10 @@
           "enum": [
             "artworkId"
           ]
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     }
@@ -83,6 +88,7 @@
       "type": "object",
       "required": [
         "id",
+        "slug",
         "title",
         "period",
         "venue",
@@ -90,13 +96,18 @@
         "officialUrl",
         "relatedUrls",
         "heroImage",
-        "artworkList"
+        "artworkList",
+        "detailUrl"
       ],
       "additionalProperties": false,
       "properties": {
         "id": {
           "type": "string",
           "minLength": 1
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$"
         },
         "title": {
           "type": "string",
@@ -155,6 +166,14 @@
           ],
           "default": null
         },
+        "highlightsBlocks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "default": []
+        },
         "officialUrl": {
           "type": "string",
           "pattern": "^https://"
@@ -184,7 +203,8 @@
           "type": "object",
           "required": [
             "src",
-            "alt"
+            "alt",
+            "focalPoint"
           ],
           "additionalProperties": false,
           "properties": {
@@ -195,6 +215,26 @@
             "alt": {
               "type": "string",
               "minLength": 1
+            },
+            "focalPoint": {
+              "type": "object",
+              "required": [
+                "x",
+                "y"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "x": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "y": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              }
             }
           }
         },
@@ -203,6 +243,27 @@
           "items": {
             "$ref": "https://exhibition-pal.example.com/schemas/artworks.json#/definitions/artwork"
           }
+        },
+        "featuredArtworkIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "maxItems": 6
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "default": []
+        },
+        "detailUrl": {
+          "type": "string",
+          "pattern": "^/exhibitions/[a-z0-9-]+/$"
         }
       }
     },

@@ -1,0 +1,104 @@
+{
+  "expo-2025-spring": {
+    "autoplay": true,
+    "loop": true,
+    "prefersReducedMotion": true,
+    "items": [
+      {
+        "artworkId": "art-001",
+        "image": {
+          "src": "https://cdn.example.com/artworks/art-001@2x.jpg",
+          "alt": "作品A — アーティストA",
+          "sources": [
+            {
+              "srcset": "https://cdn.example.com/artworks/art-001.webp 1x",
+              "type": "image/webp"
+            },
+            {
+              "srcset": "https://cdn.example.com/artworks/art-001@2x.jpg 1x",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        "caption": "作品A — アーティストA",
+        "audioUrl": "https://stand.fm/episodes/art-001"
+      },
+      {
+        "artworkId": "art-002",
+        "image": {
+          "src": "https://cdn.example.com/artworks/art-002@2x.jpg",
+          "alt": "作品B — アーティストB",
+          "sources": [
+            {
+              "srcset": "https://cdn.example.com/artworks/art-002.webp 1x",
+              "type": "image/webp"
+            },
+            {
+              "srcset": "https://cdn.example.com/artworks/art-002@2x.jpg 1x",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        "caption": "作品B — アーティストB",
+        "audioUrl": null
+      },
+      {
+        "artworkId": "art-003",
+        "image": {
+          "src": "https://cdn.example.com/artworks/art-003@2x.jpg",
+          "alt": "作品C",
+          "sources": [
+            {
+              "srcset": "https://cdn.example.com/artworks/art-003.webp 1x",
+              "type": "image/webp"
+            },
+            {
+              "srcset": "https://cdn.example.com/artworks/art-003@2x.jpg 1x",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        "caption": "作品C",
+        "audioUrl": null
+      }
+    ],
+    "controls": {
+      "previousLabel": "前へ",
+      "nextLabel": "次へ",
+      "pauseLabel": "停止",
+      "playLabel": "再生"
+    }
+  },
+  "expo-2025-autumn": {
+    "autoplay": true,
+    "loop": true,
+    "prefersReducedMotion": true,
+    "items": [
+      {
+        "artworkId": "craft-001",
+        "image": {
+          "src": "https://cdn.example.com/artworks/craft-001@2x.jpg",
+          "alt": "陶器壺 — 陶芸家D",
+          "sources": [
+            {
+              "srcset": "https://cdn.example.com/artworks/craft-001.webp 1x",
+              "type": "image/webp"
+            },
+            {
+              "srcset": "https://cdn.example.com/artworks/craft-001@2x.jpg 1x",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        "caption": "陶器壺 — 陶芸家D",
+        "audioUrl": null
+      }
+    ],
+    "controls": {
+      "previousLabel": "前へ",
+      "nextLabel": "次へ",
+      "pauseLabel": "停止",
+      "playLabel": "再生"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{% macro render(exhibition, variant = 'standard') %}
+  {% if exhibition %}
+    {% set slug = exhibition.slug or exhibition.id %}
+    {% set detailUrl = exhibition.detailUrl or '/exhibitions/' ~ slug ~ '/' %}
+    {% set hasHighlights = exhibition.highlightsBlocks and exhibition.highlightsBlocks | length > 0 %}
+    {% set artworkCount = exhibition.artworkList | default([]) | length %}
+
+    <article class="exhibition-card" data-test="exhibition-card" data-variant="{{ variant }}" aria-labelledby="exhibition-{{ slug }}">
+      {# <div class="exhibition-card__image-wrapper" data-test="exhibition-hero">
+        <img
+          src="{{ exhibition.heroImage.src }}"
+          alt="{{ exhibition.heroImage.alt }}"
+          class="exhibition-card__image"
+          loading="lazy"
+          decoding="async"
+          data-aspect-ratio="3:2"
+        />
+      </div> #}
+      <div class="exhibition-card__body">
+        {% if exhibition.period.display %}
+          <p class="exhibition-card__period">{{ exhibition.period.display }}</p>
+        {% endif %}
+        <h2 id="exhibition-{{ slug }}" class="exhibition-card__title">
+          <a href="{{ detailUrl }}">{{ exhibition.title }}</a>
+        </h2>
+        {% if exhibition.venue %}
+          <p class="exhibition-card__venue">{{ exhibition.venue }}</p>
+        {% endif %}
+        {% if exhibition.summary %}
+          <p class="exhibition-card__summary">{{ exhibition.summary }}</p>
+        {% endif %}
+        {% if artworkCount > 0 %}
+          <p class="exhibition-card__artwork-count">収録作品: {{ artworkCount }} 点</p>
+        {% endif %}
+        {% if hasHighlights %}
+          <ul class="exhibition-card__highlights">
+            {% for highlight in exhibition.highlightsBlocks | slice(0, 2) %}
+              <li>{{ highlight }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+        <div class="exhibitions-cta">
+          <a class="button" data-test="exhibition-cta" href="{{ detailUrl }}">詳しく見る</a>
+          <span class="exhibitions-cta__text">詳細ページでハイライトや作品情報をチェック</span>
+        </div>
+        {% if exhibition.relatedUrls and exhibition.relatedUrls | length > 0 %}
+          <ul class="exhibition-card__links">
+            {% for link in exhibition.relatedUrls | slice(0, 3) %}
+              <li>
+                <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.label }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    </article>
+  {% endif %}
+{% endmacro %}

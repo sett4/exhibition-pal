@@ -2,6 +2,7 @@
   "list": [
     {
       "id": "expo-2025-spring",
+      "slug": "expo-2025-spring",
       "title": "春のアート展",
       "period": {
         "start": "2025-03-01",
@@ -11,7 +12,12 @@
       "venue": "渋谷ギャラリー",
       "summary": "春に開催される展示会です。",
       "background": "地域活性化の一環として企画されました。",
-      "highlights": "大型インスタレーション、ワークショップ",
+      "highlights": "大型インスタレーション\nワークショップ\n地域アーティストとのコラボレーション",
+      "highlightsBlocks": [
+        "大型インスタレーション",
+        "ワークショップ",
+        "地域アーティストとのコラボレーション"
+      ],
       "officialUrl": "https://exhibition.example.com/spring-2025",
       "relatedUrls": [
         {
@@ -29,7 +35,11 @@
       ],
       "heroImage": {
         "src": "https://cdn.example.com/images/spring-2025.jpg",
-        "alt": "春のアート展 キービジュアル"
+        "alt": "春のアート展 キービジュアル",
+        "focalPoint": {
+          "x": 0.52,
+          "y": 0.38
+        }
       },
       "artworkList": [
         {
@@ -41,13 +51,28 @@
           "artistName": "アーティストA",
           "description": "作品Aの詳細説明",
           "notes": "関連メモ",
-          "introMediaUrl": "https://drive.google.com/file/d/abc123/view",
+          "introMediaUrl": "https://drive.example.com/file/d/intro-art-001",
           "referenceUrl": "https://example.com/art-001",
           "audioUrl": "https://stand.fm/episodes/art-001",
           "articleUrl": "https://note.com/curator/n/note001",
-          "image": "https://cdn.example.com/artworks/art-001.jpg",
-          "inputDate": "2025-09-30",
-          "lastSyncedAt": "2025-10-05T00:00:00.000Z"
+          "image": {
+            "src": "https://cdn.example.com/artworks/art-001@2x.jpg",
+            "alt": "作品A — アーティストA",
+            "sources": [
+              {
+                "srcset": "https://cdn.example.com/artworks/art-001.webp 1x",
+                "type": "image/webp"
+              },
+              {
+                "srcset": "https://cdn.example.com/artworks/art-001@2x.jpg 1x",
+                "type": "image/jpeg"
+              }
+            ]
+          },
+          "mediaType": "image",
+          "transcript": "作品Aの音声解説の書き起こし",
+          "inputDate": "2025-02-18",
+          "lastSyncedAt": "2025-03-01T00:00:00.000Z"
         },
         {
           "artworkId": "art-002",
@@ -57,101 +82,170 @@
           "displayId": "2",
           "artistName": "アーティストB",
           "description": "作品Bの詳細説明",
-          "notes": "",
+          "notes": null,
           "introMediaUrl": null,
           "referenceUrl": "https://example.com/art-002",
           "audioUrl": null,
           "articleUrl": null,
-          "image": "https://cdn.example.com/artworks/art-002.jpg",
-          "inputDate": "2025-09-29",
-          "lastSyncedAt": "2025-10-05T00:00:00.000Z"
+          "image": {
+            "src": "https://cdn.example.com/artworks/art-002@2x.jpg",
+            "alt": "作品B — アーティストB",
+            "sources": [
+              {
+                "srcset": "https://cdn.example.com/artworks/art-002.webp 1x",
+                "type": "image/webp"
+              },
+              {
+                "srcset": "https://cdn.example.com/artworks/art-002@2x.jpg 1x",
+                "type": "image/jpeg"
+              }
+            ]
+          },
+          "mediaType": "image",
+          "transcript": "作品Bの詳細説明",
+          "inputDate": "2025-02-17",
+          "lastSyncedAt": "2025-03-01T00:00:00.000Z"
+        },
+        {
+          "artworkId": "art-003",
+          "exhibitionId": "expo-2025-spring",
+          "title": "作品C",
+          "exhibitionTitle": "春のアート展",
+          "displayId": "3",
+          "artistName": "アーティストC",
+          "description": null,
+          "notes": null,
+          "introMediaUrl": null,
+          "referenceUrl": "https://example.com/art-003",
+          "audioUrl": null,
+          "articleUrl": null,
+          "image": {
+            "src": "https://cdn.example.com/artworks/art-003@2x.jpg",
+            "alt": "作品C",
+            "sources": [
+              {
+                "srcset": "https://cdn.example.com/artworks/art-003.webp 1x",
+                "type": "image/webp"
+              },
+              {
+                "srcset": "https://cdn.example.com/artworks/art-003@2x.jpg 1x",
+                "type": "image/jpeg"
+              }
+            ]
+          },
+          "mediaType": "sculpture",
+          "transcript": "作品Cに関する補足解説",
+          "inputDate": "2025-02-15",
+          "lastSyncedAt": "2025-03-01T00:00:00.000Z"
         }
-      ]
+      ],
+      "featuredArtworkIds": [
+        "art-001",
+        "art-002",
+        "art-003"
+      ],
+      "tags": [
+        "spring",
+        "contemporary"
+      ],
+      "detailUrl": "/exhibitions/expo-2025-spring/"
     },
     {
       "id": "expo-2025-autumn",
+      "slug": "expo-2025-autumn",
       "title": "秋の工芸展",
       "period": {
-        "start": null,
-        "end": null,
-        "display": null
+        "start": "2025-10-10",
+        "end": "2025-11-03",
+        "display": "2025年10月10日〜2025年11月3日"
       },
-      "venue": "日本橋アートスペース",
-      "summary": "秋に開催予定の工芸展。",
-      "background": "地域の職人が参加予定。",
-      "highlights": "伝統工芸と現代アートの融合",
-      "officialUrl": "https://exhibition.example.com/autumn-2025",
-      "relatedUrls": [
-        {
-          "url": "https://media.example.com/article-2",
-          "label": "メディア掲載"
-        },
-        {
-          "url": "https://twitter.com/exhibition_autumn",
-          "label": "関連SNS"
-        },
-        {
-          "url": "https://stand.fm/episodes/autumn",
-          "label": "音声解説"
-        }
+      "venue": "六本木ミュージアム",
+      "summary": "工芸作家の新作を集めた企画展。",
+      "background": "地域の工芸作家の支援を目的とした展示です。",
+      "highlights": "伝統技法の実演\n若手作家のトークセッション",
+      "highlightsBlocks": [
+        "伝統技法の実演",
+        "若手作家のトークセッション"
       ],
+      "officialUrl": "https://exhibition.example.com/autumn-2025",
+      "relatedUrls": [],
       "heroImage": {
         "src": "https://cdn.example.com/images/autumn-2025.jpg",
-        "alt": "秋の工芸展 キービジュアル"
+        "alt": "秋の工芸展 キービジュアル",
+        "focalPoint": {
+          "x": 0.44,
+          "y": 0.62
+        }
       },
       "artworkList": [
         {
           "artworkId": "craft-001",
           "exhibitionId": "expo-2025-autumn",
-          "title": "作品C",
+          "title": "陶器壺",
           "exhibitionTitle": "秋の工芸展",
-          "displayId": null,
-          "artistName": "職人C",
-          "description": "作品Cの詳細説明",
-          "notes": "",
-          "introMediaUrl": "https://drive.google.com/file/d/def456/view",
+          "displayId": "A-1",
+          "artistName": "陶芸家D",
+          "description": "土と釉薬のコントラストが美しい大型の壺。",
+          "notes": null,
+          "introMediaUrl": null,
           "referenceUrl": "https://example.com/craft-001",
           "audioUrl": null,
-          "articleUrl": "https://note.com/curator/n/note002",
-          "image": "https://cdn.example.com/artworks/craft-001.jpg",
-          "inputDate": "2025-09-28",
-          "lastSyncedAt": "2025-10-05T00:00:00.000Z"
+          "articleUrl": null,
+          "image": {
+            "src": "https://cdn.example.com/artworks/craft-001@2x.jpg",
+            "alt": "陶器壺 — 陶芸家D",
+            "sources": [
+              {
+                "srcset": "https://cdn.example.com/artworks/craft-001.webp 1x",
+                "type": "image/webp"
+              },
+              {
+                "srcset": "https://cdn.example.com/artworks/craft-001@2x.jpg 1x",
+                "type": "image/jpeg"
+              }
+            ]
+          },
+          "mediaType": "ceramics",
+          "transcript": "陶器壺の制作背景と使用技法の解説",
+          "inputDate": "2025-08-01",
+          "lastSyncedAt": "2025-09-15T00:00:00.000Z"
         }
-      ]
+      ],
+      "featuredArtworkIds": [
+        "craft-001",
+        "craft-002",
+        "craft-003"
+      ],
+      "tags": [
+        "autumn",
+        "craft"
+      ],
+      "detailUrl": "/exhibitions/expo-2025-autumn/"
     }
   ],
   "meta": {
-    "fetchedAt": "2025-10-05T04:00:00.000Z",
+    "fetchedAt": "2025-03-01T00:00:00.000Z",
     "sourceSpreadsheet": "spreadsheet-id",
     "warnings": [
       {
-        "id": "expo-2025-spring",
-        "type": "DUPLICATE_ID",
-        "message": "Duplicate exhibition ID encountered; later row skipped."
-      },
-      {
-        "id": "invalid-row",
-        "type": "INVALID_URL",
-        "message": "officialUrl is not a valid https URL."
-      },
-      {
-        "id": "invalid-row",
-        "type": "INVALID_DATE",
-        "message": "終了日が開始日より前です。"
+        "id": "expo-2025-autumn",
+        "type": "MISSING_IMAGE",
+        "message": "heroImage missing or invalid https URL; fallback applied."
       }
     ],
+    "updatedAt": "2025-03-02T08:15:00.000Z",
+    "artworkSortKey": "artworkId",
     "internal": {
       "expo-2025-spring": {
-        "inventoryUrl": "https://drive.google.com/file/d/INV123/view",
-        "detailDocUrl": "https://drive.google.com/file/d/DETAIL123/view",
-        "noteUrl": "https://note.com/curator/n/ne123"
+        "inventoryUrl": "https://drive.example.com/file/d/inventory-spring",
+        "detailDocUrl": "https://drive.example.com/file/d/detail-spring",
+        "noteUrl": "https://note.com/curator/n/spring"
       },
       "expo-2025-autumn": {
-        "inventoryUrl": "https://drive.google.com/file/d/INV456/view",
-        "detailDocUrl": "https://drive.google.com/file/d/DETAIL456/view",
+        "inventoryUrl": "https://drive.example.com/file/d/inventory-autumn",
+        "detailDocUrl": "https://drive.example.com/file/d/detail-autumn",
         "noteUrl": null
       }
-    },
-    "artworkSortKey": "artworkId"
+    }
   }
 }

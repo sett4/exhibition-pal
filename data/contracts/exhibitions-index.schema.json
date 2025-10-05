@@ -1,0 +1,206 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://exhibition-pal.example.com/schemas/exhibitions-index.json",
+  "title": "Exhibitions index page payload",
+  "type": "object",
+  "required": ["list", "meta"],
+  "additionalProperties": false,
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["fetchedAt", "sourceSpreadsheet", "warnings", "artworkSortKey", "updatedAt"],
+      "additionalProperties": false,
+      "properties": {
+        "fetchedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "sourceSpreadsheet": {
+          "type": "string",
+          "minLength": 1
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "type", "message"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": ["string", "number", "null"] },
+              "type": { "type": "string" },
+              "message": { "type": "string" }
+            }
+          }
+        },
+        "artworkSortKey": {
+          "type": "string"
+        },
+        "internal": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "list": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "summary",
+          "venue",
+          "period",
+          "heroImage",
+          "featuredArtworkIds",
+          "detailUrl"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "slug": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1
+          },
+          "venue": {
+            "type": "string",
+            "minLength": 1
+          },
+          "period": {
+            "type": "object",
+            "required": ["display"],
+            "additionalProperties": false,
+            "properties": {
+              "start": {
+                "type": ["string", "null"],
+                "format": "date"
+              },
+              "end": {
+                "type": ["string", "null"],
+                "format": "date"
+              },
+              "display": {
+                "type": ["string", "null"]
+              }
+            }
+          },
+          "heroImage": {
+            "type": "object",
+            "required": ["src", "alt", "focalPoint"],
+            "additionalProperties": false,
+            "properties": {
+              "src": {
+                "type": "string",
+                "pattern": "^https://"
+              },
+              "alt": {
+                "type": "string",
+                "minLength": 1
+              },
+              "focalPoint": {
+                "type": "object",
+                "required": ["x", "y"],
+                "additionalProperties": false,
+                "properties": {
+                  "x": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "y": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                }
+              }
+            }
+          },
+          "featuredArtworkIds": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 6,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "highlightsBlocks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "default": []
+          },
+          "highlights": {
+            "type": ["string", "null"],
+            "default": null
+          },
+          "officialUrl": {
+            "type": "string",
+            "pattern": "^https://"
+          },
+          "relatedUrls": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["url", "label"],
+              "additionalProperties": false,
+              "properties": {
+                "url": { "type": "string", "pattern": "^https://" },
+                "label": { "type": "string", "minLength": 1 }
+              }
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "default": []
+          },
+          "detailUrl": {
+            "type": "string",
+            "pattern": "^/exhibitions/[a-z0-9-]+/$"
+          },
+          "background": {
+            "type": ["string", "null"],
+            "default": null
+          },
+          "artworkList": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["artworkId", "title"],
+              "properties": {
+                "artworkId": { "type": "string", "minLength": 1 },
+                "title": { "type": "string", "minLength": 1 },
+                "artistName": { "type": ["string", "null"] }
+              },
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,5 +1,7 @@
 module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ "site/src/styles": "styles" });
+  eleventyConfig.addPassthroughCopy({ 'site/src/styles/exhibitions/assets': 'assets/exhibitions' });
+  eleventyConfig.addPassthroughCopy({ 'site/src/scripts': 'scripts' });
   eleventyConfig.addPassthroughCopy({ 'site/src/_data/artwork-lookup.json': 'data/artwork-lookup.json' });
 
   eleventyConfig.addCollection('artworks', async () => {

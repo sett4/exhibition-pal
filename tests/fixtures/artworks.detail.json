@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "title": "作品A | 春のアート展",
+    "description": "作品Aの解説と関連情報",
+    "ogImage": "https://cdn.example.com/artworks/art-001-og.jpg"
+  },
+  "artwork": {
+    "artworkId": "art-001",
+    "title": "作品A",
+    "artistName": "アーティストA",
+    "description": "作品Aの詳細説明",
+    "image": {
+      "src": "https://cdn.example.com/artworks/art-001@2x.jpg",
+      "alt": "作品A — アーティストA",
+      "sources": [
+        {
+          "srcset": "https://cdn.example.com/artworks/art-001.webp 1x",
+          "type": "image/webp"
+        },
+        {
+          "srcset": "https://cdn.example.com/artworks/art-001@2x.jpg 1x",
+          "type": "image/jpeg"
+        }
+      ]
+    },
+    "mediaType": "painting",
+    "transcript": "作品Aの音声解説の書き起こし",
+    "audioUrl": "https://stand.fm/episodes/art-001",
+    "referenceLinks": [
+      {
+        "label": "作家公式サイト",
+        "url": "https://artist.example.com/"
+      },
+      {
+        "label": "作品解説記事",
+        "url": "https://example.com/art-001"
+      }
+    ]
+  },
+  "navigation": {
+    "breadcrumbs": [
+      { "label": "Home", "url": "/" },
+      { "label": "Exhibitions", "url": "/exhibitions/" },
+      { "label": "春のアート展", "url": "/exhibitions/expo-2025-spring/" },
+      { "label": "作品A", "url": "/exhibitions/expo-2025-spring/art-001/" }
+    ],
+    "returnToExhibition": "/exhibitions/expo-2025-spring/"
+  },
+  "adjacent": {
+    "previous": null,
+    "next": {
+      "label": "作品B",
+      "url": "/exhibitions/expo-2025-spring/art-002/"
+    }
+  }
+}

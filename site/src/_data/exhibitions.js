@@ -2,6 +2,8 @@ import fetchSheet from './exhibitions/fetchSheet.js';
 import buildMeta from './exhibitions/buildMeta.js';
 import { normalizeSheet } from './exhibitions/normalizeRecord.js';
 import { loadArtworks } from './artworks/index.js';
+import navigationData from './navigation/exhibitions.js';
+import sliderData from './exhibitions/sliders.js';
 
 function sortRecords(records) {
   return [...records].sort((a, b) => {
@@ -43,7 +45,9 @@ export default async function exhibitionsData() {
   const internalById = {};
   const publicList = sorted.map((record) => {
     const { internal, ...publicFields } = record;
-    internalById[record.id] = internal;
+    if (internal) {
+      internalById[record.id] = internal;
+    }
     return publicFields;
   });
 
@@ -66,7 +70,8 @@ export default async function exhibitionsData() {
 
   return {
     list: publicList,
-    meta
+    meta,
+    navigation: navigationData(publicList),
+    sliders: sliderData(publicList)
   };
 }
-

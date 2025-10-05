@@ -1,0 +1,51 @@
+{% macro render(exhibition, breadcrumbs = []) %}
+  {% if exhibition %}
+    <section class="exhibition-hero" aria-labelledby="exhibition-hero-title">
+      {% if breadcrumbs and breadcrumbs | length > 0 %}
+        <nav class="exhibition-hero__breadcrumbs" aria-label="パンくず">
+          <ol data-test="breadcrumb">
+            {% for crumb in breadcrumbs %}
+              <li>
+                {% if crumb.url %}
+                  <a href="{{ crumb.url }}">{{ crumb.label }}</a>
+                {% else %}
+                  <span aria-current="page">{{ crumb.label }}</span>
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ol>
+        </nav>
+      {% endif %}
+
+      <div class="exhibition-hero__grid">
+        {# <div class="exhibition-hero__media">
+          <img
+            src="{{ exhibition.heroImage.src }}"
+            alt="{{ exhibition.heroImage.alt }}"
+            loading="lazy"
+          />
+        </div> #}
+        <div class="exhibition-hero__body">
+          <div class="exhibition-hero__eyebrow">Exhibition</div>
+          <h1 id="exhibition-hero-title" class="exhibition-hero__title">{{ exhibition.title }}</h1>
+          {% if exhibition.period.display %}
+            <p class="exhibition-hero__period">{{ exhibition.period.display }}</p>
+          {% endif %}
+          {% if exhibition.venue %}
+            <p class="exhibition-hero__venue">{{ exhibition.venue }}</p>
+          {% endif %}
+          {% if exhibition.summary %}
+            <p class="exhibition-hero__summary">{{ exhibition.summary }}</p>
+          {% endif %}
+          {% if exhibition.highlightsBlocks and exhibition.highlightsBlocks | length > 0 %}
+            <ul class="exhibition-hero__highlights" data-test="exhibition-highlights">
+              {% for highlight in exhibition.highlightsBlocks | slice(0, 3) %}
+                <li>{{ highlight }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+  {% endif %}
+{% endmacro %}

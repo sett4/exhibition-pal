@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;700&family=Open+Sans:wght@400;600;700&display=swap');
+
+:root {
+  --exhibitions-font-heading: 'Archivo Narrow', 'Arial Narrow', sans-serif;
+  --exhibitions-font-body: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+
+  --exhibitions-color-background: #ffffff;
+  --exhibitions-color-surface: #f4f4f4;
+  --exhibitions-color-surface-alt: #fafafa;
+  --exhibitions-color-text-primary: #464646;
+  --exhibitions-color-text-secondary: #787878;
+  --exhibitions-color-text-inverse: #ffffff;
+  --exhibitions-color-border: #e3e3e3;
+  --exhibitions-color-border-strong: #c7c7c7;
+  --exhibitions-color-accent: #34edc4;
+  --exhibitions-color-accent-strong: #00c9a5;
+  --exhibitions-color-accent-muted: #d8f8f0;
+  --exhibitions-color-hero-overlay: rgba(20, 20, 20, 0.35);
+
+  --exhibitions-radius-sm: 8px;
+  --exhibitions-radius-md: 16px;
+  --exhibitions-radius-lg: 24px;
+
+  --exhibitions-shadow-sm: 0 6px 12px rgba(26, 39, 49, 0.07);
+  --exhibitions-shadow-md: 0 16px 32px rgba(26, 39, 49, 0.08);
+  --exhibitions-shadow-lg: 0 32px 64px rgba(26, 39, 49, 0.12);
+
+  --exhibitions-space-2xs: 4px;
+  --exhibitions-space-xs: 8px;
+  --exhibitions-space-sm: 12px;
+  --exhibitions-space-md: 16px;
+  --exhibitions-space-lg: 24px;
+  --exhibitions-space-xl: 32px;
+  --exhibitions-space-2xl: 48px;
+  --exhibitions-space-3xl: 64px;
+
+  --exhibitions-container-max: 1200px;
+  --exhibitions-container-padding: clamp(16px, 4vw, 40px);
+
+  --exhibitions-line-height-body: 1.6;
+  --exhibitions-line-height-heading: 1.2;
+
+  --exhibitions-breakpoint-sm: 480px;
+  --exhibitions-breakpoint-md: 768px;
+  --exhibitions-breakpoint-lg: 1024px;
+  --exhibitions-breakpoint-xl: 1440px;
+}
+
+:root {
+  color-scheme: light;
+}

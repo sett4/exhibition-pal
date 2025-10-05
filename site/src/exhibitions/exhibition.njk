@@ -5,51 +5,75 @@ pagination:
   size: 1
   alias: exhibition
   addAllPagesToCollections: true
-permalink: "/exhibitions/{{ exhibition.id }}/index.html"
-pageDescription: {{ exhibition.summary | safe }}
-ogImage: {{ exhibition.heroImage.src }}
+bodyClass: exhibitions-body
 ---
 
-<article class="exhibition-detail" aria-labelledby="exhibition-title">
-  <header class="exhibition-detail__header">
-    <h1 id="exhibition-title">{{ exhibition.title }}</h1>
-    {% if exhibition.period.display %}
-      <p class="exhibition-detail__period">開催期間: {{ exhibition.period.display }}</p>
-    {% endif %}
-    <p class="exhibition-detail__venue">会場: {{ exhibition.venue }}</p>
-    <figure class="exhibition-detail__hero">
-      <img src="{{ exhibition.heroImage.src }}" alt="{{ exhibition.heroImage.alt }}" loading="lazy" />
-      <figcaption>展示会公式ビジュアル</figcaption>
-    </figure>
-  </header>
+{% from "components/hero.njk" import render as exhibitionHero %}
+{# {% from "components/slider.njk" import render as exhibitionSlider %} #}
 
-  <section class="exhibition-detail__section">
-    <h2>作品一覧</h2>
+{% set slug = exhibition.slug or exhibition.id %}
+{% set navigationMap = exhibitions.navigation or {} %}
+{% set sliderMap = exhibitions.sliders or {} %}
+{% set navigationEntry = navigationMap[slug] %}
+{# {% set sliderEntry = sliderMap[slug] %} #}
+{% set relatedExhibitions = navigationEntry.related or [] %}
+{% set ogImage = exhibition.heroImage.src %}
+
+{% block head %}
+  <link rel="preload" as="image" href="{{ exhibition.heroImage.src }}" type="image/jpeg" />
+  {% if sliderEntry and sliderEntry.items and sliderEntry.items[0].image %}
+    <link rel="preload" as="image" href="{{ sliderEntry.items[0].image.src }}" type="image/jpeg" />
+  {% endif %}
+{% endblock %}
+
+<article class="exhibition-detail" data-exhibition-detail>
+  {{ exhibitionHero(exhibition, navigationEntry.breadcrumbs | default([])) | safe }}
+
+  {% if sliderEntry %}
+    <section class="exhibition-detail__slider" aria-label="注目作品スライダー">
+      {{ exhibitionSlider(sliderEntry) | safe }}
+    </section>
+  {% endif %}
+
+  <section class="exhibition-detail__about surface">
+    <h2 class="section-title">概要</h2>
+    <div class="exhibition-detail__copy">
+      {% if exhibition.summary %}
+        <p>{{ exhibition.summary }}</p>
+      {% endif %}
+      {% if exhibition.background %}
+        <p>{{ exhibition.background }}</p>
+      {% endif %}
+    </div>
+    <div class="exhibition-detail__links">
+      <a class="button" href="{{ exhibition.officialUrl }}" target="_blank" rel="noopener">公式サイト</a>
+      {# {% if navigationEntry.cta and navigationEntry.cta.url %}
+        <a class="button" href="{{ navigationEntry.cta.url }}">{{ navigationEntry.cta.label.ja }}</a>
+      {% endif %} #}
+    </div>
+  </section>
+
+  <section class="exhibition-detail__artworks surface">
+    <h2 class="section-title">収録作品</h2>
     {% if exhibition.artworkList and exhibition.artworkList | length > 0 %}
-      <ul class="exhibition-detail__artworks">
+      <ul class="exhibition-detail__artwork-grid">
         {% for artwork in exhibition.artworkList %}
-          <li class="exhibition-detail__artwork">
-            <article aria-labelledby="artwork-{{ artwork.artworkId }}">
-              <h3 id="artwork-{{ artwork.artworkId }}">
-                <a href="/exhibitions/{{ exhibition.id }}/{{ artwork.artworkId }}/">{{ artwork.title }}</a>
-              </h3>
-              <p class="exhibition-detail__artwork-meta">
-                {% if artwork.displayId %}<span class="badge">展示ID: {{ artwork.displayId }}</span>{% endif %}
-                {% if artwork.artistName %}<span class="artist">{{ artwork.artistName }}</span>{% endif %}
-              </p>
-              {% if artwork.image %}
-                <img src="{{ artwork.image }}" alt="{{ artwork.title }}" loading="lazy" class="exhibition-detail__artwork-image" />
-              {% endif %}
-              {% if artwork.description %}
-                <p class="exhibition-detail__artwork-description">{{ artwork.description }}</p>
-              {% endif %}
-              <ul class="exhibition-detail__artwork-links">
-                <li><a href="/exhibitions/{{ exhibition.id }}/{{ artwork.artworkId }}/">詳細ページ</a></li>
-                {% if artwork.introMediaUrl %}<li><a href="{{ artwork.introMediaUrl }}" target="_blank" rel="noopener">紹介コンテンツ</a></li>{% endif %}
-                {% if artwork.referenceUrl %}<li><a href="{{ artwork.referenceUrl }}" target="_blank" rel="noopener">参照URL</a></li>{% endif %}
-                {% if artwork.audioUrl %}<li><a href="{{ artwork.audioUrl }}" target="_blank" rel="noopener">音声解説</a></li>{% endif %}
-                {% if artwork.articleUrl %}<li><a href="{{ artwork.articleUrl }}" target="_blank" rel="noopener">記事</a></li>{% endif %}
-              </ul>
+          <li class="exhibition-detail__artwork-card">
+            <article>
+              {# <a class="exhibition-detail__artwork-link" href="/exhibitions/{{ slug }}/{{ artwork.artworkId }}/"> #}
+                {# <div class="exhibition-detail__artwork-media" data-test="artwork-card-media">
+                  <img src="{{ artwork.image.src or artwork.image }}" alt="{{ artwork.title }}" loading="lazy" decoding="async" />
+                </div> #}
+                <div class="exhibition-detail__artwork-body">
+                  <h3>{% if artwork.displayId %}{{ artwork.displayId }} {% endif %}{{ artwork.title }}</h3>
+                  {% if artwork.artistName %}
+                    <p class="exhibition-detail__artwork-artist">{{ artwork.artistName }}</p>
+                  {% endif %}
+                  {% if artwork.description %}
+                    <p class="exhibition-detail__artwork-description">{{ artwork.description }}</p>
+                  {% endif %}
+                </div>
+              {# </a> #}
             </article>
           </li>
         {% endfor %}
@@ -59,35 +83,31 @@ ogImage: {{ exhibition.heroImage.src }}
     {% endif %}
   </section>
 
-  <section class="exhibition-detail__section">
-    <h2>概要</h2>
-    <p>{{ exhibition.summary }}</p>
-  </section>
-
-  {% if exhibition.background %}
-    <section class="exhibition-detail__section">
-      <h2>開催経緯</h2>
-      <p>{{ exhibition.background }}</p>
-    </section>
-  {% endif %}
-
-  {% if exhibition.highlights %}
-    <section class="exhibition-detail__section">
-      <h2>見どころ</h2>
-      <p>{{ exhibition.highlights }}</p>
-    </section>
-  {% endif %}
-
-  <section class="exhibition-detail__section">
-    <h2>関連リンク</h2>
-    <ul class="exhibition-detail__links" data-related-links="pending-label-spec">
-    {# TODO: Clarify related link labeling and ordering per spreadsheet guidance #}
-      <li><a href="{{ exhibition.officialUrl }}" target="_blank" rel="noopener">公式サイト</a></li>
-      {% if exhibition.relatedUrls and exhibition.relatedUrls | length > 0 %}
+  {% if exhibition.relatedUrls and exhibition.relatedUrls | length > 0 %}
+    <section class="exhibition-detail__resources surface">
+      <h2 class="section-title">関連リンク</h2>
+      <ul class="exhibition-detail__resource-list">
         {% for link in exhibition.relatedUrls %}
           <li><a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.label }}</a></li>
         {% endfor %}
-      {% endif %}
-    </ul>
-  </section>
+      </ul>
+    </section>
+  {% endif %}
+
+  {% if relatedExhibitions | length > 0 %}
+    <section class="exhibition-detail__related surface">
+      <h2 class="section-title">関連する展示会</h2>
+      <ul class="exhibition-detail__related-list">
+        {% for relatedSlug in relatedExhibitions %}
+          {% set related = exhibitions.list | selectattr('slug', 'equalto', relatedSlug) | first %}
+          {% if not related %}
+            {% set related = exhibitions.list | selectattr('id', 'equalto', relatedSlug) | first %}
+          {% endif %}
+          {% if related %}
+            <li><a href="{{ related.detailUrl or '/exhibitions/' ~ (related.slug or related.id) ~ '/' }}">{{ related.title }}</a></li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
 </article>

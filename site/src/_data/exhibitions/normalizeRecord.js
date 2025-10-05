@@ -1,4 +1,5 @@
 import { URL } from 'node:url';
+import slugify from '@sindresorhus/slugify';
 
 const HEADERS = {
   id: '展示会ID',
@@ -39,6 +40,10 @@ const DATE_DISPLAY_FORMATTER = new Intl.DateTimeFormat('ja-JP', {
 const FALLBACK_IMAGE =
   process.env.IMAGE_FALLBACK_URL ||
   'https://cdn.example.com/placeholders/exhibition.jpg';
+
+const DEFAULT_FOCAL_POINT = { x: 0.5, y: 0.5 };
+const FEATURED_ARTWORK_LIMIT = 6;
+const MIN_FEATURED_ARTWORKS = 3;
 
 function buildHeaderIndex(headerRow) {
   const map = new Map();
@@ -197,6 +202,62 @@ function indexArtworksByExhibition(artworks = []) {
   return { grouped, duplicateIds, warnings };
 }
 
+function deriveSlug(id, title) {
+  if (id && /^[a-z0-9-]+$/.test(id)) {
+    return id;
+  }
+  if (title) {
+    const generated = slugify(title, {
+      decamelize: false,
+      separator: '-',
+      lowercase: true,
+      trim: true
+    });
+    if (generated) {
+      return generated;
+    }
+  }
+  return `exhibition-${id ?? 'unknown'}`;
+}
+
+function deriveHighlightsList(raw) {
+  if (!raw) {
+    return [];
+  }
+  const normalized = raw.replace(/\r/g, '\n');
+  const segments = normalized
+    .split(/\n+/)
+    .map((entry) => entry.trim())
+    .filter((entry) => entry.length > 0);
+
+  if (segments.length === 0) {
+    const trimmed = raw.trim();
+    return trimmed ? [trimmed] : [];
+  }
+
+  return segments;
+}
+
+function deriveFeaturedArtworkIds(artworkList, warnings, exhibitionId) {
+  if (!Array.isArray(artworkList) || artworkList.length === 0) {
+    return [];
+  }
+
+  const ids = artworkList
+    .map((artwork) => artwork.artworkId)
+    .filter((id) => typeof id === 'string' && id.length > 0);
+
+  if (ids.length < MIN_FEATURED_ARTWORKS) {
+    warnings.push({
+      exhibitionId,
+      type: WARNING_TYPES.MISSING_REQUIRED,
+      message: `featuredArtworkIds minimum not met (found ${ids.length})`
+    });
+  }
+
+  return ids.slice(0, FEATURED_ARTWORK_LIMIT);
+}
+
 export function normalizeSheet(sheetResponse, options = {}) {
   const warnings = [];
   const values = sheetResponse?.values ?? [];
@@ -312,21 +373,31 @@ export function normalizeSheet(sheetResponse, options = {}) {
       });
     }
 
+    const slug = deriveSlug(id, title);
+    const highlightsRaw = readCell(row, headerIndex, 'highlights') || null;
+    const highlightsList = deriveHighlightsList(highlightsRaw ?? '');
+
     const record = {
       id,
+      slug,
       title,
       period: buildPeriod(startIso, endIso),
       venue,
       summary,
       background: readCell(row, headerIndex, 'background') || null,
-      highlights: readCell(row, headerIndex, 'highlights') || null,
+      highlights: highlightsRaw,
+      highlightsBlocks: highlightsList,
       officialUrl: officialUrlRaw,
       relatedUrls,
       heroImage: {
         src: heroImage,
-        alt: `${title} キービジュアル`
+        alt: `${title} キービジュアル`,
+        focalPoint: { ...DEFAULT_FOCAL_POINT }
       },
       artworkList,
+      featuredArtworkIds: deriveFeaturedArtworkIds(artworkList, warnings, id),
+      tags: [],
+      detailUrl: `/exhibitions/${slug}/`,
       internal
     };
 
@@ -367,4 +438,3 @@ function safeInternalUrl(value) {
 }
 
 export { WARNING_TYPES };
-

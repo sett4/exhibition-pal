@@ -8,70 +8,117 @@ permalink: "/exhibitions/{{ artworkEntry.exhibitionId }}/{{ artworkEntry.artwork
 eleventyComputed:
   title: "{{ artworkEntry.artwork.title }}｜{{ artworkEntry.artwork.exhibitionTitle }}"
   pageDescription: "{{ artworkEntry.artwork.description or artworkEntry.artwork.notes or artworkEntry.artwork.title }}"
+bodyClass: exhibitions-body
 ---
 
 {% set artwork = artworkEntry.artwork %}
 {% set exhibitionId = artworkEntry.exhibitionId %}
+{% set exhibitionRecord = exhibitions.list | selectattr('slug', 'equalto', exhibitionId) | first %}
+{% if not exhibitionRecord %}
+  {% set exhibitionRecord = exhibitions.list | selectattr('id', 'equalto', exhibitionId) | first %}
+{% endif %}
+{% if not exhibitionRecord and artwork.exhibitionTitle %}
+  {% set exhibitionRecord = exhibitions.list | selectattr('title', 'equalto', artwork.exhibitionTitle) | first %}
+{% endif %}
+{% set exhibitionSlug = exhibitionRecord.slug or exhibitionId %}
+{% set returnUrl = exhibitionRecord.detailUrl or '/exhibitions/' ~ exhibitionSlug ~ '/' %}
+{% set ogImage = artwork.image.src or artwork.image %}
 
-<nav class="breadcrumb" aria-label="パンくずリスト">
+{% block head %}
+  {% if artwork.image %}
+    <link rel="preload" as="image" href="{{ artwork.image.src or artwork.image }}" type="image/jpeg" />
+  {% endif %}
+{% endblock %}
+
+<nav class="exhibition-hero__breadcrumbs" aria-label="パンくず" data-test="breadcrumb">
   <ol>
-    <li><a href="/exhibitions/">展示会一覧</a></li>
-    <li><a href="/exhibitions/{{ exhibitionId }}/">{{ artwork.exhibitionTitle }}</a></li>
+    <li><a href="/">Home</a></li>
+    <li><a href="/exhibitions/">Exhibitions</a></li>
+    <li><a href="{{ returnUrl }}">{{ artwork.exhibitionTitle }}</a></li>
     <li aria-current="page">{{ artwork.title }}</li>
   </ol>
 </nav>
 
 <article class="artwork-detail" aria-labelledby="artwork-title">
-  <header class="artwork-detail__header">
-    <h1 id="artwork-title">{{ artwork.title }}</h1>
+  <header class="artwork-detail__header surface">
+    <div class="artwork-detail__header-top">
+      <p class="badge">Artwork</p>
+      <h1 id="artwork-title">{{ artwork.title }}</h1>
+      {% if artwork.artistName %}
+        <p class="artwork-detail__artist">{{ artwork.artistName }}</p>
+      {% endif %}
+    </div>
     <dl class="artwork-detail__meta">
+      {% if exhibitionRecord.period and exhibitionRecord.period.display %}
+        <div>
+          <dt>開催期間</dt>
+          <dd>{{ exhibitionRecord.period.display }}</dd>
+        </div>
+      {% endif %}
       {% if artwork.displayId %}
         <div>
           <dt>展示ID</dt>
           <dd>{{ artwork.displayId }}</dd>
         </div>
       {% endif %}
-      {% if artwork.artistName %}
+      {% if artwork.mediaType %}
         <div>
-          <dt>アーティスト</dt>
-          <dd>{{ artwork.artistName }}</dd>
-        </div>
-      {% endif %}
-      {% if artwork.inputDate %}
-        <div>
-          <dt>入力日</dt>
-          <dd>{{ artwork.inputDate }}</dd>
+          <dt>メディア</dt>
+          <dd>{{ artwork.mediaType }}</dd>
         </div>
       {% endif %}
     </dl>
   </header>
 
+  {% set galleryIndices = [0, 1, 2] %}
   {% if artwork.image %}
-    <figure class="artwork-detail__hero">
-      <img src="{{ artwork.image }}" alt="{{ artwork.title }}" loading="lazy" />
-    </figure>
-  {% endif %}
-
-  {% if artwork.description %}
-    <section class="artwork-detail__section">
-      <h2>作品詳細</h2>
-      <p>{{ artwork.description | safe }}</p>
+    <section class="artwork-detail__media surface" aria-label="作品ギャラリー">
+      <div class="artwork-detail__media-grid" data-test="media-gallery">
+        {% for index in galleryIndices %}
+          <figure class="artwork-detail__media-item" data-media-index="{{ index }}">
+            <picture>
+              {% for source in artwork.image.sources or [] %}
+                <source srcset="{{ source.srcset }}" type="{{ source.type }}" />
+              {% endfor %}
+              <img src="{{ artwork.image.src }}" alt="{{ artwork.image.alt }}" loading="lazy" decoding="async" />
+            </picture>
+            <figcaption>{{ artwork.title }} {{ index + 1 }}</figcaption>
+          </figure>
+        {% endfor %}
+      </div>
     </section>
   {% endif %}
 
-  {% if artwork.notes %}
-    <section class="artwork-detail__section">
-      <h2>その他</h2>
-      <p>{{ artwork.notes | safe }}</p>
+  {% if artwork.description or artwork.notes %}
+    <section class="artwork-detail__section surface">
+      <h2 class="section-title">作品詳細</h2>
+      {% if artwork.description %}
+        <p>{{ artwork.description | safe }}</p>
+      {% endif %}
+      {% if artwork.notes %}
+        <p>{{ artwork.notes | safe }}</p>
+      {% endif %}
     </section>
   {% endif %}
 
-  <section class="artwork-detail__section">
-    <h2>関連コンテンツ</h2>
+  {% if artwork.transcript %}
+    <section class="artwork-detail__section surface" data-test="artwork-transcript">
+      <h2 class="section-title">トランスクリプト</h2>
+      <p>{{ artwork.transcript }}</p>
+    </section>
+  {% endif %}
+
+  <section class="artwork-detail__section surface">
+    <h2 class="section-title">関連コンテンツ</h2>
     <ul class="artwork-detail__links">
-      <li><a href="/exhibitions/{{ exhibitionId }}/">展示会ページへ戻る</a></li>
+      <li data-test="return-navigation"><a href="{{ returnUrl }}">展示会ページに戻る</a></li>
       {% if artwork.introMediaUrl %}
         <li><a href="{{ artwork.introMediaUrl }}" target="_blank" rel="noopener">作品紹介コンテンツを開く</a></li>
+      {% endif %}
+      {% if artwork.referenceLinks %}
+        {% for reference in artwork.referenceLinks %}
+          <li><a href="{{ reference.url }}" target="_blank" rel="noopener">{{ reference.label }}</a></li>
+        {% endfor %}
       {% endif %}
       {% if artwork.referenceUrl %}
         <li><a href="{{ artwork.referenceUrl }}" target="_blank" rel="noopener">参照URLを見る</a></li>

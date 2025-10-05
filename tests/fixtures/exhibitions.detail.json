@@ -1,0 +1,94 @@
+{
+  "meta": {
+    "title": "春のアート展 | Exhibition Pal",
+    "description": "春に開催される展示会の詳細ページ",
+    "ogImage": "https://cdn.example.com/images/spring-2025-og.jpg"
+  },
+  "exhibition": {
+    "id": "expo-2025-spring",
+    "title": "春のアート展",
+    "period": {
+      "start": "2025-03-01",
+      "end": "2025-03-31",
+      "display": "2025年3月1日〜2025年3月31日"
+    },
+    "venue": "渋谷ギャラリー",
+    "summary": "春に開催される展示会です。",
+    "background": "地域活性化の一環として企画されました。",
+    "highlights": "大型インスタレーション\nワークショップ\n地域アーティストとのコラボレーション",
+    "heroImage": {
+      "src": "https://cdn.example.com/images/spring-2025-hero@2x.jpg",
+      "alt": "春のアート展 キービジュアル",
+      "focalPoint": {
+        "x": 0.52,
+        "y": 0.38
+      }
+    },
+    "sections": [
+      {
+        "type": "introduction",
+        "content": "会期中の主要イベントと展示構成を紹介します。"
+      },
+      {
+        "type": "gallery",
+        "content": "スライダーで紹介される代表的な作品をまとめました。"
+      },
+      {
+        "type": "cta",
+        "content": "チケットの購入とアクセス情報はこちら"
+      }
+    ]
+  },
+  "slider": {
+    "autoplay": true,
+    "loop": true,
+    "prefersReducedMotion": false,
+    "items": [
+      {
+        "artworkId": "art-001",
+        "image": {
+          "src": "https://cdn.example.com/artworks/art-001@2x.jpg",
+          "alt": "作品A — アーティストA"
+        },
+        "caption": "作品A — アーティストA",
+        "audioUrl": "https://stand.fm/episodes/art-001"
+      },
+      {
+        "artworkId": "art-002",
+        "image": {
+          "src": "https://cdn.example.com/artworks/art-002@2x.jpg",
+          "alt": "作品B — アーティストB"
+        },
+        "caption": "作品B — アーティストB",
+        "audioUrl": null
+      },
+      {
+        "artworkId": "art-003",
+        "image": {
+          "src": "https://cdn.example.com/artworks/art-003@2x.jpg",
+          "alt": "作品C"
+        },
+        "caption": "作品C",
+        "audioUrl": null
+      }
+    ],
+    "controls": {
+      "previousLabel": "前へ",
+      "nextLabel": "次へ",
+      "pauseLabel": "停止",
+      "playLabel": "再生"
+    }
+  },
+  "navigation": {
+    "breadcrumbs": [
+      { "label": "Home", "url": "/" },
+      { "label": "Exhibitions", "url": "/exhibitions/" },
+      { "label": "春のアート展", "url": "/exhibitions/expo-2025-spring/" }
+    ],
+    "related": [
+      "expo-2025-autumn",
+      "expo-2025-summer",
+      "expo-2024-winter"
+    ]
+  }
+}

@@ -5,6 +5,8 @@ import { resolve } from 'node:path';
 import fetchSheet from '../site/src/_data/exhibitions/fetchSheet.js';
 import buildMeta from '../site/src/_data/exhibitions/buildMeta.js';
 import { normalizeSheet } from '../site/src/_data/exhibitions/normalizeRecord.js';
+import navigationData from '../site/src/_data/navigation/exhibitions.js';
+import sliderData from '../site/src/_data/exhibitions/sliders.js';
 import { loadArtworks } from '../site/src/_data/artworks/index.js';
 
 function sortRecords(records) {
@@ -34,14 +36,20 @@ function toPublicDataset(records, warnings, options = {}) {
     warnings,
     fetchedAt: options.fetchedAt,
     artworkSortKey: options.artworkSortKey,
-    artworkSpreadsheetId: options.artworkSpreadsheetId ?? null
+    artworkSpreadsheetId: options.artworkSpreadsheetId ?? null,
+    updatedAt: options.updatedAt ?? options.fetchedAt
   });
 
   if (Object.keys(internalById).length > 0) {
     meta.internal = internalById;
   }
 
-  return { list, meta };
+  return {
+    list,
+    meta,
+    navigation: navigationData(list),
+    sliders: sliderData(list)
+  };
 }
 
 function logWarnings(warnings = [], scope = 'exhibitions-sync') {
@@ -100,9 +108,16 @@ async function main() {
 
   const rawPath = resolve('site/src/_data/exhibitions.raw.json');
   const normalizedPath = resolve('site/src/_data/exhibitions.normalized.json');
+  const navigationPath = resolve('site/src/_data/navigation/exhibitions.json');
+  const slidersPath = resolve('site/src/_data/exhibitions/sliders.json');
 
   await writeFile(rawPath, JSON.stringify(rawExhibitions, null, 2) + '\n', 'utf8');
-  await writeFile(normalizedPath, JSON.stringify(dataset, null, 2) + '\n', 'utf8');
+  await writeFile(normalizedPath, JSON.stringify({
+    list: dataset.list,
+    meta: dataset.meta
+  }, null, 2) + '\n', 'utf8');
+  await writeFile(navigationPath, JSON.stringify(dataset.navigation, null, 2) + '\n', 'utf8');
+  await writeFile(slidersPath, JSON.stringify(dataset.sliders, null, 2) + '\n', 'utf8');
 
   if (includeArtworks) {
     const lookupPath = resolve('site/src/_data/artwork-lookup.json');
@@ -142,4 +157,3 @@ main().catch((error) => {
   );
   process.exitCode = 1;
 });
-

@@ -4,52 +4,43 @@ title: 展示会一覧
 permalink: /exhibitions/index.html
 pageDescription: 最新の展示会情報を一覧で確認できます。
 ogImage: https://cdn.example.com/placeholders/exhibition-og.jpg
+bodyClass: exhibitions-body
 ---
 
+{% from "components/exhibition-card.njk" import render as exhibitionCard %}
+
 {% set exhibitionsList = exhibitions.list or [] %}
+{% set featured = exhibitionsList | first %}
+{% set rest = exhibitionsList | slice(1) %}
+
+{% block head %}
+  {% if featured and featured.heroImage and featured.heroImage.src %}
+    <link rel="preload" as="image" href="{{ featured.heroImage.src }}" type="image/jpeg" />
+  {% endif %}
+{% endblock %}
 
 <section class="exhibitions-index" aria-labelledby="exhibitions-heading">
-  <div class="container">
-    <h1 id="exhibitions-heading">展示会一覧</h1>
-    <p class="intro">最新の展示会情報を一覧でご覧いただけます。各展示会の詳細ページでは見どころや開催背景をご確認ください。</p>
+  <div class="exhibitions-container">
+    <header class="exhibitions-index__header">
+      <p class="exhibitions-index__kicker">Curated Highlights</p>
+      <h1 id="exhibitions-heading" class="exhibitions-index__title">展示会一覧</h1>
+      <p class="exhibitions-index__intro">
+        最新の展示会情報を一覧でご覧いただけます。各展示会の詳細ページでは見どころや開催背景、収録作品のスライダーを確認できます。
+      </p>
+    </header>
 
-    <div class="exhibitions-grid">
+    <div class="exhibitions-grid" data-test="exhibitions-grid">
+      {# {% if featured %}
+        {{ exhibitionCard(featured, 'featured') | safe }}
+      {% endif %}
+ #}
       {% for exhibition in exhibitionsList %}
-        <article class="exhibition-card" aria-labelledby="exhibition-{{ exhibition.id }}">
-          <img
-            src="{{ exhibition.heroImage.src }}"
-            alt="{{ exhibition.heroImage.alt }}"
-            class="exhibition-card__image"
-            loading="lazy"
-          />
-          <div class="exhibition-card__body">
-            <h2 id="exhibition-{{ exhibition.id }}" class="exhibition-card__title">
-              <a href="/exhibitions/{{ exhibition.id }}/">{{ exhibition.title }}</a>
-            </h2>
-            {% if exhibition.period.display %}
-              <p class="exhibition-card__period">{{ exhibition.period.display }}</p>
-            {% endif %}
-            <p class="exhibition-card__venue">{{ exhibition.venue }}</p>
-            <p class="exhibition-card__summary">{{ exhibition.summary }}</p>
-            {% if exhibition.artworkList %}
-              <p class="exhibition-card__artwork-count">収録作品: {{ exhibition.artworkList | length }} 点</p>
-            {% endif %}
-            <ul class="exhibition-card__links" data-related-links="pending-label-spec">
-            {# TODO: Clarify related link labeling order once specification is confirmed #}
-              <li><a href="{{ exhibition.officialUrl }}" target="_blank" rel="noopener">公式サイトを開く</a></li>
-              {% if exhibition.relatedUrls and exhibition.relatedUrls | length > 0 %}
-                {% for link in exhibition.relatedUrls %}
-                  <li><a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.label }}</a></li>
-                {% endfor %}
-              {% endif %}
-            </ul>
-          </div>
-        </article>
+        {{ exhibitionCard(exhibition) | safe }}
       {% endfor %}
 
-      {% if exhibitionsList | length == 0 %}
+      {# {% if exhibitionsList | length == 0 %}
         <p class="exhibition-card__empty">現在表示できる展示会はありません。</p>
-      {% endif %}
+      {% endif %} #}
     </div>
   </div>
 </section>

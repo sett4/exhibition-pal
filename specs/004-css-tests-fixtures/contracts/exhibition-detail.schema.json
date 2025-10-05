@@ -1,0 +1,302 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://exhibition-pal/specs/004-css-tests-fixtures/exhibition-detail.schema.json",
+  "title": "Exhibition detail page payload",
+  "type": "object",
+  "required": [
+    "meta",
+    "exhibition",
+    "slider",
+    "navigation"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": [
+        "title",
+        "description",
+        "ogImage"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "ogImage": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "additionalProperties": false
+    },
+    "exhibition": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "period",
+        "venue",
+        "summary",
+        "background",
+        "highlights",
+        "heroImage",
+        "sections"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "period": {
+          "type": "object",
+          "required": [
+            "display"
+          ],
+          "properties": {
+            "start": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date"
+            },
+            "end": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date"
+            },
+            "display": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "venue": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "background": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "highlights": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "heroImage": {
+          "type": "object",
+          "required": [
+            "src",
+            "alt",
+            "focalPoint"
+          ],
+          "properties": {
+            "src": {
+              "type": "string",
+              "format": "uri"
+            },
+            "alt": {
+              "type": "string",
+              "minLength": 1
+            },
+            "focalPoint": {
+              "type": "object",
+              "required": [
+                "x",
+                "y"
+              ],
+              "properties": {
+                "x": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "y": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "sections": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "type",
+              "content"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "introduction",
+                  "timeline",
+                  "gallery",
+                  "cta"
+                ]
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "slider": {
+      "type": "object",
+      "required": [
+        "items",
+        "autoplay",
+        "loop",
+        "controls"
+      ],
+      "properties": {
+        "autoplay": {
+          "type": "boolean",
+          "const": true
+        },
+        "loop": {
+          "type": "boolean",
+          "const": true
+        },
+        "prefersReducedMotion": {
+          "type": "boolean"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 6,
+          "items": {
+            "type": "object",
+            "required": [
+              "artworkId",
+              "image",
+              "caption"
+            ],
+            "properties": {
+              "artworkId": {
+                "type": "string"
+              },
+              "image": {
+                "type": "object",
+                "required": [
+                  "src",
+                  "alt"
+                ],
+                "properties": {
+                  "src": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "alt": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              "caption": {
+                "type": "string"
+              },
+              "audioUrl": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "uri"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "controls": {
+          "type": "object",
+          "required": [
+            "previousLabel",
+            "nextLabel",
+            "pauseLabel",
+            "playLabel"
+          ],
+          "properties": {
+            "previousLabel": {
+              "type": "string"
+            },
+            "nextLabel": {
+              "type": "string"
+            },
+            "pauseLabel": {
+              "type": "string"
+            },
+            "playLabel": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "navigation": {
+      "type": "object",
+      "required": [
+        "breadcrumbs",
+        "related"
+      ],
+      "properties": {
+        "breadcrumbs": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "required": [
+              "label",
+              "url"
+            ],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "related": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 3
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

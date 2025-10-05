@@ -1,0 +1,40 @@
+{
+  "expo-2025-spring": {
+    "breadcrumbs": [
+      { "label": "Home", "url": "/" },
+      { "label": "Exhibitions", "url": "/exhibitions/" },
+      { "label": "春のアート展", "url": "/exhibitions/expo-2025-spring/" }
+    ],
+    "related": [
+      "expo-2025-autumn",
+      "expo-2025-summer",
+      "expo-2024-winter"
+    ],
+    "cta": {
+      "label": {
+        "ja": "チケットを予約",
+        "en": "Book tickets"
+      },
+      "url": "/tickets/"
+    }
+  },
+  "expo-2025-autumn": {
+    "breadcrumbs": [
+      { "label": "Home", "url": "/" },
+      { "label": "Exhibitions", "url": "/exhibitions/" },
+      { "label": "秋の工芸展", "url": "/exhibitions/expo-2025-autumn/" }
+    ],
+    "related": [
+      "expo-2025-spring",
+      "expo-2025-summer",
+      "expo-2024-winter"
+    ],
+    "cta": {
+      "label": {
+        "ja": "チケットを予約",
+        "en": "Book tickets"
+      },
+      "url": "/tickets/"
+    }
+  }
+}

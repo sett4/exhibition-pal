@@ -25,12 +25,14 @@ describe('accessibility (axe)', () => {
 
   testFn('exhibitions index has zero axe violations', async () => {
     const browser = await chromium.launch({ headless: true });
-    const page = await browser.newPage();
+    const context = await browser.newContext();
+    const page = await context.newPage();
 
     const indexPath = resolve(OUTPUT_DIR, 'exhibitions', 'index.html');
     await page.goto(`file://${indexPath}`);
 
     const results = await new AxeBuilder({ page }).analyze();
+    await context.close();
     await browser.close();
 
     expect(results.violations).toHaveLength(0);
@@ -38,7 +40,8 @@ describe('accessibility (axe)', () => {
 
   testFn('artwork detail pages have zero axe violations', async () => {
     const browser = await chromium.launch({ headless: true });
-    const page = await browser.newPage();
+    const context = await browser.newContext();
+    const page = await context.newPage();
 
     const detailPath = resolve(
       OUTPUT_DIR,
@@ -50,9 +53,9 @@ describe('accessibility (axe)', () => {
     await page.goto(`file://${detailPath}`);
 
     const results = await new AxeBuilder({ page }).analyze();
+    await context.close();
     await browser.close();
 
     expect(results.violations).toHaveLength(0);
   });
 });
-
