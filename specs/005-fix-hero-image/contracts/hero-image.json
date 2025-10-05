@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://exhibition-pal/specs/005-fix-hero-image/contracts/hero-image.json",
+  "title": "HeroImageAsset",
+  "type": "object",
+  "required": [
+    "driveFileId",
+    "sourceUrl",
+    "localPath",
+    "optimizedOutputs",
+    "fetchedAt",
+    "checksum",
+    "status"
+  ],
+  "properties": {
+    "driveFileId": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]{20,}$",
+      "description": "Google Drive file identifier"
+    },
+    "sourceUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Resolved Google Drive download URL"
+    },
+    "localPath": {
+      "type": "string",
+      "pattern": "^\\.cache/hero-images/",
+      "description": "Absolute or relative path to cached original file"
+    },
+    "optimizedOutputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["format", "width", "height", "path"],
+        "properties": {
+          "format": {
+            "type": "string",
+            "enum": ["webp", "jpeg", "avif"]
+          },
+          "width": {
+            "type": "integer",
+            "minimum": 320
+          },
+          "height": {
+            "type": "integer",
+            "minimum": 180
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^/img/"
+          },
+          "filesize": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "fetchedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "checksum": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["success", "fallback", "skipped"]
+    },
+    "warning": {
+      "type": "string"
+    },
+    "altText": {
+      "type": "object",
+      "required": ["ja"],
+      "properties": {
+        "ja": {
+          "type": "string",
+          "minLength": 1
+        },
+        "en": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

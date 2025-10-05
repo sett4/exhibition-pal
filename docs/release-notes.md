@@ -1,5 +1,20 @@
 # Release Notes – Eleventy展示会データ連携
 
+## 2025-10-05 (Hero 画像キャッシュ刷新)
+- Google Drive の O 列リンクからヒーロー画像をダウンロードし `.cache/hero-images/` へ保存するパイプラインを実装。
+- `@11ty/eleventy-img` を用いて `/img/hero/` 向けの最適化済み派生画像を生成し、`exhibition.heroImage` にメタデータを注入。
+- Drive アクセス失敗時に直近キャッシュへフォールバックし、`scope:"hero-image-cache"` の JSON ログを WARN/ERROR レベルで出力。
+- 契約・統合・経験テストを追加し、`npm run test:hero` でキャッシュ動作を検証可能にした。
+
+### 検証ログ
+```bash
+npm run test:contract -- --run tests/contract/hero-image.spec.ts tests/contract/hero-notification.spec.ts
+npm run test:integration -- --run tests/integration/hero-image-cache.spec.ts
+PLAYWRIGHT_CAN_RUN=1 npm run test:experience -- --run tests/experience/hero-image-performance.spec.ts
+```
+- 生成物: `.cache/hero-images/{fileId}/metadata.json`, `docs/runbooks/samples/hero-image.json`
+- 運用手順: `docs/runbooks/hero-image-cache.md` を参照
+
 ## 2025-10-05
 - Eleventy ビルド時に Google Spreadsheet から展示会データを取得し、Global Data へ取り込むパイプラインを追加。
 - `/exhibitions/` 一覧・個別ページを自動生成し、内部用フィールドを公開出力から除外。

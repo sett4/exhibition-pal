@@ -22,7 +22,7 @@ bodyClass: exhibitions-body
 {% block head %}
   <link rel="preload" as="image" href="{{ exhibition.heroImage.src }}" type="image/jpeg" />
   {% if sliderEntry and sliderEntry.items and sliderEntry.items[0].image %}
-    <link rel="preload" as="image" href="{{ sliderEntry.items[0].image.src }}" type="image/jpeg" />
+    {# <link rel="preload" as="image" href="{{ sliderEntry.items[0].image.src }}" type="image/jpeg" /> #}
   {% endif %}
 {% endblock %}
 

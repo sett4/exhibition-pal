@@ -1,3 +1,24 @@
+const { eleventyImageTransformPlugin } = require("@11ty/eleventy-img");
+
+async function imageShortcode(src, alt, sizes) {
+  // 💡 Eleventy-imgは、`src`（この場合は動的なURL）がリモートURLであれば自動的にダウンロードして処理します。
+  let metadata = await Image(src, {
+    widths: [300, 600, null],
+    formats: ["webp", "jpeg"],
+    outputDir: "./_site/img/",
+    urlPath: "/img/",
+  });
+
+  let imageAttributes = {
+    alt,
+    sizes,
+    loading: "lazy",
+    decoding: "async",
+  };
+
+  return Image.generateHTML(metadata, imageAttributes);
+}
+
 module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ "site/src/styles": "styles" });
   eleventyConfig.addPassthroughCopy({
@@ -7,6 +28,11 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({
     "site/src/_data/artwork-lookup.json": "data/artwork-lookup.json",
   });
+  eleventyConfig.addPassthroughCopy({
+    ".cache/hero-images/optimized": "img/hero",
+  });
+
+  eleventyConfig.addWatchTarget(".cache/hero-images");
 
   eleventyConfig.addCollection("artworks", async () => {
     const module = await import("./site/src/_data/artworkLookup.js");
@@ -29,6 +55,8 @@ module.exports = function (eleventyConfig) {
     }
     return url;
   });
+
+  eleventyConfig.addPlugin(eleventyImageTransformPlugin);
 
   return {
     dir: {

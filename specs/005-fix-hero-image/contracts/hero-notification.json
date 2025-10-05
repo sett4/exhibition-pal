@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://exhibition-pal/specs/005-fix-hero-image/contracts/hero-notification.json",
+  "title": "HeroImageNotificationLog",
+  "type": "object",
+  "required": ["level", "scope", "message", "details", "timestamp"],
+  "properties": {
+    "level": {
+      "type": "string",
+      "enum": ["INFO", "WARN", "ERROR"]
+    },
+    "scope": {
+      "type": "string",
+      "const": "hero-image-cache"
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1
+    },
+    "details": {
+      "type": "object",
+      "required": ["exhibitionId", "driveFileId", "durationMs", "sizeBytes"],
+      "properties": {
+        "exhibitionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "driveFileId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]{20,}$"
+        },
+        "durationMs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "status": {
+          "type": "string",
+          "enum": ["success", "fallback", "skipped"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}

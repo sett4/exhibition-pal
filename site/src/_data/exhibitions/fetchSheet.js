@@ -2,37 +2,16 @@ import 'dotenv/config';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import EleventyFetch from '@11ty/eleventy-fetch';
-import { google } from 'googleapis';
+import { createOAuthClient, getAccessToken } from '../google/oauthClient.js';
 
-const REQUIRED_ENV = [
-  'GOOGLE_SHEETS_CLIENT_ID',
-  'GOOGLE_SHEETS_CLIENT_SECRET',
-  'GOOGLE_SHEETS_REFRESH_TOKEN',
-  'GOOGLE_SHEETS_SPREADSHEET_ID',
-  'GOOGLE_SHEETS_RANGE'
-];
+const REQUIRED_SHEET_ENV = ['GOOGLE_SHEETS_SPREADSHEET_ID', 'GOOGLE_SHEETS_RANGE'];
 
-function ensureEnv() {
-  for (const key of REQUIRED_ENV) {
+function ensureSheetEnv() {
+  for (const key of REQUIRED_SHEET_ENV) {
     if (!process.env[key] || process.env[key]?.trim() === '') {
       throw new Error(`Missing required environment variable: ${key}`);
     }
   }
-}
-
-async function getAccessToken() {
-  ensureEnv();
-  const oauth2Client = new google.auth.OAuth2(
-    process.env.GOOGLE_SHEETS_CLIENT_ID,
-    process.env.GOOGLE_SHEETS_CLIENT_SECRET
-  );
-  oauth2Client.setCredentials({ refresh_token: process.env.GOOGLE_SHEETS_REFRESH_TOKEN });
-
-  const { token } = await oauth2Client.getAccessToken();
-  if (!token) {
-    throw new Error('Failed to obtain Google Sheets access token');
-  }
-  return token;
 }
 
 async function fetchFromFixture(fixturePath) {
@@ -46,7 +25,9 @@ export default async function fetchSheet() {
     return fetchFromFixture(process.env.TEST_EXHIBITIONS_FIXTURE);
   }
 
-  const accessToken = await getAccessToken();
+  ensureSheetEnv();
+  const oauthClient = createOAuthClient();
+  const accessToken = await getAccessToken(oauthClient);
   const sheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
   const range = encodeURIComponent(process.env.GOOGLE_SHEETS_RANGE);
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}`;

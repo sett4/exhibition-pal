@@ -10,6 +10,7 @@
     "test:integration": "vitest run tests/integration",
     "test:experience": "vitest run tests/experience",
     "test": "npm run test:contract && npm run test:integration && npm run test:experience",
+    "test:hero": "PLAYWRIGHT_CAN_RUN=1 vitest run tests/contract/hero-image.contract.test.ts tests/contract/hero-notification.contract.test.ts tests/integration/hero-image-cache.test.ts tests/experience/hero-image-performance.test.ts",
     "serve": "eleventy --serve",
     "sync-data:artworks": "node scripts/sync-data.js --artworks"
   },
@@ -24,6 +25,7 @@
   "dependencies": {
     "@11ty/eleventy": "^3.1.2",
     "@11ty/eleventy-fetch": "^5.1.0",
+    "@11ty/eleventy-img": "^6.0.4",
     "dotenv": "^17.2.3",
     "googleapis": "^133.0.0",
     "node-fetch": "^3.3.2"

@@ -1,0 +1,13 @@
+{
+  "level": "WARN",
+  "scope": "hero-image-cache",
+  "message": "Large hero image detected; continuing with optimization",
+  "details": {
+    "exhibitionId": "exhibition-001",
+    "driveFileId": "1A2b3C4d5E6f7G8h9I0j",
+    "durationMs": 78231,
+    "sizeBytes": 7340032,
+    "status": "success"
+  },
+  "timestamp": "2025-10-05T09:05:00.000Z"
+}

@@ -6,16 +6,18 @@
     {% set artworkCount = exhibition.artworkList | default([]) | length %}
 
     <article class="exhibition-card" data-test="exhibition-card" data-variant="{{ variant }}" aria-labelledby="exhibition-{{ slug }}">
-      {# <div class="exhibition-card__image-wrapper" data-test="exhibition-hero">
-        <img
-          src="{{ exhibition.heroImage.src }}"
-          alt="{{ exhibition.heroImage.alt }}"
-          class="exhibition-card__image"
-          loading="lazy"
-          decoding="async"
-          data-aspect-ratio="3:2"
-        />
-      </div> #}
+      <div class="exhibition-card__image-wrapper" data-test="exhibition-hero">
+        <a href="{{ detailUrl }}">
+          <img
+            src="../../../{{ exhibition.heroImage.cache.localPath }}"
+            alt="{{ exhibition.heroImage.alt }}"
+            class="exhibition-card__image"
+            loading="lazy"
+            decoding="async"
+            data-aspect-ratio="3:2"
+          />
+        </a>  
+      </div>
       <div class="exhibition-card__body">
         {% if exhibition.period.display %}
           <p class="exhibition-card__period">{{ exhibition.period.display }}</p>

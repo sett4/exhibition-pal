@@ -3,6 +3,8 @@ node_modules/
 .output/
 .env.local
 .cache/
+# Hero image cache (managed by Drive ingest pipeline)
+/.cache/hero-images/
 .env
 _site/
 

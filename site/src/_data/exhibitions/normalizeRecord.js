@@ -1,5 +1,6 @@
 import { URL } from "node:url";
 import slugify from "@sindresorhus/slugify";
+import { buildHeroImageForExhibition } from "../hero/image.js";
 
 const HEADERS = {
   id: "展示会ID",
@@ -36,10 +37,6 @@ const DATE_DISPLAY_FORMATTER = new Intl.DateTimeFormat("ja-JP", {
   month: "long",
   day: "numeric",
 });
-
-const FALLBACK_IMAGE =
-  process.env.IMAGE_FALLBACK_URL ||
-  "https://cdn.example.com/placeholders/exhibition.jpg";
 
 const DEFAULT_FOCAL_POINT = { x: 0.5, y: 0.5 };
 const FEATURED_ARTWORK_LIMIT = 6;
@@ -274,7 +271,7 @@ function deriveFeaturedArtworkIds(artworkList, warnings, exhibitionId) {
   return ids.slice(0, FEATURED_ARTWORK_LIMIT);
 }
 
-export function normalizeSheet(sheetResponse, options = {}) {
+export async function normalizeSheet(sheetResponse, options = {}) {
   const warnings = [];
   const values = sheetResponse?.values ?? [];
   if (values.length <= 1) {
@@ -356,14 +353,13 @@ export function normalizeSheet(sheetResponse, options = {}) {
       continue;
     }
 
-    let heroImage = readCell(row, headerIndex, "image");
-    if (!isValidHttpsUrl(heroImage)) {
+    const heroImageUrl = readCell(row, headerIndex, "image");
+    if (!isValidHttpsUrl(heroImageUrl)) {
       warnings.push({
         id,
         type: WARNING_TYPES.MISSING_IMAGE,
         message: "heroImage missing or invalid https URL; fallback applied.",
       });
-      heroImage = FALLBACK_IMAGE;
     }
 
     const audioUrl = readCell(row, headerIndex, "audioUrl");
@@ -376,12 +372,6 @@ export function normalizeSheet(sheetResponse, options = {}) {
     if (audioUrl && !relatedUrls.some((item) => item.url === audioUrl)) {
       relatedUrls.push({ url: audioUrl, label: "音声解説" });
     }
-
-    const internal = {
-      inventoryUrl: safeInternalUrl(readCell(row, headerIndex, "inventoryUrl")),
-      detailDocUrl: safeInternalUrl(readCell(row, headerIndex, "detailDocUrl")),
-      noteUrl: safeInternalUrl(readCell(row, headerIndex, "noteUrl")),
-    };
 
     const artworkBucket = artworksByExhibition.get(id);
     const artworkList = artworkBucket
@@ -408,6 +398,43 @@ export function normalizeSheet(sheetResponse, options = {}) {
     const highlightsRaw = readCell(row, headerIndex, "highlights") || null;
     const highlightsList = deriveHighlightsList(highlightsRaw ?? "");
 
+    const heroAsset = await buildHeroImageForExhibition({
+      exhibitionId: id,
+      driveUrl: heroImageUrl,
+      title,
+      altText: {
+        ja: `${title} ヒーロー画像`,
+        en: `${title} hero visual`,
+      },
+      cacheRoot: process.env.HERO_IMAGE_CACHE_DIR ?? ".cache/hero-images",
+      logger: console,
+    });
+
+    if (heroAsset.status === "fallback") {
+      warnings.push({
+        id,
+        type: WARNING_TYPES.MISSING_IMAGE,
+        message: "Hero image fallback asset used for exhibition.",
+      });
+    }
+
+    const heroImageData = {
+      src: heroAsset.src,
+      alt: heroAsset.altText.ja,
+      altText: heroAsset.altText,
+      optimizedOutputs: heroAsset.optimizedOutputs,
+      status: heroAsset.status,
+      cache: heroAsset.cache,
+      warning: heroAsset.warning,
+    };
+
+    const internal = {
+      inventoryUrl: safeInternalUrl(readCell(row, headerIndex, "inventoryUrl")),
+      detailDocUrl: safeInternalUrl(readCell(row, headerIndex, "detailDocUrl")),
+      noteUrl: safeInternalUrl(readCell(row, headerIndex, "noteUrl")),
+      heroImageAsset: heroAsset,
+    };
+
     const record = {
       id,
       slug,
@@ -422,8 +449,7 @@ export function normalizeSheet(sheetResponse, options = {}) {
       relatedUrls,
       audioUrl: audioUrl,
       heroImage: {
-        src: heroImage,
-        alt: `${title} キービジュアル`,
+        ...heroImageData,
         focalPoint: { ...DEFAULT_FOCAL_POINT },
       },
       artworkList,

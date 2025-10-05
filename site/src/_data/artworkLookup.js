@@ -24,7 +24,7 @@ async function generateLookup() {
     loadArtworks({ syncedAt })
   ]);
 
-  const normalization = normalizeExhibitions(exhibitionSheet, { artworks: artworksData.records });
+  const normalization = await normalizeExhibitions(exhibitionSheet, { artworks: artworksData.records });
 
   logWarnings(artworksData.warnings, 'artworks-sync');
   logWarnings(normalization.warnings, 'exhibitions-sync');

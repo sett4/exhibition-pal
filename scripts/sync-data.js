@@ -95,7 +95,7 @@ async function main() {
     includeArtworks ? loadArtworks({ syncedAt }) : Promise.resolve({ records: [], warnings: [] })
   ]);
 
-  const normalization = normalizeSheet(rawExhibitions, {
+  const normalization = await normalizeSheet(rawExhibitions, {
     artworks: artworksData.records
   });
 

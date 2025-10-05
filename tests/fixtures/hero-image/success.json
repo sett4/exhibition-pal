@@ -1,0 +1,28 @@
+{
+  "driveFileId": "1A2b3C4d5E6f7G8h9I0j",
+  "sourceUrl": "https://drive.google.com/uc?id=1A2b3C4d5E6f7G8h9I0j&export=download",
+  "localPath": ".cache/hero-images/1A2b3C4d5E6f7G8h9I0j/original.jpg",
+  "optimizedOutputs": [
+    {
+      "format": "webp",
+      "width": 1600,
+      "height": 900,
+      "path": "/img/hero-1A2b3C4d5E6f.webp",
+      "filesize": 340112
+    },
+    {
+      "format": "jpeg",
+      "width": 800,
+      "height": 450,
+      "path": "/img/hero-1A2b3C4d5E6f-800.jpg",
+      "filesize": 180234
+    }
+  ],
+  "fetchedAt": "2025-10-05T09:00:00.000Z",
+  "checksum": "5a0d8d787e3dd2f4c28a01ff4b84d5f13d3a3ca112233445566778899aabbccd",
+  "status": "success",
+  "altText": {
+    "ja": "秋の展示会を告知するヒーロー画像",
+    "en": "Hero image promoting the autumn exhibition"
+  }
+}

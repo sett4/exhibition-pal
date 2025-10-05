@@ -18,6 +18,7 @@ export default defineConfig({
       'tests/integration/**/*.test.ts',
       'tests/experience/**/*.test.ts'
     ],
+    setupFiles: ['tests/setup.ts'],
     reporters: 'default',
     pool: 'threads',
     poolOptions: {

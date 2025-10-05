@@ -37,7 +37,7 @@ export default async function exhibitionsData() {
     loadArtworks({ syncedAt })
   ]);
 
-  const { records, warnings, artworkSortKey } = normalizeSheet(exhibitionSheet, {
+  const { records, warnings, artworkSortKey } = await normalizeSheet(exhibitionSheet, {
     artworks: artworksData.records
   });
   const sorted = sortRecords(records);

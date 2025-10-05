@@ -18,13 +18,43 @@
       {% endif %}
 
       <div class="exhibition-hero__grid">
-        {# <div class="exhibition-hero__media">
-          <img
-            src="{{ exhibition.heroImage.src }}"
+        {% if exhibition.heroImage %}
+          <div
+            class="exhibition-hero__media"
+            data-test="exhibition-hero-picture"
+            data-cache-state="{{ exhibition.heroImage.status }}"
+          >
+          <picture>
+            <img
+            src="../../../{{ exhibition.heroImage.cache.localPath }}"
             alt="{{ exhibition.heroImage.alt }}"
+            class="exhibition-card__image"
             loading="lazy"
+            decoding="async"
+            data-aspect-ratio="3:2"
           />
-        </div> #}
+
+          </picture>
+            {# <picture>
+              {% for source in exhibition.heroImage.optimizedOutputs %}
+                {% if source.format != 'jpeg' %}
+                  <source
+                    type="image/{{ source.format }}"
+                    srcset="{{ source.path }}"
+                    data-width="{{ source.width }}"
+                  />
+                {% endif %}
+              {% endfor %}
+              <img
+                src="{{ exhibition.heroImage.cache.localPath }}"
+                alt="{{ exhibition.heroImage.alt }}"
+                loading="lazy"
+                width="{{ exhibition.heroImage.optimizedOutputs[0].width | default(1600) }}"
+                height="{{ exhibition.heroImage.optimizedOutputs[0].height | default(900) }}"
+              />
+            </picture> #}
+          </div>
+        {% endif %}
         <div class="exhibition-hero__body">
           <div class="exhibition-hero__eyebrow">Exhibition</div>
           <h1 id="exhibition-hero-title" class="exhibition-hero__title">{{ exhibition.title }}</h1>

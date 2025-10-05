@@ -35,7 +35,7 @@
       "https://media.example.com/article-1, https://instagram.com/exhibition",
       "https://stand.fm/episodes/spring",
       "https://note.com/curator/n/ne123",
-      "https://cdn.example.com/images/spring-2025.jpg",
+      "https://drive.google.com/file/d/SPRING_IMAGE_ID/view",
       "artworkId"
     ],
     [
@@ -53,7 +53,7 @@
       "",
       "",
       "",
-      "https://cdn.example.com/images/spring-duplicate.jpg",
+      "https://drive.google.com/file/d/SPRING_IMAGE_ID/view",
       "artworkId"
     ],
     [
@@ -71,7 +71,7 @@
       "https://media.example.com/article-2, https://twitter.com/exhibition_autumn",
       "https://stand.fm/episodes/autumn",
       "",
-      "https://cdn.example.com/images/autumn-2025.jpg",
+      "https://drive.google.com/file/d/AUTUMN_IMAGE_ID/view",
       "artworkId"
     ],
     [

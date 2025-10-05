@@ -25,9 +25,9 @@ bodyClass: exhibitions-body
 {% set ogImage = artwork.image.src or artwork.image %}
 
 {% block head %}
-  {% if artwork.image %}
-    <link rel="preload" as="image" href="{{ artwork.image.src or artwork.image }}" type="image/jpeg" />
-  {% endif %}
+  {# {% if artwork.image %} #}
+    {# <link rel="preload" as="image" href="{{ artwork.image.src or artwork.image }}" type="image/jpeg" /> #}
+  {# {% endif %} #}
 {% endblock %}
 
 <nav class="exhibition-hero__breadcrumbs" aria-label="パンくず" data-test="breadcrumb">
@@ -76,12 +76,12 @@ bodyClass: exhibitions-body
       <div class="artwork-detail__media-grid" data-test="media-gallery">
         {% for index in galleryIndices %}
           <figure class="artwork-detail__media-item" data-media-index="{{ index }}">
-            <picture>
+            {# <picture>
               {% for source in artwork.image.sources or [] %}
                 <source srcset="{{ source.srcset }}" type="{{ source.type }}" />
               {% endfor %}
               <img src="{{ artwork.image.src }}" alt="{{ artwork.image.alt }}" loading="lazy" decoding="async" />
-            </picture>
+            </picture> #}
             <figcaption>{{ artwork.title }} {{ index + 1 }}</figcaption>
           </figure>
         {% endfor %}
