@@ -117,3 +117,5 @@ a.button:hover {
     font-size: 17px;
   }
 }
+
+.standfm-embed-iframe { height: 190px; } @media only screen and (max-device-width: 480px) { .standfm-embed-iframe { height: 230px; } }

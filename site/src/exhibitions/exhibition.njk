@@ -16,7 +16,7 @@ bodyClass: exhibitions-body
 {% set sliderMap = exhibitions.sliders or {} %}
 {% set navigationEntry = navigationMap[slug] %}
 {# {% set sliderEntry = sliderMap[slug] %} #}
-{% set relatedExhibitions = navigationEntry.related or [] %}
+{# {% set relatedExhibitions = navigationEntry.related or [] %} #}
 {% set ogImage = exhibition.heroImage.src %}
 
 {% block head %}
@@ -51,6 +51,10 @@ bodyClass: exhibitions-body
         <a class="button" href="{{ navigationEntry.cta.url }}">{{ navigationEntry.cta.label.ja }}</a>
       {% endif %} #}
     </div>
+    {% if  exhibition.audioUrl %}
+    <iframe src="{{ exhibition.audioUrl | toStandFmEmbedUrl }}" class="standfm-embed-iframe" width="100%" frameborder="0" allowtransparency="true" allow="encrypted-media" loading="lazy"></iframe>
+    {% endif %}
+
   </section>
 
   <section class="exhibition-detail__artworks surface">
@@ -74,6 +78,7 @@ bodyClass: exhibitions-body
                   {% endif %}
                 </div>
               {# </a> #}
+              <iframe src="{{ artwork.audioUrl | toStandFmEmbedUrl }}" class="standfm-embed-iframe" width="100%" frameborder="0" allowtransparency="true" allow="encrypted-media" loading="lazy"></iframe>
             </article>
           </li>
         {% endfor %}

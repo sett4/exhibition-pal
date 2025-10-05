@@ -39,11 +39,11 @@
             {% endfor %}
           </ul>
         {% endif %}
-        <div class="exhibitions-cta">
+        {# <div class="exhibitions-cta">
           <a class="button" data-test="exhibition-cta" href="{{ detailUrl }}">詳しく見る</a>
           <span class="exhibitions-cta__text">詳細ページでハイライトや作品情報をチェック</span>
-        </div>
-        {% if exhibition.relatedUrls and exhibition.relatedUrls | length > 0 %}
+        </div> #}
+        {# {% if exhibition.relatedUrls and exhibition.relatedUrls | length > 0 %}
           <ul class="exhibition-card__links">
             {% for link in exhibition.relatedUrls | slice(0, 3) %}
               <li>
@@ -51,7 +51,7 @@
               </li>
             {% endfor %}
           </ul>
-        {% endif %}
+        {% endif %} #}
       </div>
     </article>
   {% endif %}
