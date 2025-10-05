@@ -1,0 +1,62 @@
+{
+  "art-001": {
+    "exhibitionId": "expo-2025-spring",
+    "artwork": {
+      "artworkId": "art-001",
+      "exhibitionId": "expo-2025-spring",
+      "title": "作品A",
+      "exhibitionTitle": "春のアート展",
+      "displayId": "1",
+      "artistName": "アーティストA",
+      "description": "作品Aの詳細説明",
+      "notes": "関連メモ",
+      "introMediaUrl": "https://drive.google.com/file/d/abc123/view",
+      "referenceUrl": "https://example.com/art-001",
+      "audioUrl": "https://stand.fm/episodes/art-001",
+      "articleUrl": "https://note.com/curator/n/note001",
+      "image": "https://cdn.example.com/artworks/art-001.jpg",
+      "inputDate": "2025-09-30",
+      "lastSyncedAt": "2025-10-05T00:00:00.000Z"
+    }
+  },
+  "art-002": {
+    "exhibitionId": "expo-2025-spring",
+    "artwork": {
+      "artworkId": "art-002",
+      "exhibitionId": "expo-2025-spring",
+      "title": "作品B",
+      "exhibitionTitle": "春のアート展",
+      "displayId": "2",
+      "artistName": "アーティストB",
+      "description": "作品Bの詳細説明",
+      "notes": "",
+      "introMediaUrl": null,
+      "referenceUrl": "https://example.com/art-002",
+      "audioUrl": null,
+      "articleUrl": null,
+      "image": "https://cdn.example.com/artworks/art-002.jpg",
+      "inputDate": "2025-09-29",
+      "lastSyncedAt": "2025-10-05T00:00:00.000Z"
+    }
+  },
+  "craft-001": {
+    "exhibitionId": "expo-2025-autumn",
+    "artwork": {
+      "artworkId": "craft-001",
+      "exhibitionId": "expo-2025-autumn",
+      "title": "作品C",
+      "exhibitionTitle": "秋の工芸展",
+      "displayId": null,
+      "artistName": "職人C",
+      "description": "作品Cの詳細説明",
+      "notes": "",
+      "introMediaUrl": "https://drive.google.com/file/d/def456/view",
+      "referenceUrl": "https://example.com/craft-001",
+      "audioUrl": null,
+      "articleUrl": "https://note.com/curator/n/note002",
+      "image": "https://cdn.example.com/artworks/craft-001.jpg",
+      "inputDate": "2025-09-28",
+      "lastSyncedAt": "2025-10-05T00:00:00.000Z"
+    }
+  }
+}

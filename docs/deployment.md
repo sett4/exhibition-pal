@@ -5,8 +5,9 @@
 - `npm install` を実行し依存関係を最新化。
 
 ## 2. ビルド前検証
-1. `npm run sync-data`
-   - WARN ログが出力された場合は Spreadsheet を修正し、再実行。
+1. `npm run sync-data:artworks`
+   - ENV に作品用 Spreadsheet ID / Range が設定されていることを確認。
+   - WARN ログ (`scope: artworks-sync`) が出力された場合は Spreadsheet を修正し、再実行。
 2. `npm run build`
 3. `npm run test`
    - `test:contract` / `test:integration` / `test:experience` すべてがパスすること。
@@ -15,12 +16,13 @@
 - 静的ビルド: `.output/public/`
 - WARN ログ: `docs/runbooks/sync-data.md` の手順で保存
 - サンプルデータ: `site/src/_data/exhibitions.sample.json`
+- 作品辞書: `site/src/_data/artwork-lookup.json`
 
 ## 4. リリース手順
 1. `.output/public` をホスティング先（例: Cloudflare Pages）へデプロイ。
 2. リリースノートを更新: `docs/release-notes.md`
 3. Spreadsheet 更新差分を関係者へ共有。
-4. 展示会ページを目視確認（開始日表示、内部リンク非公開、画像 ALT など）。
+4. 展示会・作品ページを目視確認（作品一覧・個別ページのリンク、画像 ALT、紹介リンク開通など）。
 
 ## 5. ロールバック
 - 直前の安定タグへ再デプロイ。

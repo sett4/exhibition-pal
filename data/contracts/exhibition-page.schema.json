@@ -11,46 +11,117 @@
     "summary",
     "officialUrl",
     "relatedUrls",
-    "heroImage"
+    "heroImage",
+    "artworkList"
   ],
   "additionalProperties": false,
   "properties": {
-    "id": { "type": "string", "minLength": 1 },
-    "title": { "type": "string", "minLength": 1 },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
     "period": {
       "type": "object",
-      "required": ["start", "end", "display"],
+      "required": [
+        "start",
+        "end",
+        "display"
+      ],
       "additionalProperties": false,
       "properties": {
-        "start": { "type": ["string", "null"], "pattern": "^$|^\\d{4}-\\d{2}-\\d{2}$" },
-        "end": { "type": ["string", "null"], "pattern": "^$|^\\d{4}-\\d{2}-\\d{2}$" },
-        "display": { "type": ["string", "null"] }
+        "start": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^$|^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "end": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^$|^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "display": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       }
     },
-    "venue": { "type": "string", "minLength": 1 },
-    "summary": { "type": "string", "minLength": 1 },
-    "background": { "type": ["string", "null"] },
-    "highlights": { "type": ["string", "null"] },
-    "officialUrl": { "type": "string", "pattern": "^https://" },
+    "venue": {
+      "type": "string",
+      "minLength": 1
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "background": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "highlights": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "officialUrl": {
+      "type": "string",
+      "pattern": "^https://"
+    },
     "relatedUrls": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["url", "label"],
+        "required": [
+          "url",
+          "label"
+        ],
         "additionalProperties": false,
         "properties": {
-          "url": { "type": "string", "pattern": "^https://" },
-          "label": { "type": "string", "minLength": 1 }
+          "url": {
+            "type": "string",
+            "pattern": "^https://"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
     "heroImage": {
       "type": "object",
-      "required": ["src", "alt"],
+      "required": [
+        "src",
+        "alt"
+      ],
       "additionalProperties": false,
       "properties": {
-        "src": { "type": "string", "pattern": "^https://" },
-        "alt": { "type": "string", "minLength": 1 }
+        "src": {
+          "type": "string",
+          "pattern": "^https://"
+        },
+        "alt": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "artworkList": {
+      "type": "array",
+      "items": {
+        "$ref": "https://exhibition-pal.example.com/schemas/artworks.json#/definitions/artwork"
       }
     }
   }

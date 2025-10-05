@@ -1,0 +1,70 @@
+{
+  "range": "Artworks!A1:N",
+  "majorDimension": "ROWS",
+  "values": [
+    [
+      "入力日",
+      "展示会ID",
+      "作品ID",
+      "展覧会名",
+      "展示ID",
+      "アーティスト名",
+      "作品名",
+      "作品詳細",
+      "その他",
+      "作品紹介（Google Drive URL）",
+      "参照URL",
+      "音声化（stand fm url）",
+      "記事化（Note url）",
+      "image"
+    ],
+    [
+      "2025/09/30",
+      "expo-2025-spring",
+      "art-001",
+      "春のアート展",
+      "1",
+      "アーティストA",
+      "作品A",
+      "作品Aの詳細説明",
+      "関連メモ",
+      "https://drive.google.com/file/d/abc123/view",
+      "https://example.com/art-001",
+      "https://stand.fm/episodes/art-001",
+      "https://note.com/curator/n/note001",
+      "https://cdn.example.com/artworks/art-001.jpg"
+    ],
+    [
+      "2025/09/29",
+      "expo-2025-spring",
+      "art-002",
+      "春のアート展",
+      "2",
+      "アーティストB",
+      "作品B",
+      "作品Bの詳細説明",
+      "",
+      "",
+      "https://example.com/art-002",
+      "",
+      "",
+      "https://cdn.example.com/artworks/art-002.jpg"
+    ],
+    [
+      "2025/09/28",
+      "expo-2025-autumn",
+      "craft-001",
+      "秋の工芸展",
+      "",
+      "職人C",
+      "作品C",
+      "作品Cの詳細説明",
+      "",
+      "https://drive.google.com/file/d/def456/view",
+      "https://example.com/craft-001",
+      "",
+      "https://note.com/curator/n/note002",
+      "https://cdn.example.com/artworks/craft-001.jpg"
+    ]
+  ]
+}

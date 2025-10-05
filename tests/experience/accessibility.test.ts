@@ -12,12 +12,14 @@ const testFn = shouldSkip ? it.skip : it;
 describe('accessibility (axe)', () => {
   if (!shouldSkip) {
     beforeAll(async () => {
-      process.env.TEST_EXHIBITIONS_FIXTURE = resolveFromRoot('tests', 'fixtures', 'exhibitions.raw.json');
+      process.env.TEST_EXHIBITIONS_FIXTURE = resolveFromRoot('tests/fixtures/exhibitions.raw.json');
+      process.env.TEST_ARTWORKS_FIXTURE = resolveFromRoot('tests/fixtures/artworks.raw.json');
       await runEleventyBuild(['--quiet']);
     }, 120000);
 
     afterAll(() => {
       delete process.env.TEST_EXHIBITIONS_FIXTURE;
+      delete process.env.TEST_ARTWORKS_FIXTURE;
     });
   }
 
@@ -33,4 +35,24 @@ describe('accessibility (axe)', () => {
 
     expect(results.violations).toHaveLength(0);
   });
+
+  testFn('artwork detail pages have zero axe violations', async () => {
+    const browser = await chromium.launch({ headless: true });
+    const page = await browser.newPage();
+
+    const detailPath = resolve(
+      OUTPUT_DIR,
+      'exhibitions',
+      'expo-2025-spring',
+      'art-001',
+      'index.html'
+    );
+    await page.goto(`file://${detailPath}`);
+
+    const results = await new AxeBuilder({ page }).analyze();
+    await browser.close();
+
+    expect(results.violations).toHaveLength(0);
+  });
 });
+

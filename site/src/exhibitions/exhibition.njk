@@ -24,6 +24,42 @@ ogImage: {{ exhibition.heroImage.src }}
   </header>
 
   <section class="exhibition-detail__section">
+    <h2>作品一覧</h2>
+    {% if exhibition.artworkList and exhibition.artworkList | length > 0 %}
+      <ul class="exhibition-detail__artworks">
+        {% for artwork in exhibition.artworkList %}
+          <li class="exhibition-detail__artwork">
+            <article aria-labelledby="artwork-{{ artwork.artworkId }}">
+              <h3 id="artwork-{{ artwork.artworkId }}">
+                <a href="/exhibitions/{{ exhibition.id }}/{{ artwork.artworkId }}/">{{ artwork.title }}</a>
+              </h3>
+              <p class="exhibition-detail__artwork-meta">
+                {% if artwork.displayId %}<span class="badge">展示ID: {{ artwork.displayId }}</span>{% endif %}
+                {% if artwork.artistName %}<span class="artist">{{ artwork.artistName }}</span>{% endif %}
+              </p>
+              {% if artwork.image %}
+                <img src="{{ artwork.image }}" alt="{{ artwork.title }}" loading="lazy" class="exhibition-detail__artwork-image" />
+              {% endif %}
+              {% if artwork.description %}
+                <p class="exhibition-detail__artwork-description">{{ artwork.description }}</p>
+              {% endif %}
+              <ul class="exhibition-detail__artwork-links">
+                <li><a href="/exhibitions/{{ exhibition.id }}/{{ artwork.artworkId }}/">詳細ページ</a></li>
+                {% if artwork.introMediaUrl %}<li><a href="{{ artwork.introMediaUrl }}" target="_blank" rel="noopener">紹介コンテンツ</a></li>{% endif %}
+                {% if artwork.referenceUrl %}<li><a href="{{ artwork.referenceUrl }}" target="_blank" rel="noopener">参照URL</a></li>{% endif %}
+                {% if artwork.audioUrl %}<li><a href="{{ artwork.audioUrl }}" target="_blank" rel="noopener">音声解説</a></li>{% endif %}
+                {% if artwork.articleUrl %}<li><a href="{{ artwork.articleUrl }}" target="_blank" rel="noopener">記事</a></li>{% endif %}
+              </ul>
+            </article>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="exhibition-detail__artwork-empty">現在公開できる作品情報がありません。</p>
+    {% endif %}
+  </section>
+
+  <section class="exhibition-detail__section">
     <h2>概要</h2>
     <p>{{ exhibition.summary }}</p>
   </section>

@@ -31,6 +31,9 @@ ogImage: https://cdn.example.com/placeholders/exhibition-og.jpg
             {% endif %}
             <p class="exhibition-card__venue">{{ exhibition.venue }}</p>
             <p class="exhibition-card__summary">{{ exhibition.summary }}</p>
+            {% if exhibition.artworkList %}
+              <p class="exhibition-card__artwork-count">収録作品: {{ exhibition.artworkList | length }} 点</p>
+            {% endif %}
             <ul class="exhibition-card__links" data-related-links="pending-label-spec">
             {# TODO: Clarify related link labeling order once specification is confirmed #}
               <li><a href="{{ exhibition.officialUrl }}" target="_blank" rel="noopener">公式サイトを開く</a></li>

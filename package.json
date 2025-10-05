@@ -10,7 +10,8 @@
     "test:integration": "vitest run tests/integration",
     "test:experience": "vitest run tests/experience",
     "test": "npm run test:contract && npm run test:integration && npm run test:experience",
-    "serve": "eleventy --serve"
+    "serve": "eleventy --serve",
+    "sync-data:artworks": "node scripts/sync-data.js --artworks"
   },
   "keywords": [],
   "author": "",

@@ -47,7 +47,8 @@
           "articleUrl": "https://note.com/curator/n/note001",
           "image": "https://cdn.example.com/artworks/art-001.jpg",
           "inputDate": "2025-09-30",
-          "lastSyncedAt": "2025-10-05T00:00:00.000Z"
+          "lastSyncedAt": "2025-10-05T04:23:14.072Z",
+          "detailUrl": "/exhibitions/expo-2025-spring/art-001/"
         },
         {
           "artworkId": "art-002",
@@ -57,14 +58,15 @@
           "displayId": "2",
           "artistName": "アーティストB",
           "description": "作品Bの詳細説明",
-          "notes": "",
+          "notes": null,
           "introMediaUrl": null,
           "referenceUrl": "https://example.com/art-002",
           "audioUrl": null,
           "articleUrl": null,
           "image": "https://cdn.example.com/artworks/art-002.jpg",
           "inputDate": "2025-09-29",
-          "lastSyncedAt": "2025-10-05T00:00:00.000Z"
+          "lastSyncedAt": "2025-10-05T04:23:14.072Z",
+          "detailUrl": "/exhibitions/expo-2025-spring/art-002/"
         }
       ]
     },
@@ -108,21 +110,22 @@
           "displayId": null,
           "artistName": "職人C",
           "description": "作品Cの詳細説明",
-          "notes": "",
+          "notes": null,
           "introMediaUrl": "https://drive.google.com/file/d/def456/view",
           "referenceUrl": "https://example.com/craft-001",
           "audioUrl": null,
           "articleUrl": "https://note.com/curator/n/note002",
           "image": "https://cdn.example.com/artworks/craft-001.jpg",
           "inputDate": "2025-09-28",
-          "lastSyncedAt": "2025-10-05T00:00:00.000Z"
+          "lastSyncedAt": "2025-10-05T04:23:14.072Z",
+          "detailUrl": "/exhibitions/expo-2025-autumn/craft-001/"
         }
       ]
     }
   ],
   "meta": {
-    "fetchedAt": "2025-10-05T04:00:00.000Z",
-    "sourceSpreadsheet": "spreadsheet-id",
+    "fetchedAt": "2025-10-05T04:23:14.072Z",
+    "sourceSpreadsheet": "1_nbNteMqelNHff5V8_yH89pmQAXdIkmlYOELOo6C8-E",
     "warnings": [
       {
         "id": "expo-2025-spring",
@@ -133,13 +136,9 @@
         "id": "invalid-row",
         "type": "INVALID_URL",
         "message": "officialUrl is not a valid https URL."
-      },
-      {
-        "id": "invalid-row",
-        "type": "INVALID_DATE",
-        "message": "終了日が開始日より前です。"
       }
     ],
+    "artworkSortKey": "作品表示順キー",
     "internal": {
       "expo-2025-spring": {
         "inventoryUrl": "https://drive.google.com/file/d/INV123/view",
@@ -151,7 +150,6 @@
         "detailDocUrl": "https://drive.google.com/file/d/DETAIL456/view",
         "noteUrl": null
       }
-    },
-    "artworkSortKey": "artworkId"
+    }
   }
 }

@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://exhibition-pal.specs/003/artwork.schema.json",
+  "title": "Artwork",
+  "type": "object",
+  "required": [
+    "artworkId",
+    "exhibitionId",
+    "title",
+    "exhibitionTitle",
+    "lastSyncedAt"
+  ],
+  "properties": {
+    "artworkId": {
+      "type": "string",
+      "description": "Unique artwork identifier within an exhibition"
+    },
+    "exhibitionId": {
+      "type": "string",
+      "description": "Parent exhibition identifier"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "exhibitionTitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "displayId": {
+      "type": ["string", "null"],
+      "maxLength": 20
+    },
+    "artistName": {
+      "type": ["string", "null"],
+      "description": "Artist credit"
+    },
+    "description": {
+      "type": ["string", "null"],
+      "description": "Curator supplied description"
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "Internal notes"
+    },
+    "introMediaUrl": {
+      "type": ["string", "null"],
+      "format": "uri"
+    },
+    "referenceUrl": {
+      "type": ["string", "null"],
+      "format": "uri"
+    },
+    "audioUrl": {
+      "type": ["string", "null"],
+      "format": "uri"
+    },
+    "articleUrl": {
+      "type": ["string", "null"],
+      "format": "uri"
+    },
+    "image": {
+      "type": ["string", "null"],
+      "description": "Primary visual asset URL"
+    },
+    "inputDate": {
+      "type": ["string", "null"],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "lastSyncedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}

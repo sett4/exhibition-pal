@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://exhibition-pal.example.com/schemas/artworks.json",
+  "title": "Artworks dataset",
+  "type": "array",
+  "items": {
+    "$ref": "#/definitions/artwork"
+  },
+  "definitions": {
+    "artwork": {
+      "type": "object",
+      "required": [
+        "artworkId",
+        "exhibitionId",
+        "title",
+        "exhibitionTitle",
+        "lastSyncedAt"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "artworkId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "exhibitionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "exhibitionTitle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "displayId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 50
+        },
+        "artistName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "introMediaUrl": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^https://"
+        },
+        "referenceUrl": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^https://"
+        },
+        "audioUrl": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^https://"
+        },
+        "articleUrl": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^https://"
+        },
+        "image": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^https://"
+        },
+        "inputDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^$|^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "lastSyncedAt": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]+)?Z$"
+        }
+      }
+    }
+  },
+  "uniqueItems": true
+}
