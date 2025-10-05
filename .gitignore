@@ -4,3 +4,7 @@ node_modules/
 .env.local
 .cache/
 .env
+
+# Generated data files
+site/src/_data/exhibitions.normalized.json
+site/src/_data/exhibitions.raw.json
