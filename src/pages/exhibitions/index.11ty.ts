@@ -1,6 +1,12 @@
 import type { Exhibition, ExhibitionsData } from '../../data/types.js';
 
+/**
+ * Eleventy template responsible for rendering the exhibitions listing page.
+ */
 export default class ExhibitionsListingTemplate {
+  /**
+   * Defines Eleventy metadata for the exhibitions listing page.
+   */
   data() {
     return {
       permalink: 'exhibitions/index.html',
@@ -9,6 +15,11 @@ export default class ExhibitionsListingTemplate {
     };
   }
 
+  /**
+   * Renders the exhibitions listing page.
+   * @param data Global data injected by Eleventy.
+   * @returns HTML markup for the listing.
+   */
   render(data: ExhibitionsData): string {
     const cards = data.exhibitions.map((exhibition) => this.renderCard(exhibition)).join('\n');
 
@@ -26,6 +37,11 @@ export default class ExhibitionsListingTemplate {
 </html>`;
   }
 
+  /**
+   * Renders a single exhibition card.
+   * @param exhibition Exhibition record to display.
+   * @returns HTML snippet for the card.
+   */
   private renderCard(exhibition: Exhibition): string {
     const displayStartDate = exhibition.startDate.replaceAll('-', '/');
     const displayEndDate = exhibition.endDate.replaceAll('-', '/');

@@ -10,6 +10,10 @@ const BACKOFF_BASE_MS = 500;
 let cachedOAuthClient: OAuth2Client | null = null;
 let cachedSheets: sheets_v4.Sheets | null = null;
 
+/**
+ * Creates or returns a memoised OAuth2 client for Google Sheets access.
+ * @returns Authenticated OAuth2 client instance.
+ */
 function createOAuthClient(): OAuth2Client {
   if (cachedOAuthClient) {
     return cachedOAuthClient;
@@ -22,6 +26,10 @@ function createOAuthClient(): OAuth2Client {
   return client;
 }
 
+/**
+ * Creates or retrieves a memoised Sheets API client.
+ * @returns Sheets API client bound to the shared OAuth client.
+ */
 function getSheetsClient(): sheets_v4.Sheets {
   if (!cachedSheets) {
     cachedSheets = new sheets_v4.Sheets({ auth: createOAuthClient() });
@@ -30,6 +38,10 @@ function getSheetsClient(): sheets_v4.Sheets {
   return cachedSheets;
 }
 
+/**
+ * Awaitable helper for exponential backoff delays.
+ * @param ms Milliseconds to wait.
+ */
 async function delay(ms: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }

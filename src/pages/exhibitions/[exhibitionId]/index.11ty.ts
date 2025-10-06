@@ -5,7 +5,13 @@ interface DetailRenderContext {
   navigation: Exhibition[];
 }
 
+/**
+ * Eleventy template for rendering individual exhibition detail pages.
+ */
 export default class ExhibitionDetailTemplate {
+  /**
+   * Configures Eleventy data bindings for exhibition detail pages.
+   */
   data() {
     return {
       permalink: (data: DetailRenderContext) => `exhibitions/${data.exhibition.id}/index.html`,
@@ -13,6 +19,11 @@ export default class ExhibitionDetailTemplate {
     };
   }
 
+  /**
+   * Renders a single exhibition detail page.
+   * @param context Render context supplied by Eleventy collections.
+   * @returns HTML markup for the detail view.
+   */
   render({ exhibition, navigation }: DetailRenderContext): string {
     const relatedLinks = exhibition.relatedUrls
       .map((url) => `<li><a href="${url}" rel="noopener" target="_blank">関連リンク</a></li>`)

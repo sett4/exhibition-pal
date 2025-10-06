@@ -22,6 +22,7 @@
    GOOGLE_SHEETS_TOKEN_URL="https://oauth2.googleapis.com/token"
    ```
 3. TypeScript対応Eleventyのビルド確認
+
    ```bash
    npm run build
    ```
@@ -29,7 +30,9 @@
    - ビルド完了後、`_site/exhibitions/index.html` と各詳細ページが生成される。
    - `src/data/types.ts` の型に合わないデータがある場合はビルドが失敗する。
    - Eleventyログに `Eleventy build completed` が表示される。WinstonログはJSONで出力される。
+
 4. ローカル開発サーバー
+
    ```bash
    npm run dev
    ```
@@ -46,23 +49,28 @@
    - stand.fm URL未設定の場合、音声セクションが非表示であること。
    - 関連URLリストがURLのみで表示されること。
 3. テスト実行
+
    ```bash
    npm run test
    ```
 
    - 契約テストでGoogle SheetsレスポンスとGlobal Dataの両方が検証されること。
+
 4. Lint & Format
+
    ```bash
    npm run lint
    npm run format
    ```
 
    - ESLint、Prettierがエラーなく完了すること。
+
 5. 型チェック（NodeNextエイリアス設定が整備済みの場合）
    ```bash
    npm run typecheck
    ```
-   - Eleventyテンプレートも含めTypeScriptエラーが出ないこと。*現在の設定ではパスエイリアス解決の追加調整が必要です。*
+
+   - Eleventyテンプレートも含めTypeScriptエラーが出ないこと。_現在の設定ではパスエイリアス解決の追加調整が必要です。_
 6. Cloudflare Pagesプレビュー
    - `npm run build` 後に `wrangler pages dev` などでプレビューし、環境変数が適用されること。
    - `public/_headers` と `public/_redirects` の挙動を確認する。

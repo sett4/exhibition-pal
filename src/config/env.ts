@@ -14,6 +14,11 @@ let cachedConfig: GoogleSheetsConfig | null = null;
 const DEFAULT_RANGE = 'Exhibitions!A:O';
 const DEFAULT_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 
+/**
+ * Reads a required environment variable and returns the trimmed value.
+ * @param name Name of the variable to resolve.
+ * @throws {Error} When the variable is missing or blank.
+ */
 function requireEnv(name: string): string {
   const value = process.env[name];
   if (!value || value.trim().length === 0) {

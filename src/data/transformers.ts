@@ -2,6 +2,12 @@ import { getLogger } from '../lib/logger.js';
 
 const DATE_PATTERN = /^\d{4}\/\d{2}\/\d{2}$/;
 
+/**
+ * Normalises related URL strings and validates each entry.
+ * @param input Raw CSV or newline separated URLs.
+ * @returns Unique array of http(s) URLs.
+ * @throws {Error} When a URL does not use http/https.
+ */
 export function parseRelatedUrls(input: string): string[] {
   if (!input) {
     return [];
@@ -25,6 +31,11 @@ export function parseRelatedUrls(input: string): string[] {
   return unique;
 }
 
+/**
+ * Converts empty strings to null while trimming meaningful values.
+ * @param value Value to coerce.
+ * @returns Trimmed string or null when empty.
+ */
 export function toNullableString(value: string | undefined | null): string | null {
   if (!value) {
     return null;
@@ -34,6 +45,12 @@ export function toNullableString(value: string | undefined | null): string | nul
   return trimmed.length === 0 ? null : trimmed;
 }
 
+/**
+ * Converts yyyy/mm/dd sheet values to ISO-8601 dates.
+ * @param value Sheet value in yyyy/mm/dd format.
+ * @returns ISO-8601 date string.
+ * @throws {Error} When the value is not a valid calendar date.
+ */
 export function parseSheetDate(value: string): string {
   if (!DATE_PATTERN.test(value)) {
     throw new Error(`Date does not match yyyy/mm/dd format: ${value}`);
@@ -68,6 +85,12 @@ export interface SortableExhibitionLike {
   startDate: string;
 }
 
+/**
+ * Sorts exhibitions by start date descending then id ascending.
+ * @param a First exhibition-like item.
+ * @param b Second exhibition-like item.
+ * @returns Comparator number for Array.sort.
+ */
 export function sortByStartDateDescIdAsc<T extends SortableExhibitionLike>(a: T, b: T): number {
   if (a.startDate !== b.startDate) {
     return b.startDate.localeCompare(a.startDate);

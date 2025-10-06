@@ -6,7 +6,7 @@ import {
   toNullableString,
 } from './transformers.js';
 import type { Exhibition, ExhibitionsData } from './types.js';
-import { getLogger } from '../lib/logger.js';
+import { getLogger, startPerformanceTimer } from '../lib/logger.js';
 
 const EXPECTED_HEADERS: readonly string[] = [
   '展示会概要URL',
@@ -46,6 +46,11 @@ const COLUMN_INDEX = {
 
 type ColumnKey = keyof typeof COLUMN_INDEX;
 
+/**
+ * Validates that the incoming header matches the expected spreadsheet schema.
+ * @param header Header cells returned from Google Sheets.
+ * @throws {Error} When the header length or values differ from the spec.
+ */
 function ensureHeaderMatches(header: string[]): void {
   if (header.length !== EXPECTED_HEADERS.length) {
     throw new Error(
@@ -62,17 +67,34 @@ function ensureHeaderMatches(header: string[]): void {
   });
 }
 
+/**
+ * Retrieves and trims a cell value for the given column key.
+ * @param row Spreadsheet row values.
+ * @param key Column identifier.
+ * @returns Trimmed string representing the cell contents.
+ */
 function getCell(row: string[], key: ColumnKey): string {
   const value = row[COLUMN_INDEX[key]] ?? '';
   return String(value).trim();
 }
 
+/**
+ * Ensures an exhibition's end date is on or after the start date.
+ * @param start ISO start date.
+ * @param end ISO end date.
+ * @throws {Error} When chronology is invalid.
+ */
 function validateChronology(start: string, end: string): void {
   if (end < start) {
     throw new Error(`End date ${end} occurs before start date ${start}`);
   }
 }
 
+/**
+ * Maps a sheet row to a strongly typed exhibition object.
+ * @param row Spreadsheet row to transform.
+ * @returns Exhibition data or null when required fields are missing.
+ */
 function mapRowToExhibition(row: string[]): Exhibition | null {
   const logger = getLogger();
 
@@ -130,6 +152,13 @@ function mapRowToExhibition(row: string[]): Exhibition | null {
   return exhibition;
 }
 
+/**
+ * Builds the exhibitions dataset from raw sheet values.
+ * @param header Sheet header cells.
+ * @param rows Sheet row values.
+ * @param options.now Injected now value for deterministic tests.
+ * @returns Structured exhibitions payload for Eleventy global data.
+ */
 export function buildExhibitionsData(
   header: string[],
   rows: string[][],
@@ -167,6 +196,11 @@ export function buildExhibitionsData(
 
 let cachedExhibitionsPromise: Promise<ExhibitionsData> | null = null;
 
+/**
+ * Loads and memoises exhibitions data with optional cache busting.
+ * @param options.force When true, bypasses the in-memory cache.
+ * @returns Resolved exhibitions dataset.
+ */
 export async function loadExhibitionsData(
   options: { force?: boolean } = {}
 ): Promise<ExhibitionsData> {
@@ -175,8 +209,50 @@ export async function loadExhibitionsData(
   }
 
   cachedExhibitionsPromise = (async () => {
-    const { header, rows } = await fetchSheetValues();
-    return buildExhibitionsData(header, rows);
+    const totalTimer = startPerformanceTimer('exhibitions.load.total', {
+      forceReload: options.force === true,
+    });
+
+    let header: string[] = [];
+    let rows: string[][] = [];
+    let transformedCount = 0;
+    let caughtError: unknown | null = null;
+
+    try {
+      const fetchTimer = startPerformanceTimer('exhibitions.load.fetch');
+      try {
+        const sheet = await fetchSheetValues();
+        header = sheet.header;
+        rows = sheet.rows;
+      } finally {
+        fetchTimer({ rowsFetched: rows.length });
+      }
+
+      const transformTimer = startPerformanceTimer('exhibitions.load.transform');
+      try {
+        const data = buildExhibitionsData(header, rows);
+        transformedCount = data.exhibitions.length;
+        transformTimer({ rowsTransformed: transformedCount });
+        return data;
+      } catch (error) {
+        transformTimer({ rowsTransformed: 0, error });
+        throw error;
+      }
+    } catch (error) {
+      caughtError = error;
+      throw error;
+    } finally {
+      const meta: Record<string, unknown> = {
+        rowsFetched: rows.length,
+        rowsTransformed: transformedCount,
+      };
+
+      if (caughtError) {
+        meta.error = caughtError;
+      }
+
+      totalTimer(meta);
+    }
   })();
 
   return cachedExhibitionsPromise;

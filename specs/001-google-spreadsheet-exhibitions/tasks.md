@@ -59,15 +59,15 @@
 
 ## Phase 3.4: Integration
 
-- [X] T017 `eleventy.config.ts` を更新し、Winstonロガー・TypeScriptテンプレート・Global Dataを登録（並び順ロジックとフィルタ含む）
-- [X] T018 Cloudflare Pages用設定を更新（`public/_headers`, `public/_redirects`, `wrangler.toml`）し、必要な環境変数を記述
-- [X] T019 QuickstartガイドとREADMEに環境変数・ビルドコマンド・テスト手順を追記（`specs/001-google-spreadsheet-exhibitions/quickstart.md`, `README.md`）
+- [x] T017 `eleventy.config.ts` を更新し、Winstonロガー・TypeScriptテンプレート・Global Dataを登録（並び順ロジックとフィルタ含む）
+- [x] T018 Cloudflare Pages用設定を更新（`public/_headers`, `public/_redirects`, `wrangler.toml`）し、必要な環境変数を記述
+- [x] T019 QuickstartガイドとREADMEに環境変数・ビルドコマンド・テスト手順を追記（`specs/001-google-spreadsheet-exhibitions/quickstart.md`, `README.md`）
 
 ## Phase 3.5: Polish
 
-- [ ] T020 [P] 変換モジュール向け追加ユニットテストを `tests/unit/transformers.spec.ts` に拡充（エラー時のログ検証・スキップ行の確認）
-- [ ] T021 [P] パフォーマンス計測ログを追加しEleventyビルド時間をWinstonで出力（`src/data/exhibitions.ts`, `src/lib/logger.ts`）
-- [ ] T022 [P] 仕様ドキュメントと `.env.example` を最終更新し、Prettier/ESLint/Vitest/ビルドを実行して結果を記録
+- [x] T020 [P] 変換モジュール向け追加ユニットテストを `tests/unit/transformers.spec.ts` に拡充（エラー時のログ検証・スキップ行の確認）
+- [x] T021 [P] パフォーマンス計測ログを追加しEleventyビルド時間をWinstonで出力（`src/data/exhibitions.ts`, `src/lib/logger.ts`）
+- [x] T022 [P] 仕様ドキュメントと `.env.example` を最終更新し、Prettier/ESLint/Vitest/ビルドを実行して結果を記録
 
 ## Dependencies
 
@@ -96,7 +96,7 @@
 
 ## Validation Checklist
 
-- [ ] すべての契約テストが作成されている
-- [ ] Global Dataとテンプレートの実装がテストにより検証される
-- [ ] Cloudflare Pages設定と環境変数がドキュメント化されている
-- [ ] パフォーマンスとログの要件が確認されている
+- [x] すべての契約テストが作成されている
+- [x] Global Dataとテンプレートの実装がテストにより検証される
+- [x] Cloudflare Pages設定と環境変数がドキュメント化されている
+- [x] パフォーマンスとログの要件が確認されている
