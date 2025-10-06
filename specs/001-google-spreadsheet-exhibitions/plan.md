@@ -4,6 +4,7 @@
 **Input**: Feature specification from `/specs/001-google-spreadsheet-exhibitions/spec.md`
 
 ## Execution Flow (/plan command scope)
+
 ```
 1. Load feature spec from Input path
    → If not found: ERROR "No feature spec at {path}"
@@ -26,13 +27,16 @@
 ```
 
 **IMPORTANT**: The /plan command STOPS at step 7. Phases 2-4 are executed by other commands:
+
 - Phase 2: /tasks command creates tasks.md
 - Phase 3-4: Implementation execution (manual or via tools)
 
 ## Summary
+
 Google Spreadsheetから取得できる15項目（展示会概要URL、作品一覧ファイルリンク、展示会ID、開始日・終了日〈yyyy/mm/dd〉、場所、展示会名、概要、開催経緯、見どころ、詳細説明URL、展示会関連URLリスト、音声化、記事化、image）をEleventyビルド時に取得し、TypeScriptで型定義したGlobal Dataとして登録する。作品一覧ファイルリンクはGoogle Drive URLとしてnullableな`artworkListDriveUrl`に割り当てる。`/exhibitions/`では開始日降順・同日内ID昇順の一覧を表示し、`/exhibitions/{exhibitionId}/`では詳細情報を表示する。dotenvで環境変数からOAuth 2.0リフレッシュトークンを読み込み、Winstonでログ出力しながらVitest + ESLint + Prettierの品質ゲートを維持する。
 
 ## Technical Context
+
 **Language/Version**: Node.js 24 LTS（Eleventy + TypeScriptテンプレート対応）  
 **Primary Dependencies**: Eleventy、@googleapis/sheets、dotenv、Winston、Vitest、ESLint、Prettier  
 **Storage**: Google Spreadsheet（外部コンテンツソース）  
@@ -44,7 +48,8 @@ Google Spreadsheetから取得できる15項目（展示会概要URL、作品一
 **Scale/Scope**: 展示会レコード100件想定、関連URL最大5件/展示会、画像1件/展示会
 
 ## Constitution Check
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - Eleventy以外のSSGへ分岐しない構成で、TypeScriptは公式ドキュメントに従う。
 - すべてのスクリプトとCIはNode.js 24 LTS固定。
@@ -59,6 +64,7 @@ Google Spreadsheetから取得できる15項目（展示会概要URL、作品一
 ## Project Structure
 
 ### Documentation (this feature)
+
 ```
 specs/001-google-spreadsheet-exhibitions/
 ├── plan.md
@@ -69,6 +75,7 @@ specs/001-google-spreadsheet-exhibitions/
 ```
 
 ### Source Code (repository root)
+
 ```
 src/
 ├── data/
@@ -101,6 +108,7 @@ public/
 **Structure Decision**: 単一プロジェクト構成を維持し、`src/data`にAPIアクセスとTypeScript型定義を集約。Eleventyテンプレートは`.11ty.ts`で提供し、テストはVitestで契約・統合・ユニットに分離する。
 
 ## Phase 0: Outline & Research
+
 1. Spreadsheetスキーマ詳細（列順、必須/任意、URL形式）を確認し、変換ロジック要件を整理する。
 2. Google Sheets APIのレート制限とリトライ戦略、dotenvとCloudflare Pages環境変数の使い分けを調査する。
 3. 画像URLや作品一覧ファイルリンクなど外部リソースの利用規約・アクセスパターンを確認する。
@@ -110,7 +118,8 @@ public/
 **Output**: `/specs/001-google-spreadsheet-exhibitions/research.md`
 
 ## Phase 1: Design & Contracts
-*Prerequisites: research.md complete*
+
+_Prerequisites: research.md complete_
 
 1. `data-model.md`にExhibition・ExhibitionsDataなどの型定義（TypeScriptシグネチャ）と検証ルール、並び順ロジックを記載する。
 2. 契約テスト
@@ -120,20 +129,23 @@ public/
 3. `quickstart.md`にセットアップ（`.env`）、ビルド/テスト/デプロイ確認手順、スタブデータの扱いを記述する。
 4. `.specify/scripts/bash/update-agent-context.sh codex` を実行し、新規技術（TypeScript Eleventy、dotenv運用等）を反映させる。
 
-**Output**: `/specs/001-google-spreadsheet-exhibitions/data-model.md`, `/specs/001-google-spreadsheet-exhibitions/quickstart.md`, `/specs/001-google-spreadsheet-exhibitions/contracts/`*
+**Output**: `/specs/001-google-spreadsheet-exhibitions/data-model.md`, `/specs/001-google-spreadsheet-exhibitions/quickstart.md`, `/specs/001-google-spreadsheet-exhibitions/contracts/`\*
 
 **Post-Design Constitution Check: PASS**
 
 ## Phase 2: Task Planning Approach
-*This section describes what the /tasks command will do - DO NOT execute during /plan*
+
+_This section describes what the /tasks command will do - DO NOT execute during /plan_
 
 **Task Generation Strategy**:
+
 - `plan.md`/`research.md`/`data-model.md`/`contracts/`/`quickstart.md`を読み込み、セットアップ→テスト→実装→統合→ポリッシュの順番でタスクを列挙する。
 - TypeScript型定義・スキーマ検証・Global Data生成など、データ品質に直結する項目を優先させる。
 - 各契約ドキュメントに対応するVitest契約テストをタスク化し、実装タスクに依存させる。
 - 15項目すべてを扱うため、データ変換とテンプレートの責務を分離したタスクを作成する。
 
 **Ordering Strategy**:
+
 1. Setup（npmスクリプト、dotenv、TypeScript Eleventy設定、Winston初期化）。
 2. Tests first（Google Sheets契約テスト、Global Dataスキーマテスト、テンプレート統合テスト）。
 3. Implementation（Google Sheetsフェッチャー→データ整形→Global Data登録→テンプレート実装）。
@@ -143,23 +155,27 @@ public/
 **Estimated Output**: 約28タスク（[P]指定で並列化可能なテスト・ドキュメント作業を明示）。
 
 ## Phase 3+: Future Implementation
-*These phases are beyond the scope of the /plan command*
+
+_These phases are beyond the scope of the /plan command_
 
 **Phase 3**: Task execution (/tasks command creates tasks.md)  
 **Phase 4**: Implementation (execute tasks.md following constitutional principles)  
 **Phase 5**: Validation (run tests, execute quickstart.md, performance validation)
 
 ## Complexity Tracking
-*現時点での逸脱はなし*
+
+_現時点での逸脱はなし_
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| *(none)* | | |
+| --------- | ---------- | ------------------------------------ |
+| _(none)_  |            |                                      |
 
 ## Progress Tracking
-*This checklist is updated during execution flow*
+
+_This checklist is updated during execution flow_
 
 **Phase Status**:
+
 - [x] Phase 0: Research complete (/plan command)
 - [x] Phase 1: Design complete (/plan command)
 - [x] Phase 2: Task planning complete (/plan command - describe approach only)
@@ -168,10 +184,12 @@ public/
 - [ ] Phase 5: Validation passed
 
 **Gate Status**:
+
 - [x] Initial Constitution Check: PASS
 - [x] Post-Design Constitution Check: PASS
 - [ ] All NEEDS CLARIFICATION resolved
 - [ ] Complexity deviations documented
 
 ---
-*Based on Constitution v1.1.0 - See `/memory/constitution.md`*
+
+_Based on Constitution v1.1.0 - See `/memory/constitution.md`_

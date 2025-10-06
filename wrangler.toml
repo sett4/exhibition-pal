@@ -1,0 +1,15 @@
+name = "exhibition-pal"
+pages_build_output_dir = "_site"
+compatibility_date = "2025-10-06"
+
+[vars]
+# Populate these values in Cloudflare Pages project settings.
+GOOGLE_SHEETS_REFRESH_TOKEN = ""
+GOOGLE_SHEETS_SPREADSHEET_ID = ""
+GOOGLE_SHEETS_RANGE = "Exhibitions!A:O"
+GOOGLE_SHEETS_CLIENT_ID = ""
+GOOGLE_SHEETS_CLIENT_SECRET = ""
+GOOGLE_SHEETS_TOKEN_URL = "https://oauth2.googleapis.com/token"
+
+[build]
+command = "npm run build"
