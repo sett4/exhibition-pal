@@ -57,6 +57,16 @@ When creating this spec from a user prompt:
 
 ---
 
+## Clarifications
+
+### Session 2025-10-06
+
+- Q: 同じ開始日の展示会が複数ある場合、一覧の並び順はどのように決めますか？ → A: 内部IDを利用
+- Q: stand.fm の URL が登録されていない展示会の場合、詳細ページではどのように扱いますか？ → A: セクション非表示（準備中表示なし）
+- Q: 関連 URL リストの各項目にはどの情報を含めますか？ → A: URL のみ
+
+---
+
 ## User Scenarios & Testing _(mandatory)_
 
 ### Primary User Story
@@ -84,13 +94,16 @@ When creating this spec from a user prompt:
 - **FR-003**: システムは`/exhibitions/{exhibitionId}/`に指定された展示会の詳細（展示会名・場所・開始日・終了日・概要・見どころ・開催経緯・関連 URL リスト・音声化リンク）を表示すること。
 - **FR-004**: システムは一覧から詳細ページへの遷移手段（リンクなど）を提供すること。
 - **FR-005**: システムは取得した展示会データの更新があった場合に再ビルド時へ反映できるよう、データ源と表示内容の同期性を維持すること。
-- **FR-006**: システムは開始日が同一の展示会について内部 ID を元に順序を決めること。
-- **FR-007**: システムは stand.fm URL が存在しない場合はログに警告を出し処理を実行すること
+- **FR-006**: システムは開始日が同一の展示会について内部 ID の昇順で一覧表示すること。
+- **FR-007**: システムは stand.fm URL が存在しない展示会について、詳細ページの音声化セクションを表示しないこと。
+- **FR-008**: システムはGoogle Spreadsheetから取得する15項目（展示会概要URL、作品一覧ファイルリンク、展示会ID、開始日（yyyy/mm/dd）、終了日（yyyy/mm/dd）、場所、展示会名、概要、開催経緯、見どころ、展示会の詳細説明URL、展示会関連のURLリスト、音声化（stand.fm）、記事化（Note）、image）を欠落なく保存し、必要な画面で利用すること。
+- **FR-009**: システムはEleventyビルド時に取得データをGlobal Dataとして登録し、対応するTypeScript型（例: `ExhibitionsData`）を定義してデータ整合性を保証すること。
 
 ### Key Entities _(include if feature involves data)_
 
-- **Exhibition**: 展示会の基本情報（ID、名称、場所、開始日、終了日、概要、見どころ、開催経緯、音声化リンク、表示順に利用する日付など）を保持するレコード。
-- **ExhibitionLink**: 特定展示会に紐づく関連 URL（タイトル、URL、本編の種別）を表す複数要素の集合。[NEEDS CLARIFICATION: URL リストに必要な属性（表示名・説明など）は？]
+- **Exhibition**: 展示会の基本情報（ID、名称、場所、開始日（yyyy/mm/dd）、終了日（yyyy/mm/dd）、概要、見どころ、開催経緯、詳細説明URL、stand.fm URL、Note URL、image、展示会概要URL、作品一覧ファイルリンク（artworkListDriveUrl）、表示順に利用する日付など）を保持するレコード。
+- **ExhibitionLink**: 特定展示会に紐づく関連 URL（URL のみ）を保持する。関連 URL は存在しない場合もある。
+- **ExhibitionsData**: Eleventy Global Dataとして提供するルートオブジェクト。`exhibitions: Exhibition[]`、`createdAt`、`latestUpdate`等を含み、TypeScriptで定義する。
 
 ---
 
