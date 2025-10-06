@@ -105,7 +105,7 @@ _GATE: Automated checks run during main() execution_
 - [ ] Focused on user value and business needs
 - [ ] Written for non-technical stakeholders
 - [ ] All mandatory sections completed
-- [ ] Any cited technology constraints align with Eleventy, Node.js 24, Cloudflare Pages, Winston, Vitest, ESLint, Prettier mandates
+- [ ] Any cited technology constraints align with Eleventy + Nunjucks, Node.js 24, Cloudflare Pages, Winston, Vitest, ESLint, Prettier mandates
 - [ ] 記述は原則として日本語で行い、関係者が理解できる表現になっている
 
 ### Requirement Completeness

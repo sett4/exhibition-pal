@@ -1,6 +1,6 @@
 # exhibition-pal
 
-静的サイトビルド時に Google Spreadsheet から展示会データを取得し、Eleventy + TypeScript で一覧と詳細ページを生成するプロジェクトです。Cloudflare Pages へのデプロイを前提とし、Winston で構造化ログを出力します。
+静的サイトビルド時に Google Spreadsheet から展示会データを取得し、Eleventy + TypeScript（HTMLテンプレートは Nunjucks）で一覧と詳細ページを生成するプロジェクトです。Cloudflare Pages へのデプロイを前提とし、Winston で構造化ログを出力します。
 
 ## 必要環境
 

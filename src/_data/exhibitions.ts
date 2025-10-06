@@ -194,66 +194,62 @@ export function buildExhibitionsData(
   };
 }
 
-let cachedExhibitionsPromise: Promise<ExhibitionsData> | null = null;
+// let cachedExhibitionsPromise: Promise<ExhibitionsData> | null = null;
 
 /**
  * Loads and memoises exhibitions data with optional cache busting.
  * @param options.force When true, bypasses the in-memory cache.
  * @returns Resolved exhibitions dataset.
  */
-export default async function (options: { force?: boolean } = {}): Promise<ExhibitionsData> {
+export default async function (): Promise<ExhibitionsData> {
   getLogger().info("Loading exhibitions data");
-  if (!options.force && cachedExhibitionsPromise) {
-    return await cachedExhibitionsPromise;
-  }
+  // if (!options.force && cachedExhibitionsPromise) {
+  //   return await cachedExhibitionsPromise;
+  // }
   getLogger().info("Reloading exhibitions data from Google Sheets");
 
-  cachedExhibitionsPromise = (async () => {
-    const totalTimer = startPerformanceTimer("exhibitions.load.total", {
-      forceReload: options.force === true,
-    });
+  const totalTimer = startPerformanceTimer("exhibitions.load.total", {
+    // forceReload: options.force === true,
+  });
 
-    let header: string[] = [];
-    let rows: string[][] = [];
-    let transformedCount = 0;
-    let caughtError: unknown | null = null;
+  let header: string[] = [];
+  let rows: string[][] = [];
+  let transformedCount = 0;
+  let caughtError: unknown | null = null;
 
+  try {
+    const fetchTimer = startPerformanceTimer("exhibitions.load.fetch");
     try {
-      const fetchTimer = startPerformanceTimer("exhibitions.load.fetch");
-      try {
-        const sheet = await fetchSheetValues();
-        header = sheet.header;
-        rows = sheet.rows;
-      } finally {
-        fetchTimer({ rowsFetched: rows.length });
-      }
-
-      const transformTimer = startPerformanceTimer("exhibitions.load.transform");
-      try {
-        const data = buildExhibitionsData(header, rows);
-        transformedCount = data.exhibitions.length;
-        transformTimer({ rowsTransformed: transformedCount });
-        return data;
-      } catch (error) {
-        transformTimer({ rowsTransformed: 0, error });
-        throw error;
-      }
-    } catch (error) {
-      caughtError = error;
-      throw error;
+      const sheet = await fetchSheetValues();
+      header = sheet.header;
+      rows = sheet.rows;
     } finally {
-      const meta: Record<string, unknown> = {
-        rowsFetched: rows.length,
-        rowsTransformed: transformedCount,
-      };
-
-      if (caughtError) {
-        meta.error = caughtError;
-      }
-
-      totalTimer(meta);
+      fetchTimer({ rowsFetched: rows.length });
     }
-  })();
 
-  return await cachedExhibitionsPromise;
+    const transformTimer = startPerformanceTimer("exhibitions.load.transform");
+    try {
+      const data = buildExhibitionsData(header, rows);
+      transformedCount = data.exhibitions.length;
+      transformTimer({ rowsTransformed: transformedCount });
+      return data;
+    } catch (error) {
+      transformTimer({ rowsTransformed: 0, error });
+      throw error;
+    }
+  } catch (error) {
+    caughtError = error;
+    throw error;
+  } finally {
+    const meta: Record<string, unknown> = {
+      rowsFetched: rows.length,
+      rowsTransformed: transformedCount,
+    };
+
+    if (caughtError) {
+      meta.error = caughtError;
+    }
+
+    totalTimer(meta);
+  }
 }

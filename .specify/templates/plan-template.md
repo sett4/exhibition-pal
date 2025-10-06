@@ -52,6 +52,7 @@
 _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - Eleventy static generation plan defined; no alternative SSG/frameworks introduced.
+- Eleventy templating engine locked to Nunjucks; no alternative Eleventy engines appear in the approach.
 - Build/test environment locked to Node.js 24 LTS across scripts and CI.
 - Cloudflare Pages deployment strategy documented, including preview branches and `_redirects`/`_headers` handling.
 - Google Sheets data ingestion outlined with OAuth 2.0 refresh token sourced from environment variables only.
@@ -240,4 +241,4 @@ _This checklist is updated during execution flow_
 
 ---
 
-_Based on Constitution v1.1.0 - See `/memory/constitution.md`_
+_Based on Constitution v1.2.0 - See `/memory/constitution.md`_

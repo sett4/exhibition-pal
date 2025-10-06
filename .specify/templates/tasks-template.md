@@ -66,7 +66,7 @@
 - [ ] T009 [P] Implement Google Sheets data fetcher in `src/data/googleSheets.js` with OAuth 2.0 refresh token support
 - [ ] T010 [P] Implement Eleventy data collection using fetched spreadsheet content in `src/data/collections.js`
 - [ ] T011 [P] Wire Winston logger into Eleventy build lifecycle
-- [ ] T012 Configure Eleventy templates to consume structured data output
+- [ ] T012 Configure Eleventy Nunjucks templates to consume structured data output
 - [ ] T013 Add error handling and retry logic for Google Sheets access
 - [ ] T014 Ensure logs redact sensitive fields before emission
 

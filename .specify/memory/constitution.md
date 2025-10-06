@@ -1,15 +1,15 @@
 <!--
 Sync Impact Report
-Version change: 1.0.0 → 1.1.0
+Version change: 1.1.0 → 1.2.0
 Modified principles:
-- None
+- Eleventy-First Static Generation (Nunjucks templating mandate)
 Added sections:
 - None
 Removed sections:
 - None
 Updated sections:
-- Implementation Standards (プロジェクト目的と日本語コミュニケーションの明文化)
-- Development Workflow (日本語での合意プロセス追加)
+- Core Principles → Eleventy-First Static Generation (Nunjucks bullet)
+- Implementation Standards (Nunjucks運用ルールの明確化)
 Templates requiring updates:
 - ✅ .specify/templates/plan-template.md
 - ✅ .specify/templates/spec-template.md
@@ -27,7 +27,8 @@ Follow-up TODOs:
 - All site experiences MUST be authored as Eleventy templates, layouts, shortcodes, and data files; no alternative SSG or server frameworks are permitted.
 - Builds MUST run on Node.js 24 LTS locally, in CI, and on Cloudflare Pages to guarantee consistent rendering output.
 - Progressive enhancement MAY add client-side behavior, but the canonical content MUST remain fully static and accessible without JavaScript.
-  **Rationale:** Locking on Eleventy ensures predictable static builds tailored to Cloudflare Pages while keeping delivery purely static-first.
+- Eleventy templates MUST be implemented with the Nunjucks HTML templating engine (`.njk`, `.11ty.ts` returning Nunjucks markup); Liquid, 11ty.js, JSX, or other Eleventy engines are not permitted without amendment.
+  **Rationale:** Locking on Eleventy ensures predictable static builds tailored to Cloudflare Pages while keeping delivery purely static-first, and standardizing on Nunjucks keeps templates interoperable across contributors.
 
 ### Cloudflare Pages Delivery Discipline
 
@@ -62,6 +63,7 @@ Follow-up TODOs:
 - Deliver static exhibition and artwork description sites for museums and galleries using Eleventy-generated static output.
 - Manage project dependencies with npm or pnpm locked to Node.js 24 LTS, mirroring Cloudflare Pages build settings.
 - Store Eleventy source under `src/` (or `input/`) with co-located data modules for Google Sheets ingestion and Winston logging configuration.
+- すべてのEleventyテンプレートはNunjucksで記述し、Liquidや11ty.jsなど他エンジンの導入は禁止する。
 - Document required environment variables (`GOOGLE_SHEETS_REFRESH_TOKEN`, spreadsheet IDs, API scopes) and load them securely for local builds.
 - Maintain deployment configuration files (`wrangler.toml`, `.clasp`, `.github/workflows/`) to ensure builds run Eleventy → Cloudflare Pages without manual steps.
 - Capture reproducible build scripts (e.g., `npm run build`, `npm run preview`) that call Eleventy with logging instrumentation enabled.
@@ -87,4 +89,4 @@ Follow-up TODOs:
   - PATCH: Clarify wording without altering expectations.
 - Compliance reviews occur at plan creation, pre-merge code review, and before deployment to confirm Eleventy, Cloudflare Pages, Google Sheets, Winston, and tooling commitments remain intact.
 
-**Version**: 1.1.0 | **Ratified**: 2025-10-06 | **Last Amended**: 2025-10-06
+**Version**: 1.2.0 | **Ratified**: 2025-10-06 | **Last Amended**: 2025-10-06
