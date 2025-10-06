@@ -43,52 +43,51 @@
 - Paths shown below assume single project - adjust based on plan.md structure
 
 ## Phase 3.1: Setup
-- [ ] T001 Create project structure per implementation plan
-- [ ] T002 Initialize [language] project with [framework] dependencies
-- [ ] T003 [P] Configure linting and formatting tools
+- [ ] T001 Create project structure per implementation plan (Eleventy input, includes/, data/ directories)
+- [ ] T002 Initialize Node.js 24 project with Eleventy dependencies and npm scripts
+- [ ] T003 [P] Configure Winston logging utility in `src/lib/logger.js`
+- [ ] T004 [P] Configure ESLint with Eleventy + Vitest plugins and Prettier integration
+- [ ] T005 [P] Add Prettier config and automation hook to run on completion
 
 ## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
-- [ ] T004 [P] Contract test POST /api/users in tests/contract/test_users_post.py
-- [ ] T005 [P] Contract test GET /api/users/{id} in tests/contract/test_users_get.py
-- [ ] T006 [P] Integration test user registration in tests/integration/test_registration.py
-- [ ] T007 [P] Integration test auth flow in tests/integration/test_auth.py
+- [ ] T006 [P] Vitest contract test for Google Sheets fetcher in `tests/contract/googleSheets.spec.js`
+- [ ] T007 [P] Vitest integration test for Eleventy data collections in `tests/integration/dataCollections.spec.js`
+- [ ] T008 [P] Vitest integration test ensuring Winston logs are emitted during build in `tests/integration/logging.spec.js`
 
 ## Phase 3.3: Core Implementation (ONLY after tests are failing)
-- [ ] T008 [P] User model in src/models/user.py
-- [ ] T009 [P] UserService CRUD in src/services/user_service.py
-- [ ] T010 [P] CLI --create-user in src/cli/user_commands.py
-- [ ] T011 POST /api/users endpoint
-- [ ] T012 GET /api/users/{id} endpoint
-- [ ] T013 Input validation
-- [ ] T014 Error handling and logging
+- [ ] T009 [P] Implement Google Sheets data fetcher in `src/data/googleSheets.js` with OAuth 2.0 refresh token support
+- [ ] T010 [P] Implement Eleventy data collection using fetched spreadsheet content in `src/data/collections.js`
+- [ ] T011 [P] Wire Winston logger into Eleventy build lifecycle
+- [ ] T012 Configure Eleventy templates to consume structured data output
+- [ ] T013 Add error handling and retry logic for Google Sheets access
+- [ ] T014 Ensure logs redact sensitive fields before emission
 
 ## Phase 3.4: Integration
-- [ ] T015 Connect UserService to DB
-- [ ] T016 Auth middleware
-- [ ] T017 Request/response logging
-- [ ] T018 CORS and security headers
+- [ ] T015 Configure Cloudflare Pages deployment settings (`.clpr` or `wrangler.toml` as applicable)
+- [ ] T016 Provision environment variables for OAuth refresh token in deployment pipeline
+- [ ] T017 Define `_ redirects`/`_headers` files for Cloudflare Pages output
+- [ ] T018 Validate build output structure matches Cloudflare Pages expectations
 
 ## Phase 3.5: Polish
-- [ ] T019 [P] Unit tests for validation in tests/unit/test_validation.py
-- [ ] T020 Performance tests (<200ms)
-- [ ] T021 [P] Update docs/api.md
-- [ ] T022 Remove duplication
-- [ ] T023 Run manual-testing.md
+- [ ] T019 [P] Add Vitest unit tests for data mapping utilities in `tests/unit/mappers.spec.js`
+- [ ] T020 Measure Eleventy build performance and log metrics
+- [ ] T021 [P] Update deployment/runbook docs for Cloudflare Pages and logging expectations
+- [ ] T022 Remove redundant code paths and confirm ESLint passes
+- [ ] T023 Verify Prettier auto-run hooks execute on completion
 
 ## Dependencies
-- Tests (T004-T007) before implementation (T008-T014)
-- T008 blocks T009, T015
-- T016 blocks T018
-- Implementation before polish (T019-T023)
+- Tests (T006-T008) must fail before implementation (T009-T014).
+- T009 and T010 must complete before integration tasks (T015-T018).
+- T016 blocks T018.
+- Implementation before polish (T019-T023).
 
 ## Parallel Example
 ```
-# Launch T004-T007 together:
-Task: "Contract test POST /api/users in tests/contract/test_users_post.py"
-Task: "Contract test GET /api/users/{id} in tests/contract/test_users_get.py"
-Task: "Integration test registration in tests/integration/test_registration.py"
-Task: "Integration test auth in tests/integration/test_auth.py"
+# Launch T006-T008 together:
+Task: "Vitest contract test for Google Sheets fetcher in tests/contract/googleSheets.spec.js"
+Task: "Vitest integration test for Eleventy data collections in tests/integration/dataCollections.spec.js"
+Task: "Vitest integration test ensuring Winston logs are emitted during build in tests/integration/logging.spec.js"
 ```
 
 ## Notes
@@ -96,6 +95,7 @@ Task: "Integration test auth in tests/integration/test_auth.py"
 - Verify tests fail before implementing
 - Commit after each task
 - Avoid: vague tasks, same file conflicts
+- Stakeholder-facing documentation and updates must be prepared in Japanese per the constitution.
 
 ## Task Generation Rules
 *Applied during main() execution*

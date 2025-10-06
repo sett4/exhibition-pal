@@ -47,7 +47,13 @@
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- Eleventy static generation plan defined; no alternative SSG/frameworks introduced.
+- Build/test environment locked to Node.js 24 LTS across scripts and CI.
+- Cloudflare Pages deployment strategy documented, including preview branches and `_redirects`/`_headers` handling.
+- Google Sheets data ingestion outlined with OAuth 2.0 refresh token sourced from environment variables only.
+- Winston logging coverage described for build-time utilities and any runtime/serverless code paths.
+- Quality automation enumerates Vitest test matrix, ESLint linting, and Prettier auto-run at completion.
+- Stakeholder communication plan confirms Japanese-language collaboration between Codex and project members.
 
 ## Project Structure
 
@@ -216,4 +222,4 @@ directories captured above]
 - [ ] Complexity deviations documented
 
 ---
-*Based on Constitution v2.1.1 - See `/memory/constitution.md`*
+*Based on Constitution v1.1.0 - See `/memory/constitution.md`*
