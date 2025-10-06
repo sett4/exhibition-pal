@@ -3,8 +3,8 @@ import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { buildExhibitionsData } from "../../src/data/exhibitions.js";
-import type { Exhibition } from "../../src/data/types.js";
+import { buildExhibitionsData } from "../../src/_data/exhibitions.js";
+import type { Exhibition } from "../../src/_data/types.js";
 
 describe("Global data schema contract", () => {
   const fixtureDir = dirname(fileURLToPath(import.meta.url));

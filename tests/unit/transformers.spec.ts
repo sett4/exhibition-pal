@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { buildExhibitionsData } from "../../src/data/exhibitions.js";
+import { buildExhibitionsData } from "../../src/_data/exhibitions.js";
 import {
   parseRelatedUrls,
   toNullableString,
   parseSheetDate,
   sortByStartDateDescIdAsc,
-} from "../../src/data/transformers.js";
+} from "../../src/_data/transformers.js";
 
 const { errorSpy, warnSpy, infoSpy, startPerformanceTimerMock } = vi.hoisted(() => {
   const error = vi.fn();

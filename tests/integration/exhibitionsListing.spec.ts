@@ -4,8 +4,8 @@ import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { buildExhibitionsData } from "../../src/data/exhibitions.js";
-import ListingTemplate from "../../src/pages/exhibitions/index.11ty.js";
+import { buildExhibitionsData } from "../../src/_data/exhibitions.js";
+import { renderExhibitionsListingPage } from "../../src/lib/exhibitionsMarkup.js";
 
 describe("Exhibitions listing page", () => {
   const fixtureDir = dirname(fileURLToPath(import.meta.url));
@@ -15,8 +15,7 @@ describe("Exhibitions listing page", () => {
   const data = buildExhibitionsData(header, rows);
 
   it("sorts exhibitions by start date desc then id asc", () => {
-    const template = new ListingTemplate();
-    const html = template.render(data);
+    const html = renderExhibitionsListingPage(data);
     const $ = load(html);
 
     const items = $("[data-exhibition-id]").toArray();
@@ -39,8 +38,7 @@ describe("Exhibitions listing page", () => {
   });
 
   it("renders overview, image and note link data appropriately", () => {
-    const template = new ListingTemplate();
-    const html = template.render(data);
+    const html = renderExhibitionsListingPage(data);
     const $ = load(html);
 
     const cards = $("[data-exhibition-id]");

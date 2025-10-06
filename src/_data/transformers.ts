@@ -1,7 +1,6 @@
 import { getLogger } from "../lib/logger.js";
 
 const DATE_PATTERN = /^\d{4}\/\d{2}\/\d{2}$/;
-
 /**
  * Normalises related URL strings and validates each entry.
  * @param input Raw CSV or newline separated URLs.

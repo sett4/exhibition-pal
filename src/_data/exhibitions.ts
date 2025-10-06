@@ -201,12 +201,12 @@ let cachedExhibitionsPromise: Promise<ExhibitionsData> | null = null;
  * @param options.force When true, bypasses the in-memory cache.
  * @returns Resolved exhibitions dataset.
  */
-export async function loadExhibitionsData(
-  options: { force?: boolean } = {}
-): Promise<ExhibitionsData> {
+export default async function (options: { force?: boolean } = {}): Promise<ExhibitionsData> {
+  getLogger().info("Loading exhibitions data");
   if (!options.force && cachedExhibitionsPromise) {
-    return cachedExhibitionsPromise;
+    return await cachedExhibitionsPromise;
   }
+  getLogger().info("Reloading exhibitions data from Google Sheets");
 
   cachedExhibitionsPromise = (async () => {
     const totalTimer = startPerformanceTimer("exhibitions.load.total", {
@@ -255,5 +255,5 @@ export async function loadExhibitionsData(
     }
   })();
 
-  return cachedExhibitionsPromise;
+  return await cachedExhibitionsPromise;
 }

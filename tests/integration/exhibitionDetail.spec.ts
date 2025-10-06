@@ -4,8 +4,8 @@ import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { buildExhibitionsData } from "../../src/data/exhibitions.js";
-import DetailTemplate from "../../src/pages/exhibitions/[exhibitionId]/index.11ty.js";
+import { buildExhibitionsData } from "../../src/_data/exhibitions.js";
+import { renderExhibitionDetailPage } from "../../src/lib/exhibitionsMarkup.js";
 
 describe("Exhibition detail page", () => {
   const fixtureDir = dirname(fileURLToPath(import.meta.url));
@@ -15,10 +15,8 @@ describe("Exhibition detail page", () => {
   const data = buildExhibitionsData(header, rows);
 
   it("renders core exhibition fields and controls stand.fm visibility", () => {
-    const template = new DetailTemplate();
-
     data.exhibitions.slice(0, 3).forEach((exhibition) => {
-      const html = template.render({ exhibition, navigation: data.exhibitions });
+      const html = renderExhibitionDetailPage(exhibition, data.exhibitions);
       const $ = load(html);
 
       expect($("h1").text()).toContain(exhibition.name);

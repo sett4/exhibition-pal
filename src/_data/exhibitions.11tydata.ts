@@ -1,4 +1,4 @@
-import { loadExhibitionsData } from "./exhibitions.js";
+import loadExhibitionsData from "./exhibitions.js";
 import { logBuildLifecycle } from "../lib/logger.js";
 
 /**
