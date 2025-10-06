@@ -1,4 +1,4 @@
-import { getLogger } from '../lib/logger.js';
+import { getLogger } from "../lib/logger.js";
 
 const DATE_PATTERN = /^\d{4}\/\d{2}\/\d{2}$/;
 
@@ -23,7 +23,7 @@ export function parseRelatedUrls(input: string): string[] {
 
   unique.forEach((url) => {
     if (!/^https?:\/\//i.test(url)) {
-      logger.error('Invalid URL in relatedUrls', { url });
+      logger.error("Invalid URL in relatedUrls", { url });
       throw new Error(`Invalid URL in relatedUrls: ${url}`);
     }
   });
@@ -56,7 +56,7 @@ export function parseSheetDate(value: string): string {
     throw new Error(`Date does not match yyyy/mm/dd format: ${value}`);
   }
 
-  const [year, month, day] = value.split('/').map((segment) => Number.parseInt(segment, 10));
+  const [year, month, day] = value.split("/").map((segment) => Number.parseInt(segment, 10));
 
   if (month < 1 || month > 12) {
     throw new Error(`Month out of range in date: ${value}`);
@@ -75,9 +75,9 @@ export function parseSheetDate(value: string): string {
     throw new Error(`Invalid calendar date: ${value}`);
   }
 
-  return `${year.toString().padStart(4, '0')}-${month.toString().padStart(2, '0')}-${day
+  return `${year.toString().padStart(4, "0")}-${month.toString().padStart(2, "0")}-${day
     .toString()
-    .padStart(2, '0')}`;
+    .padStart(2, "0")}`;
 }
 
 export interface SortableExhibitionLike {

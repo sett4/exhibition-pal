@@ -10,13 +10,13 @@ export default defineConfig({
     coverage: {
       reporter: ["text", "html"],
       include: ["src/**/*.ts"],
-      exclude: ["src/**/*.11ty.ts"]
-    }
+      exclude: ["src/**/*.11ty.ts"],
+    },
   },
   resolve: {
     alias: {
-      "@": resolve(__dirname, "src")
+      "@": resolve(__dirname, "src"),
     },
-    extensions: [".ts", ".tsx", ".js", ".mjs", ".cjs", ".json", ".11ty.ts"]
-  }
+    extensions: [".ts", ".tsx", ".js", ".mjs", ".cjs", ".json", ".11ty.ts"],
+  },
 });

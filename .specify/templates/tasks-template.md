@@ -4,6 +4,7 @@
 **Prerequisites**: plan.md (required), research.md, data-model.md, contracts/
 
 ## Execution Flow (main)
+
 ```
 1. Load plan.md from feature directory
    → If not found: ERROR "No implementation plan found"
@@ -33,16 +34,19 @@
 ```
 
 ## Format: `[ID] [P?] Description`
+
 - **[P]**: Can run in parallel (different files, no dependencies)
 - Include exact file paths in descriptions
 
 ## Path Conventions
+
 - **Single project**: `src/`, `tests/` at repository root
 - **Web app**: `backend/src/`, `frontend/src/`
 - **Mobile**: `api/src/`, `ios/src/` or `android/src/`
 - Paths shown below assume single project - adjust based on plan.md structure
 
 ## Phase 3.1: Setup
+
 - [ ] T001 Create project structure per implementation plan (Eleventy input, includes/, data/ directories)
 - [ ] T002 Initialize Node.js 24 project with Eleventy dependencies and npm scripts
 - [ ] T003 [P] Configure Winston logging utility in `src/lib/logger.js`
@@ -50,12 +54,15 @@
 - [ ] T005 [P] Add Prettier config and automation hook to run on completion
 
 ## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
+
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
+
 - [ ] T006 [P] Vitest contract test for Google Sheets fetcher in `tests/contract/googleSheets.spec.js`
 - [ ] T007 [P] Vitest integration test for Eleventy data collections in `tests/integration/dataCollections.spec.js`
 - [ ] T008 [P] Vitest integration test ensuring Winston logs are emitted during build in `tests/integration/logging.spec.js`
 
 ## Phase 3.3: Core Implementation (ONLY after tests are failing)
+
 - [ ] T009 [P] Implement Google Sheets data fetcher in `src/data/googleSheets.js` with OAuth 2.0 refresh token support
 - [ ] T010 [P] Implement Eleventy data collection using fetched spreadsheet content in `src/data/collections.js`
 - [ ] T011 [P] Wire Winston logger into Eleventy build lifecycle
@@ -64,12 +71,14 @@
 - [ ] T014 Ensure logs redact sensitive fields before emission
 
 ## Phase 3.4: Integration
+
 - [ ] T015 Configure Cloudflare Pages deployment settings (`.clpr` or `wrangler.toml` as applicable)
 - [ ] T016 Provision environment variables for OAuth refresh token in deployment pipeline
 - [ ] T017 Define `_ redirects`/`_headers` files for Cloudflare Pages output
 - [ ] T018 Validate build output structure matches Cloudflare Pages expectations
 
 ## Phase 3.5: Polish
+
 - [ ] T019 [P] Add Vitest unit tests for data mapping utilities in `tests/unit/mappers.spec.js`
 - [ ] T020 Measure Eleventy build performance and log metrics
 - [ ] T021 [P] Update deployment/runbook docs for Cloudflare Pages and logging expectations
@@ -77,12 +86,14 @@
 - [ ] T023 Verify Prettier auto-run hooks execute on completion
 
 ## Dependencies
+
 - Tests (T006-T008) must fail before implementation (T009-T014).
 - T009 and T010 must complete before integration tasks (T015-T018).
 - T016 blocks T018.
 - Implementation before polish (T019-T023).
 
 ## Parallel Example
+
 ```
 # Launch T006-T008 together:
 Task: "Vitest contract test for Google Sheets fetcher in tests/contract/googleSheets.spec.js"
@@ -91,6 +102,7 @@ Task: "Vitest integration test ensuring Winston logs are emitted during build in
 ```
 
 ## Notes
+
 - [P] tasks = different files, no dependencies
 - Verify tests fail before implementing
 - Commit after each task
@@ -98,16 +110,15 @@ Task: "Vitest integration test ensuring Winston logs are emitted during build in
 - Stakeholder-facing documentation and updates must be prepared in Japanese per the constitution.
 
 ## Task Generation Rules
-*Applied during main() execution*
+
+_Applied during main() execution_
 
 1. **From Contracts**:
    - Each contract file → contract test task [P]
    - Each endpoint → implementation task
-   
 2. **From Data Model**:
    - Each entity → model creation task [P]
    - Relationships → service layer tasks
-   
 3. **From User Stories**:
    - Each story → integration test [P]
    - Quickstart scenarios → validation tasks
@@ -117,7 +128,8 @@ Task: "Vitest integration test ensuring Winston logs are emitted during build in
    - Dependencies block parallel execution
 
 ## Validation Checklist
-*GATE: Checked by main() before returning*
+
+_GATE: Checked by main() before returning_
 
 - [ ] All contracts have corresponding tests
 - [ ] All entities have model tasks

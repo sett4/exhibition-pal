@@ -66,11 +66,13 @@
    - ESLint、Prettierがエラーなく完了すること。
 
 5. 型チェック（NodeNextエイリアス設定が整備済みの場合）
+
    ```bash
    npm run typecheck
    ```
 
    - Eleventyテンプレートも含めTypeScriptエラーが出ないこと。_現在の設定ではパスエイリアス解決の追加調整が必要です。_
+
 6. Cloudflare Pagesプレビュー
    - `npm run build` 後に `wrangler pages dev` などでプレビューし、環境変数が適用されること。
    - `public/_headers` と `public/_redirects` の挙動を確認する。

@@ -1,29 +1,29 @@
-import { fetchSheetValues } from './googleSheets.js';
+import { fetchSheetValues } from "./googleSheets.js";
 import {
   parseRelatedUrls,
   parseSheetDate,
   sortByStartDateDescIdAsc,
   toNullableString,
-} from './transformers.js';
-import type { Exhibition, ExhibitionsData } from './types.js';
-import { getLogger, startPerformanceTimer } from '../lib/logger.js';
+} from "./transformers.js";
+import type { Exhibition, ExhibitionsData } from "./types.js";
+import { getLogger, startPerformanceTimer } from "../lib/logger.js";
 
 const EXPECTED_HEADERS: readonly string[] = [
-  '展示会概要URL',
-  '作品一覧ファイルリンク',
-  '展示会ID',
-  '開始日',
-  '終了日',
-  '場所',
-  '展示会名',
-  '概要',
-  '開催経緯',
-  '見どころ',
-  '展示会の詳細説明（Google Drive URL）',
-  '展示会関連のURLリスト',
-  '音声化（stand fm url）',
-  '記事化（Note url）',
-  'image',
+  "展示会概要URL",
+  "作品一覧ファイルリンク",
+  "展示会ID",
+  "開始日",
+  "終了日",
+  "場所",
+  "展示会名",
+  "概要",
+  "開催経緯",
+  "見どころ",
+  "展示会の詳細説明（Google Drive URL）",
+  "展示会関連のURLリスト",
+  "音声化（stand fm url）",
+  "記事化（Note url）",
+  "image",
 ];
 
 const COLUMN_INDEX = {
@@ -74,7 +74,7 @@ function ensureHeaderMatches(header: string[]): void {
  * @returns Trimmed string representing the cell contents.
  */
 function getCell(row: string[], key: ColumnKey): string {
-  const value = row[COLUMN_INDEX[key]] ?? '';
+  const value = row[COLUMN_INDEX[key]] ?? "";
   return String(value).trim();
 }
 
@@ -98,37 +98,37 @@ function validateChronology(start: string, end: string): void {
 function mapRowToExhibition(row: string[]): Exhibition | null {
   const logger = getLogger();
 
-  const id = getCell(row, 'id');
-  const name = getCell(row, 'name');
-  const venue = getCell(row, 'venue');
-  const summary = getCell(row, 'summary');
-  const story = getCell(row, 'story');
-  const highlights = getCell(row, 'highlights');
-  const overviewUrl = getCell(row, 'overviewUrl');
-  const detailUrl = getCell(row, 'detailUrl');
+  const id = getCell(row, "id");
+  const name = getCell(row, "name");
+  const venue = getCell(row, "venue");
+  const summary = getCell(row, "summary");
+  const story = getCell(row, "story");
+  const highlights = getCell(row, "highlights");
+  const overviewUrl = getCell(row, "overviewUrl");
+  const detailUrl = getCell(row, "detailUrl");
 
   const requiredEntries: Array<[string, string]> = [
-    ['id', id],
-    ['name', name],
-    ['venue', venue],
-    ['summary', summary],
-    ['story', story],
-    ['highlights', highlights],
-    ['overviewUrl', overviewUrl],
-    ['detailUrl', detailUrl],
+    ["id", id],
+    ["name", name],
+    ["venue", venue],
+    ["summary", summary],
+    ["story", story],
+    ["highlights", highlights],
+    ["overviewUrl", overviewUrl],
+    ["detailUrl", detailUrl],
   ];
 
   const missing = requiredEntries.filter(([, value]) => value.length === 0);
   if (missing.length > 0) {
-    logger.warn('Skipping row with missing required fields', {
+    logger.warn("Skipping row with missing required fields", {
       id,
       missingFields: missing.map(([field]) => field),
     });
     return null;
   }
 
-  const startDate = parseSheetDate(getCell(row, 'startDate'));
-  const endDate = parseSheetDate(getCell(row, 'endDate'));
+  const startDate = parseSheetDate(getCell(row, "startDate"));
+  const endDate = parseSheetDate(getCell(row, "endDate"));
   validateChronology(startDate, endDate);
 
   const exhibition: Exhibition = {
@@ -142,11 +142,11 @@ function mapRowToExhibition(row: string[]): Exhibition | null {
     highlights,
     detailUrl,
     overviewUrl,
-    artworkListDriveUrl: toNullableString(getCell(row, 'artworkListDriveUrl')),
-    relatedUrls: parseRelatedUrls(getCell(row, 'relatedUrls')),
-    standfmUrl: toNullableString(getCell(row, 'standfmUrl')),
-    noteUrl: toNullableString(getCell(row, 'noteUrl')),
-    imageUrl: toNullableString(getCell(row, 'imageUrl')),
+    artworkListDriveUrl: toNullableString(getCell(row, "artworkListDriveUrl")),
+    relatedUrls: parseRelatedUrls(getCell(row, "relatedUrls")),
+    standfmUrl: toNullableString(getCell(row, "standfmUrl")),
+    noteUrl: toNullableString(getCell(row, "noteUrl")),
+    imageUrl: toNullableString(getCell(row, "imageUrl")),
   };
 
   return exhibition;
@@ -176,7 +176,7 @@ export function buildExhibitionsData(
         exhibitions.push(exhibition);
       }
     } catch (error) {
-      logger.error('Failed to transform exhibition row', {
+      logger.error("Failed to transform exhibition row", {
         error,
         rowNumber: index + 2,
       });
@@ -209,7 +209,7 @@ export async function loadExhibitionsData(
   }
 
   cachedExhibitionsPromise = (async () => {
-    const totalTimer = startPerformanceTimer('exhibitions.load.total', {
+    const totalTimer = startPerformanceTimer("exhibitions.load.total", {
       forceReload: options.force === true,
     });
 
@@ -219,7 +219,7 @@ export async function loadExhibitionsData(
     let caughtError: unknown | null = null;
 
     try {
-      const fetchTimer = startPerformanceTimer('exhibitions.load.fetch');
+      const fetchTimer = startPerformanceTimer("exhibitions.load.fetch");
       try {
         const sheet = await fetchSheetValues();
         header = sheet.header;
@@ -228,7 +228,7 @@ export async function loadExhibitionsData(
         fetchTimer({ rowsFetched: rows.length });
       }
 
-      const transformTimer = startPerformanceTimer('exhibitions.load.transform');
+      const transformTimer = startPerformanceTimer("exhibitions.load.transform");
       try {
         const data = buildExhibitionsData(header, rows);
         transformedCount = data.exhibitions.length;

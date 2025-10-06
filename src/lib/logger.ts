@@ -1,5 +1,5 @@
-import { performance } from 'node:perf_hooks';
-import { createLogger, format, transports } from 'winston';
+import { performance } from "node:perf_hooks";
+import { createLogger, format, transports } from "winston";
 
 const { combine, timestamp, splat, printf, errors } = format;
 
@@ -19,10 +19,10 @@ const jsonFormatter = printf(({ level, message, timestamp: ts, stack, ...meta })
 });
 
 const loggerInstance = createLogger({
-  level: process.env.LOG_LEVEL || 'info',
+  level: process.env.LOG_LEVEL || "info",
   format: combine(errors({ stack: true }), splat(), timestamp(), jsonFormatter),
-  defaultMeta: { service: 'eleventy-build' },
-  transports: [new transports.Console({ stderrLevels: ['error', 'warn'] })],
+  defaultMeta: { service: "eleventy-build" },
+  transports: [new transports.Console({ stderrLevels: ["error", "warn"] })],
 });
 
 export type BuildLogger = typeof loggerInstance;
@@ -51,7 +51,7 @@ export function startPerformanceTimer(
 
   return (metadata: Record<string, unknown> = {}) => {
     const durationMs = Number((performance.now() - start).toFixed(3));
-    getLogger().info('performance metric', {
+    getLogger().info("performance metric", {
       metric,
       durationMs,
       ...baseMeta,
@@ -68,12 +68,12 @@ let eleventyBuildTimer: PerformanceTimer | null = null;
  * @param details Optional metadata to capture alongside the event.
  */
 export function logBuildLifecycle(phase: string, details?: Record<string, unknown>): void {
-  if (phase === 'eleventy:before') {
-    eleventyBuildTimer = startPerformanceTimer('eleventy.build');
-  } else if (phase === 'eleventy:after' && eleventyBuildTimer) {
+  if (phase === "eleventy:before") {
+    eleventyBuildTimer = startPerformanceTimer("eleventy.build");
+  } else if (phase === "eleventy:after" && eleventyBuildTimer) {
     eleventyBuildTimer({ phase, ...details });
     eleventyBuildTimer = null;
   }
 
-  getLogger().info('eleventy lifecycle event', { phase, ...details });
+  getLogger().info("eleventy lifecycle event", { phase, ...details });
 }

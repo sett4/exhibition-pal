@@ -1,8 +1,8 @@
-import { auth, sheets_v4 } from '@googleapis/sheets';
-import type { OAuth2Client } from 'google-auth-library';
-import type { SheetFetchResult } from './types.js';
-import { loadGoogleSheetsConfig } from '../config/env.js';
-import { getLogger } from '../lib/logger.js';
+import { auth, sheets_v4 } from "@googleapis/sheets";
+import type { OAuth2Client } from "google-auth-library";
+import type { SheetFetchResult } from "./types.js";
+import { loadGoogleSheetsConfig } from "../config/env.js";
+import { getLogger } from "../lib/logger.js";
 
 const MAX_ATTEMPTS = 3;
 const BACKOFF_BASE_MS = 500;
@@ -62,22 +62,22 @@ export async function fetchSheetValues(attempt = 1): Promise<SheetFetchResult> {
 
     const values = response.data.values ?? [];
     if (values.length === 0) {
-      throw new Error('Google Sheets returned no data for configured range');
+      throw new Error("Google Sheets returned no data for configured range");
     }
 
     const [header, ...rows] = values;
     return {
-      header: header.map((cell) => String(cell ?? '').trim()),
-      rows: rows.map((row) => row.map((cell) => String(cell ?? '').trim())),
+      header: header.map((cell) => String(cell ?? "").trim()),
+      rows: rows.map((row) => row.map((cell) => String(cell ?? "").trim())),
     };
   } catch (error) {
     if (attempt >= MAX_ATTEMPTS) {
-      logger.error('Failed to fetch Google Sheets values', { err: error, attempt });
+      logger.error("Failed to fetch Google Sheets values", { err: error, attempt });
       throw error;
     }
 
     const backoff = BACKOFF_BASE_MS * 2 ** (attempt - 1);
-    logger.warn('Retrying Google Sheets fetch after transient error', { attempt, backoff });
+    logger.warn("Retrying Google Sheets fetch after transient error", { attempt, backoff });
     await delay(backoff);
     return fetchSheetValues(attempt + 1);
   }

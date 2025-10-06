@@ -1,4 +1,4 @@
-import type { Exhibition } from '../../../data/types.js';
+import type { Exhibition } from "../../../data/types.js";
 
 interface DetailRenderContext {
   exhibition: Exhibition;
@@ -15,7 +15,7 @@ export default class ExhibitionDetailTemplate {
   data() {
     return {
       permalink: (data: DetailRenderContext) => `exhibitions/${data.exhibition.id}/index.html`,
-      layout: 'layouts/base.njk',
+      layout: "layouts/base.njk",
     };
   }
 
@@ -27,25 +27,25 @@ export default class ExhibitionDetailTemplate {
   render({ exhibition, navigation }: DetailRenderContext): string {
     const relatedLinks = exhibition.relatedUrls
       .map((url) => `<li><a href="${url}" rel="noopener" target="_blank">関連リンク</a></li>`)
-      .join('');
+      .join("");
 
     const standfmSection = exhibition.standfmUrl
       ? `<section class="standfm-section"><h2>stand.fm</h2><a href="${exhibition.standfmUrl}" rel="noopener" target="_blank">音声で聴く</a></section>`
-      : '';
+      : "";
 
     const artworkLink = exhibition.artworkListDriveUrl
       ? `<a href="${exhibition.artworkListDriveUrl}" rel="noopener" target="_blank">作品一覧を開く</a>`
-      : '';
+      : "";
 
-    const displayStartDate = exhibition.startDate.replaceAll('-', '/');
-    const displayEndDate = exhibition.endDate.replaceAll('-', '/');
+    const displayStartDate = exhibition.startDate.replaceAll("-", "/");
+    const displayEndDate = exhibition.endDate.replaceAll("-", "/");
 
     const navigationLinks = navigation
       .map(
         (item) =>
-          `<li${item.id === exhibition.id ? ' aria-current="page"' : ''}><a href="/exhibitions/${item.id}/">${item.name}</a></li>`
+          `<li${item.id === exhibition.id ? ' aria-current="page"' : ""}><a href="/exhibitions/${item.id}/">${item.name}</a></li>`
       )
-      .join('');
+      .join("");
 
     return `<!DOCTYPE html>
 <html lang="ja">
@@ -81,7 +81,7 @@ export default class ExhibitionDetailTemplate {
         <p><a href="${exhibition.detailUrl}" rel="noopener" target="_blank">詳細説明を読む</a></p>
         <p><a href="${exhibition.overviewUrl}" rel="noopener" target="_blank">公式サイトへ</a></p>
         ${artworkLink}
-        ${exhibition.noteUrl ? `<a href="${exhibition.noteUrl}" class="note-link" rel="noopener" target="_blank">Note記事</a>` : ''}
+        ${exhibition.noteUrl ? `<a href="${exhibition.noteUrl}" class="note-link" rel="noopener" target="_blank">Note記事</a>` : ""}
       </section>
       ${standfmSection}
     </article>

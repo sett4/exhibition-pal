@@ -1,4 +1,4 @@
-import { config as loadEnvFromFile } from 'dotenv';
+import { config as loadEnvFromFile } from "dotenv";
 
 export interface GoogleSheetsConfig {
   refreshToken: string;
@@ -11,8 +11,8 @@ export interface GoogleSheetsConfig {
 
 let cachedConfig: GoogleSheetsConfig | null = null;
 
-const DEFAULT_RANGE = 'Exhibitions!A:O';
-const DEFAULT_TOKEN_URL = 'https://oauth2.googleapis.com/token';
+const DEFAULT_RANGE = "Exhibitions!A:O";
+const DEFAULT_TOKEN_URL = "https://oauth2.googleapis.com/token";
 
 /**
  * Reads a required environment variable and returns the trimmed value.
@@ -38,8 +38,8 @@ export function loadGoogleSheetsConfig(): GoogleSheetsConfig {
 
   loadEnvFromFile();
 
-  const refreshToken = requireEnv('GOOGLE_SHEETS_REFRESH_TOKEN');
-  const spreadsheetId = requireEnv('GOOGLE_SHEETS_SPREADSHEET_ID');
+  const refreshToken = requireEnv("GOOGLE_SHEETS_REFRESH_TOKEN");
+  const spreadsheetId = requireEnv("GOOGLE_SHEETS_SPREADSHEET_ID");
   const range = process.env.GOOGLE_SHEETS_RANGE?.trim() || DEFAULT_RANGE;
   const clientId = process.env.GOOGLE_SHEETS_CLIENT_ID?.trim();
   const clientSecret = process.env.GOOGLE_SHEETS_CLIENT_SECRET?.trim();

@@ -17,39 +17,45 @@ Templates requiring updates:
 Follow-up TODOs:
 - None
 -->
+
 # Exhibition Pal Constitution
 
 ## Core Principles
 
 ### Eleventy-First Static Generation
+
 - All site experiences MUST be authored as Eleventy templates, layouts, shortcodes, and data files; no alternative SSG or server frameworks are permitted.
 - Builds MUST run on Node.js 24 LTS locally, in CI, and on Cloudflare Pages to guarantee consistent rendering output.
 - Progressive enhancement MAY add client-side behavior, but the canonical content MUST remain fully static and accessible without JavaScript.
-**Rationale:** Locking on Eleventy ensures predictable static builds tailored to Cloudflare Pages while keeping delivery purely static-first.
+  **Rationale:** Locking on Eleventy ensures predictable static builds tailored to Cloudflare Pages while keeping delivery purely static-first.
 
 ### Cloudflare Pages Delivery Discipline
+
 - The deployment target MUST be Cloudflare Pages with `_site/` (or configured Eleventy output) uploaded directly; other hosting paths require constitutional amendment.
 - Branch previews and production deploys MUST rely on Cloudflare Pages workflows, including environment bindings and build commands defined in project config.
 - `_headers`, `_redirects`, and asset caching policies MUST be managed in the repository to align with Cloudflare edge behavior.
-**Rationale:** Codifying Cloudflare Pages keeps delivery frictionless and guarantees shared expectations for previews, routing, and caching.
+  **Rationale:** Codifying Cloudflare Pages keeps delivery frictionless and guarantees shared expectations for previews, routing, and caching.
 
 ### Google Sheets Data Integrity
+
 - External data MUST be sourced through the Google Sheets API using OAuth 2.0 with a refresh token read from environment variables at runtime/build time.
 - Credentials and refresh tokens MUST never be committed; they MUST be injected via `.env` files or Cloudflare Pages environment variables with least-privilege scopes.
 - Data access routines MUST implement retry/backoff and graceful degradation to keep builds stable when the Sheets API is temporarily unavailable.
-**Rationale:** Enforcing a single integration path keeps content authoritative, protects secrets, and maintains reliable build pipelines.
+  **Rationale:** Enforcing a single integration path keeps content authoritative, protects secrets, and maintains reliable build pipelines.
 
 ### Structured Observability with Winston
+
 - All runtime and build-time logging MUST flow through Winston with a shared configuration module that emits structured JSON by default.
 - Sensitive fields (tokens, PII) MUST be redacted before logging, and log levels MUST be respected (`error`, `warn`, `info`, `debug`).
 - Logging configuration MUST support Cloudflare Pages functions or workers if introduced, ensuring consistent formatting across environments.
-**Rationale:** A single structured logger improves troubleshooting across static builds and any supporting serverless code.
+  **Rationale:** A single structured logger improves troubleshooting across static builds and any supporting serverless code.
 
 ### Quality Automation with Vitest, ESLint, Prettier
+
 - Automated tests MUST be authored and executed with Vitest; new features cannot merge without relevant failing tests before implementation and passing tests afterward.
 - ESLint MUST gate commits/CI with a ruleset covering Eleventy, Google API usage, and Cloudflare constraints.
 - Prettier MUST run automatically at the end of each working session (local or CI) to enforce consistent formatting before artifacts leave the workstation.
-**Rationale:** Standardized tooling creates fast feedback loops and keeps the codebase consistent across contributors.
+  **Rationale:** Standardized tooling creates fast feedback loops and keeps the codebase consistent across contributors.
 
 ## Implementation Standards
 
