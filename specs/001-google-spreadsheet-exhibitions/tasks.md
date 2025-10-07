@@ -54,8 +54,8 @@
 - [x] T012 `src/data/googleSheets.ts` にGoogle Sheets APIクライアントを実装（dotenv読み込み・指数バックオフ・ログ出力）
 - [x] T013 `src/data/exhibitions.ts` で取得データのバリデーションと変換を実装（`yyyy/mm/dd`検証・`artworkListDriveUrl`整形・スタンドFM制御フラグ）
 - [x] T014 `src/data/exhibitions.11tydata.ts` を作成し、Eleventy Global Dataに`ExhibitionsData`を供給する
-- [x] T015 `src/pages/exhibitions/index.11ty.ts` に一覧テンプレートを実装（開始日降順・ID昇順・概要/画像/Noteリンク表記）
-- [x] T016 `src/pages/exhibitions/[exhibitionId]/index.11ty.ts` に詳細テンプレートを実装（見どころ・開催経緯・各URL・stand.fm条件表示）
+- [x] T015 `src/pages/exhibitions/index.njk` に一覧テンプレートを実装（開始日降順・ID昇順・概要/画像/Noteリンク表記）
+- [x] T016 `src/pages/exhibitions/[exhibitionId]/index.njk` に詳細テンプレートを実装（見どころ・開催経緯・各URL・stand.fm条件表示）
 
 ## Phase 3.4: Integration
 

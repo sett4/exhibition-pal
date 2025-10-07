@@ -34,7 +34,7 @@ export default function eleventyConfig(config) {
     logger.info("Eleventy build completed", { outputDir: "_site" });
   });
 
-  config.addGlobalData("exhibitionsData", loadExhibitionsData());
+  config.addGlobalData("exhibitionsData", () => loadExhibitionsData());
 
   return {
     dir: {
