@@ -4,7 +4,6 @@ import { getLogger, logBuildLifecycle } from "./src/lib/logger.js";
 
 const projectRoot = resolve(process.cwd());
 const compiledSourceDir = resolve(projectRoot, "dist", "src");
-
 const isoToSlashDate = (value) => {
   if (typeof value !== "string") {
     return "";
@@ -22,7 +21,11 @@ export default function eleventyConfig(config) {
   const logger = getLogger();
 
   config.addPassthroughCopy({ public: "/" });
+  config.addPassthroughCopy({ "dist/assets": "assets" });
   config.addWatchTarget("src");
+  config.addWatchTarget("src/styles");
+  config.addWatchTarget("dist/assets");
+  config.addWatchTarget("dist/assets/styles/exhibitions.css");
   config.addWatchTarget("public");
 
   config.on("eleventy.before", () => {
@@ -39,9 +42,8 @@ export default function eleventyConfig(config) {
   return {
     dir: {
       input: resolve(projectRoot, "src", "pages"),
-      data: resolve(compiledSourceDir, "_data"),
-      includes: resolve(projectRoot, "src", "includes"),
-      layouts: resolve(projectRoot, "src", "layouts"),
+      data: "_data",
+      includes: "_includes",
       output: "_site",
     },
     templateFormats: ["njk", "md"],

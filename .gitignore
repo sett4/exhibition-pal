@@ -151,3 +151,6 @@ vite.config.ts.timestamp-*
 
 ## Eleventy
 _site/
+
+## Templates
+.tmp/write-mobile-blog-template-2023-11-27-04-59-51-utc/

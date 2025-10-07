@@ -5,105 +5,29 @@ pagination:
   alias: exhibition
 permalink: "/exhibitions/{{ exhibition.id }}/"
 ---
-{% macro formatIsoDate(value) -%}
-  {% if value %}{{ value | replace('-', '/') }}{% endif %}
-{%- endmacro %}
-
-{% if not exhibition %}
-  <main class="exhibition-detail">
-    <p>展示会情報を読み込めませんでした。</p>
-  </main>
+{% extends "layouts/exhibition-detail.njk" %}
+{% set sectionsById = exhibitionsData.sectionsById or {} %}
+{% set sections = sectionsById[exhibition.id] or [] %}
+{% if sections | length == 0 %}
+  {% set sections = [
+    {
+      "slug": "overview",
+      "title": "展示情報",
+      "body": "この展示の詳細は準備中です。公式サイトで最新情報をご確認ください。",
+      "items": []
+    }
+  ] %}
+{% endif %}
+{% if exhibition.heroImageUrl %}
+  {% set heroMedia = {
+    "variant": "image",
+    "src": exhibition.heroImageUrl,
+    "alt": exhibition.title
+  } %}
 {% else %}
-  <main class="exhibition-detail" aria-labelledby="exhibition-detail-heading">
-    <header class="exhibition-detail__header">
-      <a class="exhibition-detail__back" href="/exhibitions/">一覧に戻る</a>
-      <h1 id="exhibition-detail-heading" class="exhibition-detail__heading">{{ exhibition.name }}</h1>
-      <dl class="exhibition-detail__meta">
-        <div class="exhibition-detail__meta-row">
-          <dt class="exhibition-detail__meta-term">会期</dt>
-          <dd class="exhibition-detail__meta-definition exhibition-detail__dates">
-            {{ formatIsoDate(exhibition.startDate) }} 〜 {{ formatIsoDate(exhibition.endDate) }}
-          </dd>
-        </div>
-        <div class="exhibition-detail__meta-row">
-          <dt class="exhibition-detail__meta-term">会場</dt>
-          <dd class="exhibition-detail__meta-definition exhibition-detail__venue">{{ exhibition.venue }}</dd>
-        </div>
-      </dl>
-    </header>
-
-    {% if exhibition.imageUrl %}
-      <figure class="exhibition-detail__image">
-        <img src="{{ exhibition.imageUrl }}" alt="{{ exhibition.name }}の展示画像" loading="lazy" />
-      </figure>
-    {% endif %}
-
-    {% if exhibition.summary %}
-      <section class="exhibition-detail__section exhibition-detail__summary">
-        <h2 class="exhibition-detail__section-title">概要</h2>
-        <p>{{ exhibition.summary }}</p>
-      </section>
-    {% endif %}
-
-    {% if exhibition.highlights %}
-      <section class="exhibition-detail__section exhibition-detail__highlights">
-        <h2 class="exhibition-detail__section-title">見どころ</h2>
-        <p>{{ exhibition.highlights }}</p>
-      </section>
-    {% endif %}
-
-    {% if exhibition.story %}
-      <section class="exhibition-detail__section exhibition-detail__story">
-        <h2 class="exhibition-detail__section-title">開催経緯</h2>
-        <p>{{ exhibition.story }}</p>
-      </section>
-    {% endif %}
-
-    <section class="exhibition-detail__section exhibition-detail__resources">
-      <h2 class="exhibition-detail__section-title">関連情報</h2>
-      <ul class="exhibition-detail__resource-links">
-        <li>
-          <a class="exhibition-detail__overview-link" href="{{ exhibition.overviewUrl }}" target="_blank" rel="noopener noreferrer">公式サイトを見る</a>
-        </li>
-        <li>
-          <a class="exhibition-detail__detail-link" href="{{ exhibition.detailUrl }}" target="_blank" rel="noopener noreferrer">詳細説明を読む</a>
-        </li>
-        {% if exhibition.artworkListDriveUrl %}
-          <li>
-            <a class="exhibition-detail__artwork-link" href="{{ exhibition.artworkListDriveUrl }}" target="_blank" rel="noopener noreferrer">作品一覧を確認する</a>
-          </li>
-        {% endif %}
-        {% if exhibition.noteUrl %}
-          <li>
-            <a class="exhibition-detail__note-link" href="{{ exhibition.noteUrl }}" target="_blank" rel="noopener noreferrer">Note記事を読む</a>
-          </li>
-        {% endif %}
-      </ul>
-    </section>
-
-    {% if exhibition.standfmUrl %}
-      <section class="exhibition-detail__section exhibition-detail__standfm">
-        <h2 class="exhibition-detail__section-title">音声で聞く</h2>
-        <a class="exhibition-detail__standfm-link" href="{{ exhibition.standfmUrl }}" target="_blank" rel="noopener noreferrer">stand.fmで聞く</a>
-      </section>
-    {% endif %}
-
-    {% if exhibition.relatedUrls and exhibition.relatedUrls | length %}
-      <section class="exhibition-detail__section exhibition-detail__related">
-        <h2 class="exhibition-detail__section-title">関連リンク</h2>
-        <ul class="exhibition-detail__related-list">
-          {% for url in exhibition.relatedUrls %}
-            <li>
-              <a href="{{ url }}" target="_blank" rel="noopener noreferrer">{{ url }}</a>
-            </li>
-          {% endfor %}
-        </ul>
-      </section>
-    {% else %}
-      <section class="exhibition-detail__section exhibition-detail__related">
-        <h2 class="exhibition-detail__section-title">関連リンク</h2>
-        <p class="exhibition-detail__related-empty">関連リンクはありません。</p>
-      </section>
-    {% endif %}
-  </main>
+  {% set heroMedia = {
+    "variant": "placeholder",
+    "label": exhibition.title | slice(0, 2),
+    "backgroundClass": "hero-gradient"
+  } %}
 {% endif %}

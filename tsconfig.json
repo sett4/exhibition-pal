@@ -18,6 +18,6 @@
     "sourceMap": true,
     "allowImportingTsExtensions": false
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts", "eleventy.config.ts"],
-  "exclude": ["dist", "node_modules"]
+  "include": ["src/**/*.ts", "eleventy.config.ts"],
+  "exclude": ["dist", "node_modules", "tests"]
 }

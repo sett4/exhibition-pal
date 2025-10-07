@@ -3,8 +3,8 @@ import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { buildExhibitionsData } from "../../src/_data/exhibitions.js";
-import type { Exhibition } from "../../src/_data/types.js";
+import { buildExhibitionsData } from "../../src/_data/transformers.js";
+import type { ExhibitionViewModel } from "../../src/_data/types.js";
 
 describe("Global data schema contract", () => {
   const fixtureDir = dirname(fileURLToPath(import.meta.url));
@@ -13,29 +13,44 @@ describe("Global data schema contract", () => {
   const [header, ...rows] = parse(csvContent, { skipEmptyLines: true }) as string[][];
 
   it("generates ExhibitionsData with ISO timestamps and validated records", () => {
-    const data = buildExhibitionsData(header, rows);
+    const now = new Date("2025-10-05T12:00:00Z");
+    const { contents } = buildExhibitionsData(header, rows, { now });
+
+    const sectionsById = Object.fromEntries(
+      contents.map(({ exhibition, sections }) => [exhibition.id, sections])
+    );
+
+    const data = {
+      exhibitions: contents.map((content) => content.exhibition),
+      sectionsById,
+      latestUpdate: now.toISOString(),
+      createdAt: now.toISOString(),
+    };
 
     expect(Array.isArray(data.exhibitions)).toBe(true);
     expect(data.exhibitions.length).toBeGreaterThan(0);
 
     const sample = data.exhibitions[0];
     expect(validateExhibition(sample)).toBe(true);
+    expect(Array.isArray(data.sectionsById[sample.id])).toBe(true);
 
     expect(() => new Date(data.latestUpdate).toISOString()).not.toThrow();
     expect(() => new Date(data.createdAt).toISOString()).not.toThrow();
   });
 });
 
-function validateExhibition(entry: Exhibition): boolean {
+function validateExhibition(entry: ExhibitionViewModel): boolean {
   expect(typeof entry.id).toBe("string");
-  expect(typeof entry.name).toBe("string");
+  expect(typeof entry.title).toBe("string");
+  expect(typeof entry.summary).toBe("string");
   expect(typeof entry.venue).toBe("string");
-  expect(entry.relatedUrls.every((url) => url.startsWith("http"))).toBe(true);
+  expect(typeof entry.ctaUrl).toBe("string");
+  expect(entry.status).toMatch(/past|current|upcoming/);
+  expect(
+    entry.relatedUrls.every((link) => typeof link.label === "string" && link.url.startsWith("http"))
+  ).toBe(true);
   expect(hasIsoDateShape(entry.startDate)).toBe(true);
   expect(hasIsoDateShape(entry.endDate)).toBe(true);
-  expect(entry.artworkListDriveUrl === null || typeof entry.artworkListDriveUrl === "string").toBe(
-    true
-  );
   return true;
 }
 

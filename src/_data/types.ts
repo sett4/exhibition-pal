@@ -1,23 +1,29 @@
-export interface Exhibition {
-  id: string;
-  name: string;
-  venue: string;
-  startDate: string; // ISO yyyy-mm-dd
-  endDate: string; // ISO yyyy-mm-dd
-  summary: string;
-  story: string;
-  highlights: string;
-  detailUrl: string;
-  overviewUrl: string;
-  artworkListDriveUrl: string | null;
-  relatedUrls: string[];
-  standfmUrl: string | null;
-  noteUrl: string | null;
-  imageUrl: string | null;
-}
+export { buildPageSections, resolveHeroMedia, SECTION_SLUGS } from "./entities/pageSection.js";
+export type {
+  HeroMedia,
+  PageSection,
+  PageSectionSource,
+  SectionItem,
+} from "./entities/pageSection.js";
+
+export {
+  createDurationLabel,
+  createExhibitionViewModel,
+  deriveStatus,
+  toStatusLabel,
+} from "./entities/exhibition.js";
+export type {
+  ExhibitionSource,
+  ExhibitionStatus,
+  ExhibitionViewModel,
+} from "./entities/exhibition.js";
+
+import type { ExhibitionViewModel } from "./entities/exhibition.js";
+import type { PageSection } from "./entities/pageSection.js";
 
 export interface ExhibitionsData {
-  exhibitions: Exhibition[];
+  exhibitions: ExhibitionViewModel[];
+  sectionsById: Record<string, PageSection[]>;
   latestUpdate: string; // ISO timestamp representing source retrieval time
   createdAt: string; // ISO timestamp representing build time
 }

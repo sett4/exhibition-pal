@@ -1,60 +1,53 @@
 ---
-title: 展示会一覧
+title: Exhibitions
 ---
-{% macro formatIsoDate(value) -%}
-  {% if value %}{{ value | replace('-', '/') }}{% endif %}
-{%- endmacro %}
-
-{% set exhibitions = exhibitionsData.exhibitions %}
-<main class="exhibitions" aria-labelledby="exhibitions-heading">
-  <header class="exhibitions__header">
-    <h1 id="exhibitions-heading" class="exhibitions__heading">展示会一覧</h1>
-    <p class="exhibitions__description">開催予定・開催中の展示会情報をまとめています。</p>
-  </header>
-
-  {% if exhibitions and exhibitions | length %}
-    <ol class="exhibitions__list">
-      {% for exhibition in exhibitions %}
-        <li class="exhibitions__item">
-          <article class="exhibitions__card">
-            <h2 class="exhibitions__title">
-              <a class="exhibitions__detail-link" href="/exhibitions/{{ exhibition.id }}/">{{ exhibition.name }}</a>
-            </h2>
-
-            <dl class="exhibitions__meta">
-              <div class="exhibitions__meta-row">
-                <dt class="exhibitions__meta-term">会期</dt>
-                <dd class="exhibitions__meta-definition exhibitions__dates">
-                  {{ formatIsoDate(exhibition.startDate) }} 〜 {{ formatIsoDate(exhibition.endDate) }}
-                </dd>
-              </div>
-              <div class="exhibitions__meta-row">
-                <dt class="exhibitions__meta-term">会場</dt>
-                <dd class="exhibitions__meta-definition exhibitions__venue">{{ exhibition.venue }}</dd>
-              </div>
-            </dl>
-
-            {% if exhibition.summary %}
-              <p class="exhibitions__summary">{{ exhibition.summary }}</p>
-            {% endif %}
-
-            <div class="exhibitions__links">
-              <a class="exhibitions__overview-link" href="{{ exhibition.overviewUrl }}" target="_blank" rel="noopener noreferrer">公式サイトを見る</a>
-              {% if exhibition.noteUrl %}
-                <a class="exhibitions__note-link" href="{{ exhibition.noteUrl }}" target="_blank" rel="noopener noreferrer">Noteで読む</a>
-              {% endif %}
-            </div>
-
-            {% if exhibition.imageUrl %}
-              <figure class="exhibitions__image">
-                <img src="{{ exhibition.imageUrl }}" alt="{{ exhibition.name }}の展示画像" loading="lazy" />
-              </figure>
-            {% endif %}
-          </article>
-        </li>
-      {% endfor %}
-    </ol>
+{% extends "layouts/exhibitions.njk" %}
+{% from "components/exhibitions-hero.njk" import exhibitionsHero %}
+{% from "components/exhibition-card.njk" import exhibitionCard %}
+{% set exhibitions = exhibitionsData.exhibitions or [] %}
+{% set heroExhibition = exhibitions[0] if exhibitions | length > 0 else null %}
+{% set heroMedia = {} %}
+{% if heroExhibition %}
+  {% if heroExhibition.heroImageUrl %}
+    {% set heroMedia = {
+      "variant": "image",
+      "src": heroExhibition.heroImageUrl,
+      "alt": heroExhibition.title
+    } %}
   {% else %}
-    <p class="exhibitions__empty">現在表示できる展示会はありません。</p>
+    {% set heroMedia = {
+      "variant": "placeholder",
+      "label": heroExhibition.title | slice(0, 2),
+      "backgroundClass": "hero-gradient"
+    } %}
   {% endif %}
-</main>
+{% endif %}
+
+{% block hero %}
+  {% if heroExhibition %}
+    {{ exhibitionsHero(heroExhibition, heroMedia, "今週の注目展示", heroExhibition.summary, "index") }}
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% if exhibitions | length %}
+    <section class="flex flex-col gap-10">
+      <header class="flex flex-col gap-3">
+        <p class="text-sm uppercase tracking-[0.4em] text-brand-dark">Exhibitions Calendar</p>
+        <h2 class="text-3xl font-semibold text-neutral-900 md:text-4xl">開催中・開催予定の展示会</h2>
+      </header>
+      <div
+        class="grid gap-8 md:grid-cols-2 md:gap-10 xl:grid-cols-3 xl:gap-12"
+        data-testid="exhibitions-grid"
+      >
+        {% for exhibition in exhibitions %}
+          {{ exhibitionCard(exhibition) }}
+        {% endfor %}
+      </div>
+    </section>
+  {% else %}
+    <section class="rounded-3xl bg-white p-12 text-center shadow-card">
+      <p class="text-lg text-neutral-600">現在表示できる展示会はありません。</p>
+    </section>
+  {% endif %}
+{% endblock %}

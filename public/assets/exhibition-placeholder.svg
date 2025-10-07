@@ -1,0 +1,7 @@
+<svg width="640" height="480" viewBox="0 0 640 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="480" rx="48" fill="#111111"/>
+  <path d="M0 360L640 120V480H0V360Z" fill="#34EDC4" fill-opacity="0.25"/>
+  <path d="M0 120L640 360V0H0V120Z" fill="#34EDC4" fill-opacity="0.18"/>
+  <circle cx="320" cy="240" r="96" fill="#34EDC4" fill-opacity="0.32"/>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="'Montserrat', 'Noto Sans JP', sans-serif" font-size="72" font-weight="700" fill="white" opacity="0.35">EX</text>
+</svg>

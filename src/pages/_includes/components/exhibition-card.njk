@@ -1,0 +1,56 @@
+{% macro exhibitionCard(exhibition) %}
+<article
+  class="group flex h-full flex-col overflow-hidden rounded-3xl bg-white shadow-card ring-1 ring-neutral-200 transition hover:-translate-y-1 hover:shadow-xl"
+  data-testid="exhibition-card"
+>
+  <div class="relative aspect-[4/3] w-full overflow-hidden">
+    {% if exhibition.heroImageUrl %}
+      <img
+        src="{{ exhibition.heroImageUrl }}"
+        alt="{{ exhibition.title }}"
+        class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+        loading="lazy"
+        data-testid="exhibition-cover"
+      />
+    {% else %}
+      <div
+        class="relative flex h-full w-full items-center justify-center overflow-hidden rounded-3xl"
+        data-testid="exhibition-placeholder"
+      >
+        <img
+          src="/assets/exhibition-placeholder.svg"
+          alt="{{ exhibition.title }} のイメージは準備中です"
+          class="h-full w-full object-cover"
+          loading="lazy"
+        />
+        <span class="absolute inset-0 flex items-center justify-center text-4xl font-semibold text-brand-light/70">
+          {{ exhibition.title | slice(0, 2) }}
+        </span>
+      </div>
+    {% endif %}
+  </div>
+  <div class="flex flex-1 flex-col gap-5 p-7">
+    <div class="flex items-center justify-between text-sm font-medium text-neutral-600">
+      <span class="badge-outline">{{ exhibition.statusLabel }}</span>
+      <span data-testid="exhibition-duration">{{ exhibition.durationLabel }}</span>
+    </div>
+    <div class="flex flex-col gap-3">
+      <h3 class="text-2xl font-semibold text-neutral-900">{{ exhibition.title }}</h3>
+      <p class="text-neutral-600">{{ exhibition.summary }}</p>
+    </div>
+    <div class="mt-auto flex items-center justify-between pt-4">
+      <a class="text-sm font-semibold text-brand" href="/exhibitions/{{ exhibition.id }}/">
+        展示詳細を見る
+      </a>
+      <a
+        class="btn-primary px-4 py-2 text-sm"
+        href="{{ exhibition.ctaUrl }}"
+        target="_blank"
+        rel="noreferrer"
+      >
+        {{ exhibition.ctaLabel }}
+      </a>
+    </div>
+  </div>
+</article>
+{% endmacro %}

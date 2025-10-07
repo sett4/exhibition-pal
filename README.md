@@ -30,10 +30,11 @@
    npm run typecheck
    npm run build
    ```
+Tailwind CSS バンドルは `npm run test` 実行時に 120KB (gzip) 以内であることを検証します。上限を超えた場合は `scripts/check-css-size.ts` が失敗します。
 
 ## 開発フロー
 
-- `npm run dev` で TypeScript ウォッチ + Eleventy ローカルサーバーを起動します。
+- `npm run dev` で TypeScript ウォッチ + Tailwind JIT + Eleventy ローカルサーバーを同時に起動します。
 - 変換ロジックやテンプレートは `src/data` / `src/pages` 以下の `.ts` / `.11ty.ts` ファイルで管理しています。
 - `tests/` 以下に Vitest の契約・統合・ユニットテストが配置されています。
 
@@ -49,19 +50,23 @@ Cloudflare Pages を利用します。
 
 | コマンド            | 目的                                                            |
 | ------------------- | --------------------------------------------------------------- |
-| `npm run dev`       | TypeScript ウォッチ + Eleventy サーバー                         |
-| `npm run build`     | TypeScript コンパイル + Eleventy ビルド                         |
-| `npm run test`      | Vitest 実行（契約・統合・ユニット）                             |
+| `npm run dev`       | TypeScript ウォッチ + Tailwind JIT + Eleventy サーバー          |
+| `npm run build`     | TypeScript コンパイル + Tailwind ビルド + Eleventy ビルド        |
+| `npm run test`      | Tailwind ビルド → Vitest → CSS バジェット検証                   |
 | `npm run lint`      | ESLint チェック                                                 |
 | `npm run format`    | Prettier フォーマット                                           |
 | `npm run typecheck` | TypeScript 型チェック（パスエイリアス解決設定が整備済みの場合） |
+| `npm run tailwind:build` | Tailwind CSS を単体でビルドし `dist/assets/styles/` へ出力 |
+| `npm run tailwind:watch` | Tailwind CSS をウォッチモードで出力                           |
+| `npm run css:budget` | `dist/assets/styles/exhibitions.css` の gzip サイズ上限 120KB を検証 |
 
 ## フォルダ構成
 
 ```
 src/
   data/            # Google Sheets 取得・整形ロジック
-  pages/           # Eleventy テンプレート (.11ty.ts)
+  pages/           # Eleventy テンプレート (.njk) と `_includes` ディレクトリ
+    _includes/   # layouts, components, partials for exhibitions
   lib/logger.ts    # Winston JSON ロガー
 public/            # Cloudflare Pages 用設定 (ヘッダー・リダイレクト)
 specs/001-google-spreadsheet-exhibitions/  # ドキュメントとタスクリスト

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { buildExhibitionsData } from "../../src/_data/exhibitions.js";
 import {
+  buildExhibitionsData,
   parseRelatedUrls,
   toNullableString,
   parseSheetDate,
@@ -186,8 +186,9 @@ describe("transformers", () => {
       const now = new Date("2025-10-06T12:00:00Z");
       const data = buildExhibitionsData(header, rows, { now });
 
-      expect(data.exhibitions).toHaveLength(1);
-      expect(data.exhibitions[0]?.id).toBe("EXH-VALID");
+      expect(data.contents).toHaveLength(1);
+      expect(data.contents[0]?.exhibition.id).toBe("EXH-VALID");
+      expect(Array.isArray(data.contents[0]?.sections)).toBe(true);
       expect(warnSpy).toHaveBeenCalledWith("Skipping row with missing required fields", {
         id: "EXH-SKIP",
         missingFields: ["summary"],
