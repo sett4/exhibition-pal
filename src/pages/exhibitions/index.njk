@@ -1,0 +1,60 @@
+---
+title: 展示会一覧
+---
+{% macro formatIsoDate(value) -%}
+  {% if value %}{{ value | replace('-', '/') }}{% endif %}
+{%- endmacro %}
+
+{% set exhibitions = exhibitionsData.exhibitions %}
+<main class="exhibitions" aria-labelledby="exhibitions-heading">
+  <header class="exhibitions__header">
+    <h1 id="exhibitions-heading" class="exhibitions__heading">展示会一覧</h1>
+    <p class="exhibitions__description">開催予定・開催中の展示会情報をまとめています。</p>
+  </header>
+
+  {% if exhibitions and exhibitions | length %}
+    <ol class="exhibitions__list">
+      {% for exhibition in exhibitions %}
+        <li class="exhibitions__item">
+          <article class="exhibitions__card">
+            <h2 class="exhibitions__title">
+              <a class="exhibitions__detail-link" href="/exhibitions/{{ exhibition.id }}/">{{ exhibition.name }}</a>
+            </h2>
+
+            <dl class="exhibitions__meta">
+              <div class="exhibitions__meta-row">
+                <dt class="exhibitions__meta-term">会期</dt>
+                <dd class="exhibitions__meta-definition exhibitions__dates">
+                  {{ formatIsoDate(exhibition.startDate) }} 〜 {{ formatIsoDate(exhibition.endDate) }}
+                </dd>
+              </div>
+              <div class="exhibitions__meta-row">
+                <dt class="exhibitions__meta-term">会場</dt>
+                <dd class="exhibitions__meta-definition exhibitions__venue">{{ exhibition.venue }}</dd>
+              </div>
+            </dl>
+
+            {% if exhibition.summary %}
+              <p class="exhibitions__summary">{{ exhibition.summary }}</p>
+            {% endif %}
+
+            <div class="exhibitions__links">
+              <a class="exhibitions__overview-link" href="{{ exhibition.overviewUrl }}" target="_blank" rel="noopener noreferrer">公式サイトを見る</a>
+              {% if exhibition.noteUrl %}
+                <a class="exhibitions__note-link" href="{{ exhibition.noteUrl }}" target="_blank" rel="noopener noreferrer">Noteで読む</a>
+              {% endif %}
+            </div>
+
+            {% if exhibition.imageUrl %}
+              <figure class="exhibitions__image">
+                <img src="{{ exhibition.imageUrl }}" alt="{{ exhibition.name }}の展示画像" loading="lazy" />
+              </figure>
+            {% endif %}
+          </article>
+        </li>
+      {% endfor %}
+    </ol>
+  {% else %}
+    <p class="exhibitions__empty">現在表示できる展示会はありません。</p>
+  {% endif %}
+</main>

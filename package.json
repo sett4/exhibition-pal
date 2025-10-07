@@ -1,0 +1,56 @@
+{
+  "name": "exhibition-pal",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "build": "run-s clean compile eleventy:build",
+    "clean": "rimraf dist .cache _site",
+    "compile": "tsc -p tsconfig.json",
+    "dev": "run-s compile dev:serve",
+    "dev:serve": "run-p compile:watch eleventy:serve",
+    "compile:watch": "tsc -p tsconfig.json --watch",
+    "eleventy:build": "ELEVENTY_ENV=production tsx ./node_modules/.bin/eleventy --formats=njk",
+    "eleventy:serve": "ELEVENTY_ENV=development tsx --watch ./node_modules/.bin/eleventy --formats=njk --serve",
+    "lint": "eslint \"{src,tests}/**/*.{ts,tsx}\"",
+    "format": "prettier --write \"{src,tests,specs}/**/*.{ts,tsx,md}\"",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@11ty/eleventy": "^3.0.0",
+    "@googleapis/sheets": "^5.0.0",
+    "dotenv": "^16.4.5",
+    "tsx": "^4.15.7",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "@eslint/compat": "^1.4.0",
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.37.0",
+    "@types/node": "^22.5.0",
+    "@typescript-eslint/eslint-plugin": "^8.3.0",
+    "@typescript-eslint/parser": "^8.3.0",
+    "@vitest/coverage-v8": "^2.0.5",
+    "cheerio": "^1.0.0",
+    "csv-parse": "^5.5.6",
+    "eslint": "^9.10.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-jsdoc": "^48.0.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "globals": "^15.15.0",
+    "npm-run-all": "^4.1.5",
+    "nunjucks": "^3.2.4",
+    "prettier": "^3.3.2",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.5.4",
+    "vite-tsconfig-paths": "^5.0.0",
+    "vitest": "^2.0.5"
+  }
+}
