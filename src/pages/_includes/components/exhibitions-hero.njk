@@ -25,7 +25,7 @@
 
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
       {% if exhibition.id %}
-        <a class="btn-primary" href="{{ exhibition.id }}" aria-label="{{ exhibition.ctaLabel }}" data-testid="{{ variant == 'detail' and 'exhibition-cta' or 'hero-cta' }}">
+        <a class="btn-primary" href="/exhibitions/{{ exhibition.id }}" aria-label="{{ exhibition.ctaLabel }}" data-testid="{{ variant == 'detail' and 'exhibition-cta' or 'hero-cta' }}">
           {{ exhibition.ctaLabel }}
         </a>
       {% endif %}

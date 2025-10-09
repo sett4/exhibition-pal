@@ -1,5 +1,5 @@
 import { resolve } from "node:path";
-import loadExhibitionsData from "./dist/src/_data/exhibitions.js";
+import loadExhibitionsData from "./src/_data/exhibitions.js";
 import { getLogger, logBuildLifecycle } from "./src/lib/logger.js";
 
 const projectRoot = resolve(process.cwd());

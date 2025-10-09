@@ -58,20 +58,20 @@ const SECTION_CREATORS: Record<PageSectionSlug, (source: PageSectionSource) => P
       };
     },
     highlights: (source) => {
-      const items = source.highlights
-        .map((entry) => entry.trim())
-        .filter((entry) => entry.length > 0)
-        .map<SectionItem>((heading) => ({ type: "highlight", heading }));
+      // const items = source.highlights
+      //   .map((entry) => entry.trim())
+      //   .filter((entry) => entry.length > 0)
+      //   .map<SectionItem>((heading) => ({ type: "highlight", heading }));
 
-      if (items.length === 0) {
-        return null;
-      }
+      // if (items.length === 0) {
+      //   return null;
+      // }
 
       return {
         slug: SECTION_SLUGS.highlights,
         title: SECTION_TITLES.highlights,
-        body: "",
-        items,
+        body: source.highlights.join("\n\n"),
+        items: [],
       };
     },
     access: (source) => {

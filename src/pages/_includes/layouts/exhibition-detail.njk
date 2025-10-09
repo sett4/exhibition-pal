@@ -38,7 +38,7 @@
       {% else %}
         <section class="flex flex-col gap-6" data-testid="exhibition-section" data-section-slug="{{ section.slug }}">
           <div class="flex items-center gap-3">
-            <span class="badge-outline">SECTION {{ loop.index }}</span>
+            {# <span class="badge-outline">SECTION {{ loop.index }}</span> #}
             <h2 class="text-2xl font-bold md:text-3xl">{{ section.title }}</h2>
           </div>
           {% if section.body %}
@@ -74,6 +74,6 @@
       {% endif %}
     {% endfor %}
 
-        {{ pageFooterCta(exhibition) }}
+        {# {{ pageFooterCta(exhibition) }} #}
   </div>
 {% endblock %}
