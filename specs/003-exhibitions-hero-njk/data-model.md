@@ -1,0 +1,400 @@
+# Data Model: Google Drive Image URL Transformation
+
+**Feature**: Google Drive Image URL Transformation
+**Date**: 2025-10-10
+**Status**: Complete
+
+## Overview
+
+This document defines the data structures and transformations involved in processing Google Drive image URLs through eleventy-img for optimized delivery in exhibition pages.
+
+## Core Entities
+
+### 1. GoogleDriveUrl
+
+**Purpose**: Represents a Google Drive sharing link that needs transformation
+
+**Fields**:
+
+| Field | Type | Required | Description | Validation |
+|-------|------|----------|-------------|------------|
+| originalUrl | string | Yes | The raw URL from Google Sheets | Must be non-empty string |
+| fileId | string \| null | No | Extracted Google Drive file ID | 28-44 character alphanumeric with `-_` |
+| transformedUrl | string | Yes | Direct image URL for eleventy-img | Must be valid HTTPS URL |
+| isGoogleDrive | boolean | Yes | Whether URL is from Google Drive | Derived from URL pattern |
+
+**Relationships**:
+- Input to `ImageTransformRequest`
+- Referenced by `Exhibition.heroImageUrl` (existing)
+
+**State Transitions**:
+```
+Raw URL → Parse → Extract File ID → Transform → Direct URL
+         ↓ (if not Google Drive)
+         Pass through unchanged
+```
+
+**Business Rules**:
+- If URL matches Google Drive pattern but file ID extraction fails, log warning and return original URL
+- Non-Google Drive URLs pass through without transformation
+- Empty or null URLs are preserved as-is
+
+### 2. ImageTransformRequest
+
+**Purpose**: Configuration for processing a single image through eleventy-img
+
+**Fields**:
+
+| Field | Type | Required | Description | Validation |
+|-------|------|----------|-------------|------------|
+| sourceUrl | string | Yes | Direct image URL (after Google Drive transformation) | Must be valid HTTP(S) URL |
+| exhibitionId | string | Yes | Exhibition identifier for filename generation | Alphanumeric with hyphens |
+| widths | number[] | Yes | Target widths for responsive images | [640, 1024, 1920, null] |
+| formats | string[] | Yes | Output formats to generate | ["avif", "webp", "jpeg"] |
+| outputDir | string | Yes | Filesystem path for processed images | Must be writable directory |
+| urlPath | string | Yes | Public URL path for generated images | Must start with / |
+| cacheDir | string | Yes | Filesystem path for image cache | Must be writable directory |
+
+**Relationships**:
+- Consumes `GoogleDriveUrl.transformedUrl`
+- Produces `ImageMetadata`
+
+**State Transitions**:
+```
+Request → Download → Cache → Process → Optimize → Generate Variants → Metadata
+        ↓ (on error)
+        Error → Log → Return null (trigger placeholder)
+```
+
+**Business Rules**:
+- Cache directory must be git-ignored
+- Output directory must be within _site/ for Eleventy output
+- Widths array must include `null` for original size
+- At least one format must be specified
+
+### 3. ImageMetadata
+
+**Purpose**: Information about processed image variants for template rendering
+
+**Fields**:
+
+| Field | Type | Required | Description | Example |
+|-------|------|----------|-------------|---------|
+| avif | ImageFormat[] | No | AVIF format variants | See ImageFormat below |
+| webp | ImageFormat[] | No | WebP format variants | See ImageFormat below |
+| jpeg | ImageFormat[] | Yes | JPEG format variants (fallback) | See ImageFormat below |
+| originalFormat | string | Yes | Source image format | "jpeg", "png", "webp" |
+| primaryUrl | string | Yes | URL of primary image (largest JPEG) | "/assets/images/exhibitions/ex001-1920.jpeg" |
+
+**Relationships**:
+- Output of `ImageTransformRequest`
+- Consumed by Nunjucks templates (exhibitions-hero.njk)
+- Stored in `Exhibition.heroImageMetadata` (new field)
+
+**State Transitions**:
+```
+Generation → Format Variants → Sort by Width → Select Primary → Metadata Object
+```
+
+**Business Rules**:
+- JPEG format must always be generated (fallback for older browsers)
+- Primary URL is the largest JPEG variant for backward compatibility
+- Empty variants array means generation failed for that format
+- Metadata is serializable for Eleventy's data cascade
+
+### 4. ImageFormat
+
+**Purpose**: Details of a single image variant (width + format combination)
+
+**Fields**:
+
+| Field | Type | Required | Description | Example |
+|-------|------|----------|-------------|---------|
+| url | string | Yes | Public URL path to image file | "/assets/images/exhibitions/ex001-640.webp" |
+| width | number | Yes | Image width in pixels | 640 |
+| height | number | Yes | Image height in pixels (maintains aspect ratio) | 480 |
+| filename | string | Yes | Generated filename | "ex001-640.webp" |
+| outputPath | string | Yes | Filesystem path to generated file | "_site/assets/images/exhibitions/ex001-640.webp" |
+| size | number | Yes | File size in bytes | 45678 |
+| sourceType | string | Yes | MIME type | "image/webp" |
+
+**Relationships**:
+- Part of `ImageMetadata` format arrays
+- Generated by eleventy-img library
+
+**Business Rules**:
+- Width must match one of the requested widths
+- Height is calculated to maintain aspect ratio
+- Filename follows pattern: `{exhibitionId}-{width}.{format}`
+- All URLs must be web-accessible after build
+
+## Extended Entities (Modifications to Existing)
+
+### Exhibition (Extended)
+
+**New Fields Added**:
+
+| Field | Type | Required | Description | Validation |
+|-------|------|----------|-------------|------------|
+| heroImageMetadata | ImageMetadata \| null | No | Processed image data from eleventy-img | See ImageMetadata above |
+
+**Modified Fields**:
+
+| Field | Type | Before | After | Reason |
+|-------|------|--------|-------|--------|
+| heroImageUrl | string \| null | Google Drive share link | Direct image URL (transformed) | Enable eleventy-img processing |
+
+**Business Rules**:
+- If `heroImageUrl` is null, `heroImageMetadata` must also be null
+- If image processing fails, `heroImageMetadata` is null and template uses placeholder
+- `heroImageUrl` is still used for backward compatibility if `heroImageMetadata` is null
+
+## Data Transformation Pipeline
+
+### Step 1: URL Transformation
+
+**Input**: Raw Google Sheets data row
+**Process**: `transformGoogleDriveUrl()`
+**Output**: Direct image URL
+
+```typescript
+function transformGoogleDriveUrl(url: string | null): string | null {
+  // Pattern matching and file ID extraction
+  // Returns: https://drive.google.com/uc?export=view&id={FILE_ID}
+  // Or original URL if not Google Drive
+}
+```
+
+**Validation Rules**:
+- Input URL must be valid HTTPS URL if non-null
+- File ID must match pattern: `/[a-zA-Z0-9_-]{28,44}/`
+- Invalid patterns return original URL with warning log
+
+### Step 2: Image Processing
+
+**Input**: Transformed URL + Exhibition ID
+**Process**: `processExhibitionImage()`
+**Output**: ImageMetadata object
+
+```typescript
+async function processExhibitionImage(
+  url: string,
+  exhibitionId: string
+): Promise<ImageMetadata | null> {
+  // eleventy-img processing with error handling
+  // Returns metadata or null on error
+}
+```
+
+**Validation Rules**:
+- URL must be accessible (HTTP 200)
+- Content-Type must be image/*
+- File size should be < 10MB (warning if larger)
+- Network timeout: 30 seconds
+- Retry on network error: 3 attempts with exponential backoff
+
+### Step 3: Template Data Preparation
+
+**Input**: ImageMetadata object
+**Process**: Template rendering (exhibitions-hero.njk)
+**Output**: HTML with `<picture>` or `<img>` element
+
+```typescript
+// Template receives:
+{
+  exhibition: {
+    id: "ex001",
+    heroImageUrl: "https://drive.google.com/uc?export=view&id=...",
+    heroImageMetadata: {
+      avif: [...],
+      webp: [...],
+      jpeg: [...],
+      primaryUrl: "/assets/images/exhibitions/ex001-1920.jpeg"
+    }
+  }
+}
+```
+
+**Business Rules**:
+- If `heroImageMetadata` exists, use responsive `<picture>` element
+- If `heroImageMetadata` is null, fallback to `heroImageUrl` directly
+- If both null, use existing placeholder logic
+- Always include JPEG as fallback source
+
+## Validation Schema
+
+### Google Drive URL Pattern
+
+```regex
+/^https:\/\/drive\.google\.com\/(file\/d\/([a-zA-Z0-9_-]+)|open\?id=([a-zA-Z0-9_-]+)|uc\?id=([a-zA-Z0-9_-]+))/
+```
+
+### File ID Pattern
+
+```regex
+/[a-zA-Z0-9_-]{28,44}/
+```
+
+### Direct Image URL Format
+
+```
+https://drive.google.com/uc?export=view&id={FILE_ID}
+```
+
+### Exhibition ID Pattern
+
+```regex
+/^[a-z0-9]+(-[a-z0-9]+)*$/
+```
+
+**Examples**:
+- Valid: `ex001`, `winter-2024`, `special-exhibit-01`
+- Invalid: `EX001` (uppercase), `ex_001` (underscore), `ex 001` (space)
+
+## Error Handling
+
+### Error States
+
+| Error | Detection | Handling | User Impact |
+|-------|-----------|----------|-------------|
+| Invalid Google Drive URL | Regex match fails | Log warning, return original URL | Placeholder shown |
+| File ID extraction fails | Pattern match fails | Log warning, return original URL | Placeholder shown |
+| Network timeout | HTTP request timeout (30s) | Retry 3x, then return null | Placeholder shown |
+| Access denied (403) | HTTP status code | Log error, return null | Placeholder shown |
+| Not an image (wrong MIME) | Content-Type check | Log error, return null | Placeholder shown |
+| eleventy-img error | Exception thrown | Catch, log, return null | Placeholder shown |
+| Disk space error | Write failure | Catch, log, fail build | Build error (critical) |
+
+### Logging Structure
+
+```typescript
+{
+  level: "error" | "warn" | "info",
+  message: "Human-readable description",
+  context: {
+    exhibitionId: string,
+    originalUrl: string,
+    transformedUrl?: string,
+    fileId?: string,
+    error?: Error
+  }
+}
+```
+
+## Performance Considerations
+
+### Caching Strategy
+
+**Cache Key**: SHA-256 hash of transformed URL
+**Cache Duration**: 1 week (configurable)
+**Cache Location**: `.cache/gdrive-images/`
+
+**Cache Hit Behavior**:
+1. Check if cached file exists and is fresh
+2. If yes, read metadata from cache
+3. If no, download and process
+
+**Cache Invalidation**:
+- Automatic after 1 week
+- Manual: delete `.cache/` directory
+- URL change triggers new download
+
+### Build Performance
+
+**Expected Metrics** (for 50 exhibitions with 1 image each):
+
+| Scenario | First Build | Cached Build | Notes |
+|----------|-------------|--------------|-------|
+| Image downloads | ~50s | ~0s | Network-dependent |
+| Image processing | ~25s | ~5s | CPU-dependent |
+| Total overhead | ~75s | ~5s | vs baseline without images |
+
+**Optimization Techniques**:
+- Parallel image processing (Promise.all)
+- Cache persistence across builds
+- Conditional processing (skip if metadata exists)
+- Progressive enhancement (don't block build on image errors)
+
+## Database Schema
+
+N/A - This feature uses file-based storage only (Eleventy static site)
+
+## API Contracts
+
+N/A - This feature is build-time only, no runtime APIs
+
+## Migration Strategy
+
+### Data Migration
+
+**Phase 1**: Backward compatible changes
+- Add `heroImageMetadata` field (optional)
+- Transform `heroImageUrl` in-place during data load
+- Templates fallback to `heroImageUrl` if metadata missing
+
+**Phase 2**: Optimize templates (future enhancement)
+- Update exhibitions-hero.njk to use `<picture>` elements
+- Leverage responsive images for performance
+- Add loading="lazy" for below-fold images
+
+**No breaking changes** - existing exhibitions without images continue to work with placeholders.
+
+## Type Definitions
+
+```typescript
+// src/_data/types.ts extensions
+
+export interface GoogleDriveUrl {
+  originalUrl: string;
+  fileId: string | null;
+  transformedUrl: string;
+  isGoogleDrive: boolean;
+}
+
+export interface ImageTransformRequest {
+  sourceUrl: string;
+  exhibitionId: string;
+  widths: number[];
+  formats: string[];
+  outputDir: string;
+  urlPath: string;
+  cacheDir: string;
+}
+
+export interface ImageFormat {
+  url: string;
+  width: number;
+  height: number;
+  filename: string;
+  outputPath: string;
+  size: number;
+  sourceType: string;
+}
+
+export interface ImageMetadata {
+  avif?: ImageFormat[];
+  webp?: ImageFormat[];
+  jpeg: ImageFormat[];
+  originalFormat: string;
+  primaryUrl: string;
+}
+
+// Extension to existing Exhibition type
+export interface ExhibitionViewModel {
+  // ... existing fields ...
+  heroImageUrl: string | null; // Now contains transformed URL
+  heroImageMetadata?: ImageMetadata | null; // New field
+}
+```
+
+## Summary
+
+The data model extends the existing Exhibition entity minimally while introducing new types for image transformation. The design prioritizes:
+
+1. **Backward compatibility**: Existing exhibitions work without changes
+2. **Progressive enhancement**: New fields are optional
+3. **Error resilience**: Failures degrade gracefully to placeholders
+4. **Performance**: Caching and parallel processing optimize build times
+5. **Type safety**: Comprehensive TypeScript interfaces prevent runtime errors
+
+All transformations happen at build time, with no runtime dependencies or API calls required after the site is generated.
