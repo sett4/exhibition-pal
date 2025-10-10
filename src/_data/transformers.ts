@@ -1,3 +1,4 @@
+import { transformGoogleDriveUrl } from "./imageTransformer.js";
 import {
   buildPageSections,
   createExhibitionViewModel,
@@ -230,6 +231,10 @@ function mapRowToExhibitionSource(row: string[]): ExhibitionSource | null {
 
   const ctaUrl = ensureHttpsUrl(detailUrl || overviewUrl, "ctaUrl");
 
+  // Transform Google Drive URLs to direct image URLs
+  const rawImageUrl = toNullableString(getCell(row, "imageUrl"));
+  const transformedImageUrl = transformGoogleDriveUrl(rawImageUrl);
+
   return {
     id,
     title,
@@ -239,7 +244,7 @@ function mapRowToExhibitionSource(row: string[]): ExhibitionSource | null {
     endDate,
     venue,
     city: null,
-    heroImageUrl: toNullableString(getCell(row, "imageUrl")),
+    heroImageUrl: transformedImageUrl,
     galleryImages: [],
     overviewUrl,
     detailUrl,

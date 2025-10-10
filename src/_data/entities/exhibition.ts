@@ -2,6 +2,42 @@ export type ExhibitionStatus = "past" | "current" | "upcoming";
 
 const GALLERY_IMAGE_LIMIT = 6;
 
+// Image transformation types
+export interface GoogleDriveUrl {
+  originalUrl: string;
+  fileId: string | null;
+  transformedUrl: string;
+  isGoogleDrive: boolean;
+}
+
+export interface ImageFormat {
+  url: string;
+  width: number;
+  height: number;
+  filename: string;
+  outputPath: string;
+  size: number;
+  sourceType: string;
+}
+
+export interface ImageMetadata {
+  avif?: ImageFormat[];
+  webp?: ImageFormat[];
+  jpeg: ImageFormat[];
+  originalFormat: string;
+  primaryUrl: string;
+}
+
+export interface ImageTransformRequest {
+  sourceUrl: string;
+  exhibitionId: string;
+  widths: number[];
+  formats: string[];
+  outputDir: string;
+  urlPath: string;
+  cacheDir: string;
+}
+
 export interface ExhibitionSource {
   id: string;
   title: string;
@@ -27,6 +63,7 @@ export interface ExhibitionViewModel extends ExhibitionSource {
   status: ExhibitionStatus;
   statusLabel: string;
   durationLabel: string;
+  heroImageMetadata?: ImageMetadata | null;
 }
 
 /**

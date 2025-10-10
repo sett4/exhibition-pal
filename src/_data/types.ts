@@ -16,6 +16,10 @@ export type {
   ExhibitionSource,
   ExhibitionStatus,
   ExhibitionViewModel,
+  GoogleDriveUrl,
+  ImageFormat,
+  ImageMetadata,
+  ImageTransformRequest,
 } from "./entities/exhibition.js";
 
 import type { ExhibitionViewModel } from "./entities/exhibition.js";

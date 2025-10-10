@@ -4,7 +4,7 @@
     {# <span class="badge-outline">HIGHLIGHTS</span> #}
     <h2 class="text-2xl font-bold md:text-3xl">{{ section.title }}</h2>
   </div>
-  <div class="grid gap-6 md:grid-cols-6">
+  {# <div class="grid gap-6 md:grid-cols-6"> #}
       <article
         class="bg-white  "
         data-testid="section-item"
@@ -17,6 +17,6 @@
         {% endif %}
     {% endfor %} #}
       </article>
-  </div>
+  {# </div> #}
 </section>
 {% endmacro %}

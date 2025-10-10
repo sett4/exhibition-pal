@@ -1,5 +1,6 @@
 import { fetchSheetValues } from "./googleSheets.js";
-import { buildExhibitionsData } from "./transformers.js";
+import { processExhibitionImage } from "./imageTransformer.js";
+import { buildExhibitionsData, type ExhibitionContent } from "./transformers.js";
 import type { ExhibitionsData } from "./types.js";
 import { getLogger, startPerformanceTimer } from "../lib/logger.js";
 
@@ -30,25 +31,63 @@ export default async function (): Promise<ExhibitionsData> {
     }
 
     const transformTimer = startPerformanceTimer("exhibitions.load.transform");
+    let contents: ExhibitionContent[];
     try {
       const now = new Date();
-      const { contents } = buildExhibitionsData(header, rows, { now });
+      const result = buildExhibitionsData(header, rows, { now });
+      contents = result.contents;
       contentsLength = contents.length;
 
-      const sectionsById: ExhibitionsData["sectionsById"] = Object.fromEntries(
-        contents.map(({ exhibition, sections }) => [exhibition.id, sections])
+      transformTimer({ rowsTransformed: contentsLength });
+    } catch (error) {
+      transformTimer({ rowsTransformed: 0, error });
+      throw error;
+    }
+
+    // Process images in parallel
+    const imageTimer = startPerformanceTimer("exhibitions.load.images");
+    try {
+      logger.info("Processing exhibition images", { count: contents.length });
+
+      const exhibitionsWithImages = await Promise.all(
+        contents.map(async (content: ExhibitionContent) => {
+          const metadata = await processExhibitionImage(
+            content.exhibition.heroImageUrl,
+            content.exhibition.id
+          );
+
+          return {
+            ...content,
+            exhibition: {
+              ...content.exhibition,
+              heroImageMetadata: metadata,
+            },
+          };
+        })
       );
 
-      transformTimer({ rowsTransformed: contentsLength });
+      const successCount = exhibitionsWithImages.filter(
+        (content) => content.exhibition.heroImageMetadata !== null
+      ).length;
+
+      imageTimer({
+        totalImages: contents.length,
+        successfulImages: successCount,
+        failedImages: contents.length - successCount,
+      });
+
+      const sectionsById: ExhibitionsData["sectionsById"] = Object.fromEntries(
+        exhibitionsWithImages.map(({ exhibition, sections }) => [exhibition.id, sections])
+      );
 
       return {
-        exhibitions: contents.map((content) => content.exhibition),
+        exhibitions: exhibitionsWithImages.map((content) => content.exhibition),
         sectionsById,
-        latestUpdate: now.toISOString(),
+        latestUpdate: new Date().toISOString(),
         createdAt: new Date().toISOString(),
       };
     } catch (error) {
-      transformTimer({ rowsTransformed: 0, error });
+      imageTimer({ error });
       throw error;
     }
   } catch (error) {
