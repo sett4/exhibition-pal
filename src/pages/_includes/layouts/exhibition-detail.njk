@@ -47,7 +47,7 @@
             </p>
           {% endif %}
           {% if section.items and section.items | length > 0 %}
-            <div class="grid gap-6 md:grid-cols-2" data-testid="section-item">
+            <div class="grid gap-6 md:grid-cols-6" data-testid="section-item">
               {% for item in section.items %}
                 {% if item.type == 'resource' %}
                   <a
