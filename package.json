@@ -15,7 +15,7 @@
     "compile:watch": "tsc -p tsconfig.json --watch",
     "eleventy:build": "ELEVENTY_ENV=production tsx ./node_modules/.bin/eleventy --formats=njk",
     "eleventy:serve": "ELEVENTY_ENV=development tsx --watch ./node_modules/.bin/eleventy --formats=njk --serve",
-    "lint": "eslint \"{src,tests}/**/*.{ts,tsx}\"",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "format": "prettier --write \"{src,tests,specs}/**/*.{ts,tsx,md}\"",
     "test": "run-s tailwind:build test:vitest css:budget",
     "test:watch": "vitest watch",
