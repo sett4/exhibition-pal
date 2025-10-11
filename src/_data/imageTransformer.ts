@@ -1,12 +1,71 @@
 // @ts-expect-error - @11ty/eleventy-img does not have type definitions
 import Image from "@11ty/eleventy-img";
+import { auth } from "@googleapis/sheets";
+import { loadGoogleSheetsConfig } from "../config/env.js";
 import { getLogger } from "../lib/logger.js";
 import type { ImageMetadata } from "./entities/exhibition.js";
 
 const logger = getLogger();
 
+let cachedOAuthClient: InstanceType<typeof auth.OAuth2> | null = null;
+
 /**
- * Transforms Google Drive sharing links to direct image URLs.
+ * Creates or returns a memoised OAuth2 client for Google Drive access.
+ * @returns Authenticated OAuth2 client instance.
+ */
+function getOAuthClient(): InstanceType<typeof auth.OAuth2> {
+  if (cachedOAuthClient) {
+    return cachedOAuthClient;
+  }
+
+  const config = loadGoogleSheetsConfig();
+  const client = new auth.OAuth2(config.clientId, config.clientSecret, undefined);
+  client.setCredentials({ refresh_token: config.refreshToken });
+  cachedOAuthClient = client;
+  return client;
+}
+
+/**
+ * Gets a valid access token for Google Drive API access.
+ * @returns Access token string
+ */
+async function getAccessToken(): Promise<string> {
+  const client = getOAuthClient();
+  const { token } = await client.getAccessToken();
+
+  if (!token) {
+    throw new Error("Failed to obtain access token from OAuth2 client");
+  }
+
+  return token;
+}
+
+/**
+ * Extracts Google Drive file ID from various URL formats.
+ *
+ * @param url - The original URL from Google Sheets
+ * @returns File ID or null if not found
+ */
+function extractGoogleDriveFileId(url: string): string | null {
+  // Pattern 1: /file/d/{FILE_ID}/...
+  const filePattern = /\/file\/d\/([a-zA-Z0-9_-]+)(?:\/|$)/;
+  const fileMatch = url.match(filePattern);
+  if (fileMatch && fileMatch[1]) {
+    return fileMatch[1];
+  }
+
+  // Pattern 2: ?id={FILE_ID} or &id={FILE_ID}
+  const idPattern = /[?&]id=([a-zA-Z0-9_-]+)/;
+  const idMatch = url.match(idPattern);
+  if (idMatch && idMatch[1]) {
+    return idMatch[1];
+  }
+
+  return null;
+}
+
+/**
+ * Transforms Google Drive sharing links to Google Drive API v3 download URLs.
  *
  * Supports the following URL formats:
  * - https://drive.google.com/file/d/{FILE_ID}/view
@@ -14,7 +73,7 @@ const logger = getLogger();
  * - https://drive.google.com/uc?id={FILE_ID}
  *
  * @param url - The original URL from Google Sheets (or any other source)
- * @returns Direct image URL for Google Drive files, or original URL if not Google Drive
+ * @returns Google Drive API v3 URL for files, or original URL if not Google Drive
  */
 export function transformGoogleDriveUrl(url: string | null): string | null {
   // Handle null/undefined
@@ -24,35 +83,23 @@ export function transformGoogleDriveUrl(url: string | null): string | null {
   const trimmed = url.trim();
   if (trimmed === "") return url; // Return as-is (preserving original format)
 
-  // Pattern 1: /file/d/{FILE_ID}/...
-  // Ensure file ID is followed by / or end of string to avoid matching "view" as file ID
-  const filePattern = /\/file\/d\/([a-zA-Z0-9_-]+)(?:\/|$)/;
-  const fileMatch = trimmed.match(filePattern);
-
-  if (fileMatch && fileMatch[1]) {
-    const fileId = fileMatch[1];
-    return `https://drive.google.com/uc?export=view&id=${fileId}`;
+  // Check if it's a Google Drive URL
+  if (!trimmed.includes("drive.google.com")) {
+    return url;
   }
 
-  // Pattern 2: ?id={FILE_ID} or &id={FILE_ID}
-  const idPattern = /[?&]id=([a-zA-Z0-9_-]+)/;
-  const idMatch = trimmed.match(idPattern);
-
-  if (idMatch && idMatch[1]) {
-    const fileId = idMatch[1];
-    return `https://drive.google.com/uc?export=view&id=${fileId}`;
-  }
-
-  // Not a Google Drive URL or pattern didn't match - return unchanged
-  // Check if it looks like a Google Drive URL but we couldn't extract the ID
-  if (trimmed.includes("drive.google.com")) {
+  const fileId = extractGoogleDriveFileId(trimmed);
+  if (!fileId) {
     logger.warn("Google Drive URL detected but file ID extraction failed", {
       originalUrl: trimmed,
       context: "imageTransformer.transformGoogleDriveUrl",
     });
+    return url;
   }
 
-  return url;
+  // Use Google Drive API v3 endpoint for direct file access
+  // This endpoint works with OAuth2 Authorization header
+  return `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`;
 }
 
 /**
@@ -77,6 +124,29 @@ export async function processExhibitionImage(
       context: "imageTransformer.processExhibitionImage",
     });
 
+    // Add Authorization header for Google Drive API URLs
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const fetchOptions: any = {};
+    if (url.includes("googleapis.com/drive")) {
+      try {
+        const accessToken = await getAccessToken();
+        fetchOptions.headers = {
+          Authorization: `Bearer ${accessToken}`,
+        };
+        logger.info("Added OAuth2 token for Google Drive image", {
+          exhibitionId,
+          context: "imageTransformer.processExhibitionImage",
+        });
+      } catch (error) {
+        logger.warn("Failed to get access token for Google Drive image", {
+          exhibitionId,
+          url,
+          error: error instanceof Error ? error.message : String(error),
+          context: "imageTransformer.processExhibitionImage",
+        });
+      }
+    }
+
     const metadata = await Image(url, {
       widths: [640, 1024, 1920, null], // null = original size
       formats: ["avif", "webp", "jpeg"],
@@ -85,6 +155,7 @@ export async function processExhibitionImage(
       cacheOptions: {
         directory: ".cache/gdrive-images/",
         duration: "1w", // Cache for 1 week
+        fetchOptions: fetchOptions,
       },
       filenameFormat: (
         _id: string,
