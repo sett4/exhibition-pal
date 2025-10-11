@@ -61,6 +61,7 @@ export default async function (): Promise<ExhibitionsData> {
             exhibition: {
               ...content.exhibition,
               heroImageMetadata: metadata,
+              heroImageUrl: metadata?.primaryUrl || content.exhibition.heroImageUrl,
             },
           };
         })

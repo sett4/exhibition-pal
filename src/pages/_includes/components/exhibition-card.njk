@@ -5,13 +5,17 @@
 >
   <div class="relative aspect-[4/3] w-full overflow-hidden">
     {% if exhibition.heroImageUrl %}
-      <img
-        src="{{ exhibition.heroImageUrl }}"
-        alt="{{ exhibition.title }}"
-        class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-        loading="lazy"
-        data-testid="exhibition-cover"
-      />
+      <a
+        href="/exhibitions/{{ exhibition.id }}"
+      >
+        <img
+          src="{{ exhibition.heroImageUrl }}"
+          alt="{{ exhibition.title }}"
+          class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+          loading="lazy"
+          data-testid="exhibition-cover"
+        />
+      </a>
     {% else %}
       <div
         class="relative flex h-full w-full items-center justify-center overflow-hidden rounded-3xl"
