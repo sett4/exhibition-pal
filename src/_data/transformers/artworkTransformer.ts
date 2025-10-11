@@ -105,11 +105,11 @@ export function ensureArtworkHeaderMatches(header: string[]): void {
 export function mapRowToArtworkSource(row: string[]): ArtworkSource | null {
   const artworkId = toNullableString(getCell(row, "artworkId"));
   const exhibitionId = toNullableString(getCell(row, "exhibitionId"));
-  const displayId = toNullableString(getCell(row, "displayId"));
-  const artistName = toNullableString(getCell(row, "artistName"));
+  const displayId = toNullableString(getCell(row, "displayId")) || "";
+  const artistName = toNullableString(getCell(row, "artistName")) || "";
   const artworkName = toNullableString(getCell(row, "artworkName"));
 
-  if (!artworkId || !exhibitionId || !artworkName || !artistName) {
+  if (!artworkId || !exhibitionId || !artworkName) {
     logger.warn("Skipping artwork row with missing required fields", {
       artworkId,
       exhibitionId,

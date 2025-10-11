@@ -66,13 +66,13 @@ describe("Artwork data contract", () => {
 
   it("rejects rows missing required columns", () => {
     const missingRequired = [...fixtureRows[0]];
-    missingRequired[5] = ""; // artistName
+    missingRequired[2] = ""; // artworkId
 
     const result = mapRowToArtworkSource(missingRequired);
     expect(result).toBeNull();
     expect(warnSpy).toHaveBeenCalledWith(
       "Skipping artwork row with missing required fields",
-      expect.objectContaining({ artistName: null })
+      expect.objectContaining({ artworkId: null })
     );
   });
 
