@@ -18,6 +18,7 @@ npm test [ONLY COMMANDS FOR ACTIVE TECHNOLOGIES][ONLY COMMANDS FOR ACTIVE TECHNO
 TypeScript 5.5.4 / Node.js 24.0.0+: Follow standard conventions
 
 ## Recent Changes
+- 004-google-spreadsheet-google: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 - 003-exhibitions-hero-njk: Added TypeScript 5.5.4 / Node.js 24.0.0+ + @11ty/eleventy 3.0.0, @11ty/eleventy-img (to be added), @googleapis/sheets 5.0.0
 
 <!-- MANUAL ADDITIONS START -->
