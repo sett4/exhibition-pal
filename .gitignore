@@ -149,6 +149,7 @@ vite.config.ts.timestamp-*
 .codex/auth.json
 .codex/version.json
 .codex/sessions/
+.codex/log/
 
 ## Eleventy
 _site/
