@@ -24,6 +24,12 @@ const logger = getLogger();
 
 let cached: CachedArtworks | null = null;
 
+/**
+ * Google Sheets のキャッシュキーを、既知の展示会 ID の組み合わせから生成する。
+ *
+ * @param options ロードオプション。既知の展示会 ID が指定されていない場合はデフォルトキーを返す。
+ * @returns キャッシュ照合用のキー文字列。
+ */
 function createCacheKey(options: LoadArtworksOptions | undefined): string {
   if (!options?.knownExhibitionIds || options.knownExhibitionIds.size === 0) {
     return "default";
@@ -32,6 +38,12 @@ function createCacheKey(options: LoadArtworksOptions | undefined): string {
   return [...options.knownExhibitionIds].sort().join("|");
 }
 
+/**
+ * Google スプレッドシートから作品データを取得し、変換・キャッシュ情報を付与した結果を返す。
+ *
+ * @param options データ変換時に利用するオプション。
+ * @returns 変換済み作品データと取得時刻を含むオブジェクト。
+ */
 async function loadArtworksInternal(
   options: LoadArtworksOptions | undefined
 ): Promise<ArtworksData> {
@@ -86,6 +98,12 @@ async function loadArtworksInternal(
   }
 }
 
+/**
+ * 作品データを取得する。前回取得したデータと同じ条件であればキャッシュを再利用する。
+ *
+ * @param options 取得時の挙動を制御するためのオプション。
+ * @returns 変換済み作品データ。
+ */
 export default async function loadArtworks(
   options: LoadArtworksOptions = {}
 ): Promise<ArtworksData> {
