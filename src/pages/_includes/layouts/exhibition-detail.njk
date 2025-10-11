@@ -41,6 +41,11 @@
       <p class="text-lg leading-relaxed text-neutral-700">
         {{ overviewSection.body | safe }}
       </p>
+      {% if exhibition.standfmEmbedCode %}
+        <div class="aspect-w-16 aspect-h-9">
+          {{ exhibition.standfmEmbedCode | safe }}
+        </div>
+      {% endif %}
     </section>
 
     {{ renderArtworkList(exhibition.artworkList) }}

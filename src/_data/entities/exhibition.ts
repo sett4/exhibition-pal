@@ -1,3 +1,4 @@
+import { transformStandfmUrl } from "../transformers/standfmTransformer.js";
 import type { ArtworkViewModel } from "./artwork.js";
 
 export type ExhibitionStatus = "past" | "current" | "upcoming";
@@ -67,6 +68,7 @@ export interface ExhibitionViewModel extends ExhibitionSource {
   durationLabel: string;
   heroImageMetadata?: ImageMetadata | null;
   artworkList: ArtworkViewModel[];
+  standfmEmbedCode: string | null;
 }
 
 /**
@@ -139,5 +141,6 @@ export function createExhibitionViewModel(
     statusLabel: toStatusLabel(status),
     durationLabel: createDurationLabel(source.startDate, source.endDate),
     artworkList: [],
+    standfmEmbedCode: transformStandfmUrl(source.standfmUrl),
   };
 }
