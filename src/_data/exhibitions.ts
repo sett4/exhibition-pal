@@ -1,3 +1,4 @@
+import loadArtworks from "./artworks.js";
 import { fetchSheetValues } from "./googleSheets.js";
 import { processExhibitionImage } from "./imageTransformer.js";
 import { buildExhibitionsData, type ExhibitionContent } from "./transformers.js";
@@ -18,6 +19,8 @@ export default async function (): Promise<ExhibitionsData> {
   let header: string[] = [];
   let rows: string[][] = [];
   let contentsLength = 0;
+  let artworksCount = 0;
+  let artworksFetchedAt: string | null = null;
   let caughtError: unknown | null = null;
 
   try {
@@ -37,12 +40,14 @@ export default async function (): Promise<ExhibitionsData> {
       const result = buildExhibitionsData(header, rows, { now });
       contents = result.contents;
       contentsLength = contents.length;
-
       transformTimer({ rowsTransformed: contentsLength });
     } catch (error) {
       transformTimer({ rowsTransformed: 0, error });
       throw error;
     }
+
+    const exhibitionIds = new Set(contents.map((content) => content.exhibition.id));
+    const artworksPromise = loadArtworks({ knownExhibitionIds: exhibitionIds });
 
     // Process images in parallel
     const imageTimer = startPerformanceTimer("exhibitions.load.images");
@@ -77,14 +82,25 @@ export default async function (): Promise<ExhibitionsData> {
         failedImages: contents.length - successCount,
       });
 
+      const artworksData = await artworksPromise;
+      artworksCount = artworksData.artworks.length;
+      artworksFetchedAt = artworksData.fetchedAt;
+      const artworksByExhibitionId = artworksData.artworksByExhibitionId;
+
       const sectionsById: ExhibitionsData["sectionsById"] = Object.fromEntries(
         exhibitionsWithImages.map(({ exhibition, sections }) => [exhibition.id, sections])
       );
 
+      const exhibitionsWithArtworks = exhibitionsWithImages.map(({ exhibition }) => ({
+        ...exhibition,
+        artworkList: artworksByExhibitionId[exhibition.id] ?? [],
+      }));
+
       return {
-        exhibitions: exhibitionsWithImages.map((content) => content.exhibition),
+        exhibitions: exhibitionsWithArtworks,
         sectionsById,
-        latestUpdate: new Date().toISOString(),
+        artworksByExhibitionId,
+        latestUpdate: artworksFetchedAt ?? new Date().toISOString(),
         createdAt: new Date().toISOString(),
       };
     } catch (error) {
@@ -98,6 +114,7 @@ export default async function (): Promise<ExhibitionsData> {
     const meta: Record<string, unknown> = {
       rowsFetched: rows.length,
       rowsTransformed: contentsLength,
+      artworks: artworksCount,
     };
 
     if (caughtError) {

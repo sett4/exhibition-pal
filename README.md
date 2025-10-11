@@ -22,7 +22,10 @@
    GOOGLE_SHEETS_CLIENT_ID="..."
    GOOGLE_SHEETS_CLIENT_SECRET="..."
    GOOGLE_SHEETS_TOKEN_URL="https://oauth2.googleapis.com/token"
+   GOOGLE_ARTWORK_SPREADSHEET_ID="..."
+   GOOGLE_ARTWORK_RANGE="Artworks!A:N"
    ```
+   作品スプレッドシートの初期設定や必要な列については [`specs/004-google-spreadsheet-google/quickstart.md`](specs/004-google-spreadsheet-google/quickstart.md) を参照してください。
 3. 動作確認を行います。
    ```bash
    npm run test

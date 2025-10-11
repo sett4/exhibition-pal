@@ -46,18 +46,26 @@ async function delay(ms: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+export interface SheetRangeConfig {
+  spreadsheetId: string;
+  range: string;
+}
+
 /**
  * Fetches raw sheet values with exponential backoff to tolerate transient failures.
  */
-export async function fetchSheetValues(attempt = 1): Promise<SheetFetchResult> {
+export async function fetchSheetValues(
+  config?: SheetRangeConfig,
+  attempt = 1
+): Promise<SheetFetchResult> {
   const sheets = getSheetsClient();
-  const config = loadGoogleSheetsConfig();
+  const resolvedConfig = config ?? loadGoogleSheetsConfig();
   const logger = getLogger();
 
   try {
     const response = await sheets.spreadsheets.values.get({
-      spreadsheetId: config.spreadsheetId,
-      range: config.range,
+      spreadsheetId: resolvedConfig.spreadsheetId,
+      range: resolvedConfig.range,
     });
 
     const values = response.data.values ?? [];
@@ -79,6 +87,6 @@ export async function fetchSheetValues(attempt = 1): Promise<SheetFetchResult> {
     const backoff = BACKOFF_BASE_MS * 2 ** (attempt - 1);
     logger.warn("Retrying Google Sheets fetch after transient error", { attempt, backoff });
     await delay(backoff);
-    return fetchSheetValues(attempt + 1);
+    return fetchSheetValues(resolvedConfig, attempt + 1);
   }
 }

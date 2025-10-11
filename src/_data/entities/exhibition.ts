@@ -1,3 +1,5 @@
+import type { ArtworkViewModel } from "./artwork.js";
+
 export type ExhibitionStatus = "past" | "current" | "upcoming";
 
 const GALLERY_IMAGE_LIMIT = 6;
@@ -64,6 +66,7 @@ export interface ExhibitionViewModel extends ExhibitionSource {
   statusLabel: string;
   durationLabel: string;
   heroImageMetadata?: ImageMetadata | null;
+  artworkList: ArtworkViewModel[];
 }
 
 /**
@@ -135,5 +138,6 @@ export function createExhibitionViewModel(
     status,
     statusLabel: toStatusLabel(status),
     durationLabel: createDurationLabel(source.startDate, source.endDate),
+    artworkList: [],
   };
 }

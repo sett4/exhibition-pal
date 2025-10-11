@@ -1,0 +1,38 @@
+{#
+  Artwork list component
+  Expects an array of ArtworkViewModel objects.
+#}
+
+{% macro renderArtworkList(artworkItems=[]) %}
+  {% if artworkItems and artworkItems.length %}
+    <section class="artwork-list" data-testid="artwork-list">
+      <h2 class="section-title text-2xl font-bold md:text-3xl">作品一覧</h2>
+      <div class="artwork-grid">
+        {% for artwork in artworkItems %}
+          <article class="artwork-card" data-testid="artwork-card">
+            <header class="artwork-header">
+              <span class="artwork-id">{{ artwork.displayId or "" }}</span>
+            </header>
+            <h3 class="artwork-title">{{ artwork.artworkName }}</h3>
+            <p class="artwork-artist">{{ artwork.artistName }}</p>
+
+            {% if artwork.artworkDetail %}
+              <p class="artwork-detail">{{ artwork.artworkDetail }}</p>
+            {% endif %}
+
+            {% if artwork.standfmEmbedCode %}
+              <div class="artwork-audio" data-testid="artwork-standfm">
+                <h4 class="audio-title">音声ガイド</h4>
+                {{ artwork.standfmEmbedCode | safe }}
+              </div>
+            {% endif %}
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  {% else %}
+    <section class="artwork-list-empty" data-testid="artwork-list-empty">
+      <p>作品情報は準備中です。</p>
+    </section>
+  {% endif %}
+{% endmacro %}

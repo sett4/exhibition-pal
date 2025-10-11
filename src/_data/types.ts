@@ -21,13 +21,16 @@ export type {
   ImageMetadata,
   ImageTransformRequest,
 } from "./entities/exhibition.js";
+export type { ArtworkSource, ArtworkViewModel } from "./entities/artwork.js";
 
+import type { ArtworkViewModel } from "./entities/artwork.js";
 import type { ExhibitionViewModel } from "./entities/exhibition.js";
 import type { PageSection } from "./entities/pageSection.js";
 
 export interface ExhibitionsData {
   exhibitions: ExhibitionViewModel[];
   sectionsById: Record<string, PageSection[]>;
+  artworksByExhibitionId: Record<string, ArtworkViewModel[]>;
   latestUpdate: string; // ISO timestamp representing source retrieval time
   createdAt: string; // ISO timestamp representing build time
 }

@@ -27,6 +27,7 @@ const baseExhibition = {
   status: "current" as const,
   durationLabel: "2025/11/01 – 2025/12/15",
   statusLabel: "開催中",
+  artworkList: [],
 };
 
 describe("exhibition detail page", () => {
@@ -149,5 +150,59 @@ describe("exhibition detail page", () => {
       '[data-testid="exhibition-hero"] [data-testid="exhibition-placeholder"]'
     );
     expect(heroPlaceholder.length).toBe(1);
+  });
+
+  it("renders artwork list with test hooks and Stand.fm embed", () => {
+    const renderer = createRenderer();
+    const artworks = [
+      {
+        artworkId: "art-001",
+        exhibitionId: baseExhibition.id,
+        displayId: "disp-001",
+        artistName: "Artist Alpha",
+        artworkName: "Spectrum",
+        artworkDetail: "混合技法による抽象作品",
+        standfmUrl: "https://stand.fm/episodes/mock",
+        noteUrl: null,
+        standfmEmbedCode:
+          '<iframe src="https://stand.fm/embed/episodes/mock" data-testid="standfm-iframe"></iframe>',
+      },
+      {
+        artworkId: "art-002",
+        exhibitionId: baseExhibition.id,
+        displayId: null,
+        artistName: "Artist Beta",
+        artworkName: "Diffusion",
+        artworkDetail: null,
+        standfmUrl: null,
+        noteUrl: null,
+        standfmEmbedCode: null,
+      },
+    ];
+
+    const html = renderTemplate(renderer, "_includes/layouts/exhibition-detail.njk", {
+      exhibition: {
+        ...baseExhibition,
+        artworkList: artworks,
+      },
+      sections: [],
+      heroMedia: {
+        variant: "image",
+        src: baseExhibition.heroImageUrl,
+        alt: baseExhibition.title,
+      },
+    });
+
+    const $ = load(html);
+    const list = $('[data-testid="artwork-list"]');
+    expect(list.length).toBe(1);
+    const cards = list.find('[data-testid="artwork-card"]');
+    expect(cards.length).toBe(2);
+    expect(cards.eq(0).text()).toContain("Spectrum");
+    expect(cards.eq(0).find('[data-testid="artwork-standfm"]').length).toBe(1);
+    expect(cards.eq(0).find('[data-testid="artwork-standfm"]').html()).toContain(
+      'data-testid="standfm-iframe"'
+    );
+    expect(cards.eq(1).find('[data-testid="artwork-standfm"]').length).toBe(0);
   });
 });

@@ -197,10 +197,10 @@ const EXPECTED_ARTWORK_HEADERS = [
   "作品名",
   "作品詳細",
   "その他",
-  "作品紹介(Google Drive URL)",
+  "作品紹介（Google Drive URL）",
   "参照URL",
-  "音声化(stand fm url)",
-  "記事化(Note url)",
+  "音声化（stand fm url）",
+  "記事化（Note url）",
   "image",
 ] as const;
 
@@ -606,6 +606,13 @@ permalink: "/exhibitions/{{ exhibition.id }}/"
 }
 ```
 
+**CSSチェックリスト**:
+
+- [ ] `.artwork-list` と `.artwork-grid` が作品カードのグリッド配置に適用されている
+- [ ] `.artwork-card` に境界線・影・ホバー時の遷移が設定されている
+- [ ] `.standfm-embed-iframe` クラスに高さが指定され、モバイルで上書きされている
+- [ ] 空状態の `.artwork-list-empty` セクションに枠線と背景が設定されている
+
 ## Step 11: ビルドとテスト
 
 ```bash
@@ -617,6 +624,14 @@ npm run compile
 
 # テストの実行
 npm test
+
+# 作品データ関連の個別テスト
+npx vitest run tests/contract/artwork-data.contract.spec.ts
+npx vitest run tests/unit/transformers/standfmTransformer.spec.ts
+npx vitest run tests/unit/entities/artwork.spec.ts
+npx vitest run tests/unit/transformers/artworkTransformer.spec.ts
+npx vitest run tests/integration/artworks.spec.ts
+npx vitest run tests/integration/exhibitions-detail.spec.ts
 
 # 開発サーバーの起動
 npm run dev
@@ -669,3 +684,12 @@ Error: Unexpected column at index X: expected "..." but received "..."
 - [Data Model](./data-model.md)
 - [Eleventy Documentation](https://www.11ty.dev/docs/)
 - [Google Sheets API v4](https://developers.google.com/sheets/api)
+
+## Verification Log
+
+- 2025-10-11T11:34:12Z — `npm run lint` ✅（jsdoc 警告のみ）
+- 2025-10-11T11:34:57Z — `npm test` ✅
+- 2025-10-11T11:35:07Z — `npm run build` ⚠️ 環境変数 `GOOGLE_ARTWORK_SPREADSHEET_ID` 未設定のため失敗
+- 2025-10-11T11:46:47Z — `npm run build` ✅
+- 2025-10-11T11:51:47Z — `npm test` ✅（fixtures/google-sheets/artworks.csv を利用）
+- データスナップショット: 2025-10-11T11:51:47Z

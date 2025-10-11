@@ -3,79 +3,89 @@
 **Input**: Design documents from `/specs/004-google-spreadsheet-google/`
 **Prerequisites**: plan.md, research.md, data-model.md, contracts/artwork-data-contract.md, quickstart.md
 
-## Execution Flow
+## Phase 1: Setup (Shared Infrastructure)
 
-```
-1. Review plan.md for tech stack (Eleventy 3.x, TypeScript, Tailwind CLI) and performance constraints.
-2. Load research.md for Google Sheets + Stand.fm decisions, plus logging expectations.
-3. Read data-model.md for ArtworkSource → ArtworkViewModel fields and validation rules.
-4. Read contracts/artwork-data-contract.md for required headers, referential integrity, and sorting guarantees.
-5. Read quickstart.md for environment setup, test matrix, and styling requirements.
-6. Execute Setup → Tests → Core → Integration → Polish in order, respecting [P] markers.
-```
+- [X] T001 [Setup] Update Google Sheets environment loader in `/home/sett4/Documents/exhibition-pal/src/config/env.ts` to expose `loadGoogleArtworkSheetsConfig()` and memoise artwork sheet credentials.
+- [X] T002 [P] [Setup] Append artwork spreadsheet placeholders to `/home/sett4/Documents/exhibition-pal/.env.example`, noting the required 14-column A:N range and Stand.fm expectations.
 
-## Phase 1: Setup
+---
 
-- [ ] T001 Update Google Sheets env loader in `/home/sett4/Documents/exhibition-pal/src/config/env.ts` to expose `loadGoogleArtworkSheetsConfig()` that validates `GOOGLE_ARTWORK_SPREADSHEET_ID`/`GOOGLE_ARTWORK_RANGE` alongside existing exhibition config.
-- [ ] T002 [P] Append artwork spreadsheet placeholders and notes in `/home/sett4/Documents/exhibition-pal/.env.example` so new contributors configure the Stand.fm sheet before running builds.
+## Phase 2: Tests First (TDD)
 
-## Phase 2: Tests First (TDD) ⚠️ Complete before Phase 3
+- [X] T003 [P] [US1] Add failing contract spec `/home/sett4/Documents/exhibition-pal/tests/contract/artwork-data.contract.spec.ts` validating `tests/fixtures/google-sheets/artworks.csv` headers, required columns, and Stand.fm URL format against `contracts/artwork-data-contract.md`.
+- [X] T004 [P] [US1] Add failing unit spec `/home/sett4/Documents/exhibition-pal/tests/unit/transformers/standfmTransformer.spec.ts` covering valid embed generation, invalid URL warnings, and null inputs per research.md.
+- [X] T005 [P] [US1] Add failing unit spec `/home/sett4/Documents/exhibition-pal/tests/unit/entities/artwork.spec.ts` asserting ArtworkSource → ArtworkViewModel conversion and Stand.fm embed propagation from the data model.
+- [X] T006 [P] [US1] Add failing unit spec `/home/sett4/Documents/exhibition-pal/tests/unit/transformers/artworkTransformer.spec.ts` to enforce header verification, referential integrity, grouping, and sorting rules using the fixture CSV.
+- [X] T007 [P] [US1] Add failing integration spec `/home/sett4/Documents/exhibition-pal/tests/integration/artworks.spec.ts` ensuring the Eleventy data loader memoises results, consumes fixtures, and surfaces unknown exhibition errors.
+- [X] T008 [P] [US2] Update `/home/sett4/Documents/exhibition-pal/tests/integration/exhibitions-detail.spec.ts` to expect artwork list hooks (`data-testid` markers) and Stand.fm iframe output on the exhibition detail layout.
 
-- [ ] T003 [P] Create failing Vitest contract spec `/home/sett4/Documents/exhibition-pal/tests/contract/artwork-data.contract.spec.ts` asserting sheet headers, required columns, Stand.fm URL shape, and exhibition ID integrity per `contracts/artwork-data-contract.md`.
-- [ ] T004 [P] Create failing unit spec `/home/sett4/Documents/exhibition-pal/tests/unit/transformers/standfmTransformer.spec.ts` covering valid embed generation, invalid URL warnings, and null inputs as defined in research.md.
-- [ ] T005 [P] Create failing unit spec `/home/sett4/Documents/exhibition-pal/tests/unit/entities/artwork.spec.ts` validating ArtworkSource → ArtworkViewModel conversion, optional fields, and embed propagation per data-model.md.
-- [ ] T006 [P] Create failing unit spec `/home/sett4/Documents/exhibition-pal/tests/unit/transformers/artworkTransformer.spec.ts` that checks header validation, row mapping, referential errors, grouping, and artworkId sorting.
-- [ ] T007 [P] Create failing integration spec `/home/sett4/Documents/exhibition-pal/tests/integration/artworks.spec.ts` to ensure the Eleventy data loader exposes `artworksByExhibitionId`, enforces referential integrity, and memoises results.
-- [ ] T008 Update `/home/sett4/Documents/exhibition-pal/tests/integration/exhibitions-detail.spec.ts` to expect artwork list rendering hooks (`data-testid` markers, Stand.fm iframe) before template work begins.
+---
 
-## Phase 3: Core Data Layer
+## Phase 3: User Story 1 - Google Sheets Artwork Data Pipeline (Priority: P1)
 
-- [ ] T009 [P] Implement artwork entity module at `/home/sett4/Documents/exhibition-pal/src/_data/entities/artwork.ts` defining `ArtworkSource`/`ArtworkViewModel` interfaces and helper factory aligned with data-model.md.
-- [ ] T010 [P] Implement Stand.fm transformer at `/home/sett4/Documents/exhibition-pal/src/_data/transformers/standfmTransformer.ts` using regex-based episode extraction, iframe template, and Winston warnings for invalid URLs.
-- [ ] T011 Implement Google Sheets → artwork transformer at `/home/sett4/Documents/exhibition-pal/src/_data/transformers/artworkTransformer.ts` to normalise rows, coerce blanks to null, create view models, and build sorted `artworksByExhibitionId`.
-- [ ] T012 Refactor `/home/sett4/Documents/exhibition-pal/src/_data/googleSheets.ts` so `fetchSheetValues` accepts an explicit `{ spreadsheetId, range }` config, defaulting to exhibitions when omitted and retaining retry/backoff logging.
-- [ ] T013 Add Eleventy data loader `/home/sett4/Documents/exhibition-pal/src/_data/artworks.ts` that consumes `loadGoogleArtworkSheetsConfig()`, calls the refactored fetcher, applies artworkTransformer, and memoises results with performance timers.
-- [ ] T014 Update `/home/sett4/Documents/exhibition-pal/src/_data/types.ts` to export artwork types, extend `ExhibitionsData` with `artworksByExhibitionId: Record<string, ArtworkViewModel[]>`, and adjust `SheetFetchResult` typing if needed.
+**Goal**: Load artwork records from Google Sheets, transform them into typed view models, and expose them via Eleventy global data.
+**Independent Test**: Run `npx vitest run tests/integration/artworks.spec.ts` to confirm grouped data and memoisation using the fixture sheet.
 
-## Phase 4: Integration
+- [X] T009 [P] [US1] Implement artwork entity definitions in `/home/sett4/Documents/exhibition-pal/src/_data/entities/artwork.ts`, creating `ArtworkSource` and `ArtworkViewModel` helpers per data-model.md.
+- [X] T010 [P] [US1] Implement `/home/sett4/Documents/exhibition-pal/src/_data/transformers/standfmTransformer.ts` with regex-based episode extraction, iframe template, and Winston warnings for invalid URLs.
+- [X] T011 [US1] Implement `/home/sett4/Documents/exhibition-pal/src/_data/transformers/artworkTransformer.ts` to normalise sheet rows, coerce blanks to null, and build sorted `artworksByExhibitionId`.
+- [X] T012 [US1] Refactor `/home/sett4/Documents/exhibition-pal/src/_data/googleSheets.ts` so `fetchSheetValues` accepts `{ spreadsheetId, range }` overrides while retaining retry/backoff logging.
+- [X] T013 [US1] Create `/home/sett4/Documents/exhibition-pal/src/_data/artworks.ts` Eleventy loader that reads fixtures via `loadGoogleArtworkSheetsConfig()`, applies transformers, memoises results, and records telemetry.
+- [X] T014 [US1] Extend `/home/sett4/Documents/exhibition-pal/src/_data/types.ts` to export artwork types and embed `artworksByExhibitionId: Record<string, ArtworkViewModel[]>` on `ExhibitionsData`.
 
-- [ ] T015 Update `/home/sett4/Documents/exhibition-pal/src/_data/exhibitions.ts` to merge artworks data into the existing loader, propagate timestamps, surface memoisation metrics, and fail fast when artworks reference unknown exhibitions.
-- [ ] T016 [P] Implement artwork list component `/home/sett4/Documents/exhibition-pal/src/pages/_includes/components/artwork-list.njk` rendering artwork cards, optional detail text, Stand.fm embed block, and empty-state messaging per quickstart.md.
-- [ ] T017 Update `/home/sett4/Documents/exhibition-pal/src/pages/_includes/layouts/exhibition-detail.njk` to import and render the artwork list component within the main content flow while preserving existing sections.
-- [ ] T018 Update `/home/sett4/Documents/exhibition-pal/src/pages/exhibitions/[exhibitionId]/index.njk` to supply `artworks = exhibitionsData.artworksByExhibitionId[exhibition.id] || []` and pass it to the new component without breaking pagination front-matter.
+---
 
-## Phase 5: Polish & Validation
+## Phase 4: User Story 2 - Exhibition Detail Artwork Rendering (Priority: P1)
 
-- [ ] T019 [P] Extend `/home/sett4/Documents/exhibition-pal/src/styles/exhibitions.css` with Tailwind component utilities for `.artwork-list`, `.artwork-card`, and `.standfm-embed-iframe`, matching responsive rules from research.md.
-- [ ] T020 [P] Update `/home/sett4/Documents/exhibition-pal/specs/004-google-spreadsheet-google/quickstart.md` with the new test commands (`vitest run tests/contract/artwork-data.contract.spec.ts`, etc.) and CSS checklist once implementation stabilises.
-- [ ] T021 Update `/home/sett4/Documents/exhibition-pal/README.md` to document the new Google Sheets environment variables and reference the artworks quickstart section.
-- [ ] T022 Run final verification (`npm run lint`, `npm test`, `npm run build`) and record outcomes plus data snapshot timestamp in `/home/sett4/Documents/exhibition-pal/specs/004-google-spreadsheet-google/quickstart.md`.
+**Goal**: Render artwork lists with Stand.fm embeds on exhibition detail pages using the new dataset.
+**Independent Test**: Run `npx vitest run tests/integration/exhibitions-detail.spec.ts` to verify artwork cards and audio embeds render with test hooks.
 
-## Dependencies
+- [X] T015 [US2] Update `/home/sett4/Documents/exhibition-pal/src/_data/exhibitions.ts` to hydrate `artworksByExhibitionId`, propagate timestamps, and fail fast when artworks reference missing exhibitions.
+- [X] T016 [P] [US2] Create `/home/sett4/Documents/exhibition-pal/src/pages/_includes/components/artwork-list.njk` component rendering artwork cards, optional details, and Stand.fm embeds with accessibility hooks.
+- [X] T017 [US2] Update `/home/sett4/Documents/exhibition-pal/src/pages/_includes/layouts/exhibition-detail.njk` to import `renderArtworkList` and render the component in the main content flow.
+- [X] T018 [US2] Update `/home/sett4/Documents/exhibition-pal/src/pages/exhibitions/[exhibitionId]/index.njk` to supply `artworks = exhibitionsData.artworksByExhibitionId[exhibition.id] || []` without breaking pagination front matter.
 
-- Complete Setup tasks (T001–T002) before authoring any tests to guarantee environment config availability.
-- Tests (T003–T008) must be created and observed failing before starting Core tasks (T009–T014).
-- T011 depends on standards defined in T009 and T010; T013 depends on T012 and T011; T014 depends on T009–T013.
-- Integration tasks T015–T018 require Core data layer completion (T009–T014) and the failing tests from T003–T008.
-- Polish tasks T019–T022 run after Integration; T022 is last and requires all prior tasks to pass.
+---
+
+## Phase 5: Polish & Cross-Cutting Enhancements
+
+- [X] T019 [P] [Polish] Extend `/home/sett4/Documents/exhibition-pal/src/styles/exhibitions.css` with Tailwind utilities for `.artwork-list`, `.artwork-card`, and `.standfm-embed-iframe`, including responsive height overrides.
+- [X] T020 [P] [Polish] Update `/home/sett4/Documents/exhibition-pal/specs/004-google-spreadsheet-google/quickstart.md` to document fixture-driven tests and the verification log.
+- [X] T021 [Polish] Update `/home/sett4/Documents/exhibition-pal/README.md` to describe artwork sheet environment variables and link to the quickstart checklist.
+- [X] T022 [Polish] Run `npm run lint`, `npm test`, and `npm run build`, then record results plus timestamps in `specs/004-google-spreadsheet-google/quickstart.md`.
+
+---
+
+## Dependencies & Execution Order
+
+- Phase 1 (T001–T002) must complete before any tests or implementation.
+- Phase 2 tests (T003–T008) must be authored and observed failing before Phase 3 and Phase 4 implementation tasks begin.
+- T011 depends on T009–T010; T013 depends on T011–T012; T014 depends on T009–T013.
+- Phase 4 tasks (T015–T018) depend on Phase 3 completion and passing tests from Phase 2.
+- Polish tasks (T019–T022) start after both user stories are functional; T022 runs last and depends on all prior tasks.
+
+---
 
 ## Parallel Execution Guidance
 
 ```
-# After completing T001–T002, queue failing tests in parallel (different files):
+# After finishing Setup (T001–T002), queue failing tests in parallel:
 /task run T003
 /task run T004
 /task run T005
 /task run T006
 /task run T007
+/task run T008
 
-# Once T009–T014 land and tests pass, implement UI pieces concurrently:
+# Once T009–T014 are green, parallelise independent UI work:
 /task run T016
-/task run T017
 /task run T019
 
-# Final verification (sequential):
+# Final validation sequence (sequential):
+/task run T015
+/task run T017
 /task run T018
+/task run T020
 /task run T021
 /task run T022
 ```

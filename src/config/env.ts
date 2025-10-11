@@ -9,7 +9,13 @@ export interface GoogleSheetsConfig {
   tokenUrl: string;
 }
 
+export interface GoogleArtworkSheetsConfig {
+  spreadsheetId: string;
+  range: string;
+}
+
 let cachedConfig: GoogleSheetsConfig | null = null;
+let cachedArtworkConfig: GoogleArtworkSheetsConfig | null = null;
 
 const DEFAULT_RANGE = "Exhibitions!A:O";
 const DEFAULT_TOKEN_URL = "https://oauth2.googleapis.com/token";
@@ -55,4 +61,26 @@ export function loadGoogleSheetsConfig(): GoogleSheetsConfig {
   };
 
   return cachedConfig;
+}
+
+/**
+ * Loads Google Sheets configuration for artwork data.
+ * Ensures required environment variables are present and trims values.
+ */
+export function loadGoogleArtworkSheetsConfig(): GoogleArtworkSheetsConfig {
+  if (cachedArtworkConfig) {
+    return cachedArtworkConfig;
+  }
+
+  loadEnvFromFile();
+
+  const spreadsheetId = requireEnv("GOOGLE_ARTWORK_SPREADSHEET_ID");
+  const range = requireEnv("GOOGLE_ARTWORK_RANGE");
+
+  cachedArtworkConfig = {
+    spreadsheetId,
+    range,
+  };
+
+  return cachedArtworkConfig;
 }

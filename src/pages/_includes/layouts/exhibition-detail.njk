@@ -2,6 +2,7 @@
 {% from "../components/exhibitions-hero.njk" import exhibitionsHero %}
 {% from "../components/exhibition-highlights.njk" import exhibitionHighlights %}
 {% from "../components/page-footer-cta.njk" import pageFooterCta %}
+{% from "../components/artwork-list.njk" import renderArtworkList %}
 
 {% block page_title %}{{ exhibition.title }}{% endblock %}
 {% block meta_description %}{{ exhibition.summary }}{% endblock %}
@@ -32,9 +33,14 @@
       </section>
     {% endif %}
 
+    {% set artworksList = exhibition.artworkList or [] %}
+    {% set highlightSections = sections | selectattr("slug", "equalto", "highlights") | list %}
+    {% set hasHighlights = highlightSections | length > 0 %}
+
     {% for section in sections %}
       {% if section.slug == 'highlights' %}
                 {{ exhibitionHighlights(section) }}
+        {{ renderArtworkList(artworksList) }}
       {% else %}
         <section class="flex flex-col gap-6" data-testid="exhibition-section" data-section-slug="{{ section.slug }}">
           <div class="flex items-center gap-3">
@@ -73,6 +79,10 @@
         </section>
       {% endif %}
     {% endfor %}
+
+    {% if not hasHighlights %}
+      {{ renderArtworkList(artworksList) }}
+    {% endif %}
 
         {# {{ pageFooterCta(exhibition) }} #}
   </div>

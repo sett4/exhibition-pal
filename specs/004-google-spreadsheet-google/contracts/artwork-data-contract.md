@@ -27,10 +27,10 @@
 | G | 作品名 | string | Yes | 作品のタイトル | `夏の風景` |
 | H | 作品詳細 | string | No | 作品の説明 | `油彩画、キャンバスに描かれた風景画` |
 | I | その他 | string | No | その他の情報（現在未使用） | - |
-| J | 作品紹介(Google Drive URL) | string | No | 作品画像のGoogle Drive URL（現在未使用） | `https://drive.google.com/...` |
+| J | 作品紹介（Google Drive URL） | string | No | 作品画像のGoogle Drive URL（現在未使用） | `https://drive.google.com/...` |
 | K | 参照URL | string | No | 作品に関連する外部URL（現在未使用） | `https://example.com/...` |
-| L | 音声化(stand fm url) | string | No | Stand.fm音声ガイドURL | `https://stand.fm/episodes/68bd9ce...` |
-| M | 記事化(Note url) | string | No | Note記事URL（現在未使用） | `https://note.com/...` |
+| L | 音声化（stand fm url） | string | No | Stand.fm音声ガイドURL | `https://stand.fm/episodes/68bd9ce...` |
+| M | 記事化（Note url） | string | No | Note記事URL（現在未使用） | `https://note.com/...` |
 | N | image | string | No | 画像URL（現在未使用） | - |
 
 ### Validation Rules
@@ -43,7 +43,7 @@
 ### Example Spreadsheet Row
 
 ```csv
-入力日,展示会ID,作品ID,展覧会名,展示ID,アーティスト名,作品名,作品詳細,その他,作品紹介(Google Drive URL),参照URL,音声化(stand fm url),記事化(Note url),image
+入力日,展示会ID,作品ID,展覧会名,展示ID,アーティスト名,作品名,作品詳細,その他,作品紹介（Google Drive URL）,参照URL,音声化（stand fm url）,記事化（Note url）,image
 2025-10-11,ex001,art001,現代アート展,disp001,山田太郎,夏の風景,油彩画、キャンバスに描かれた風景画,,,https://example.com,https://stand.fm/episodes/68bd9ce07e45afd2f3e1d6e6,,
 ```
 
