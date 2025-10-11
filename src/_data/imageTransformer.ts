@@ -167,6 +167,17 @@ export async function processExhibitionImage(
       },
     });
 
+    // Check if metadata was returned (Image() might return undefined on error)
+    if (!metadata || !metadata.jpeg) {
+      logger.error("Image() returned invalid metadata", {
+        exhibitionId,
+        url,
+        metadata,
+        context: "imageTransformer.processExhibitionImage",
+      });
+      return null;
+    }
+
     // Extract the primary URL (largest JPEG for backward compatibility)
     const jpegFormats = metadata.jpeg || [];
     const primaryUrl = jpegFormats[jpegFormats.length - 1]?.url || url;

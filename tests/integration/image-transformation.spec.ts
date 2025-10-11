@@ -8,8 +8,8 @@ describe("Image Transformation Pipeline", () => {
       const googleDriveUrl = "https://drive.google.com/file/d/1ABC123xyz/view";
       const transformed = transformGoogleDriveUrl(googleDriveUrl);
 
-      expect(transformed).toBe("https://drive.google.com/uc?export=view&id=1ABC123xyz");
-      expect(transformed).toContain("uc?export=view");
+      expect(transformed).toBe("https://www.googleapis.com/drive/v3/files/1ABC123xyz?alt=media");
+      expect(transformed).toContain("googleapis.com/drive/v3/files");
     });
 
     it("should preserve non-Google Drive URLs", () => {
@@ -99,10 +99,10 @@ describe("Image Transformation Pipeline", () => {
 
       // Step 1: Transform URL
       const transformedUrl = transformGoogleDriveUrl(rawImageUrl);
-      expect(transformedUrl).toBe("https://drive.google.com/uc?export=view&id=1TestFileId123");
+      expect(transformedUrl).toBe("https://www.googleapis.com/drive/v3/files/1TestFileId123?alt=media");
 
       // Step 2: URL is now ready for processExhibitionImage()
-      expect(transformedUrl).toContain("uc?export=view");
+      expect(transformedUrl).toContain("googleapis.com/drive/v3/files");
       expect(transformedUrl).not.toContain("/file/d/");
     });
 
@@ -128,7 +128,7 @@ describe("Image Transformation Pipeline", () => {
         const result = await processExhibitionImage(url, "test-ex");
         expect(result).toBeNull();
       }
-    }, 45000); // Extended timeout for multiple network requests
+    }, 90000); // Extended timeout for multiple network requests with retry logic
 
     it("should handle malformed Google Drive URLs gracefully", () => {
       const malformedUrls = [
@@ -185,6 +185,6 @@ describe("Image Transformation Pipeline", () => {
 
       // Null result should trigger template placeholder logic
       expect(result).toBeNull();
-    }, 30000);
+    }, 60000); // Increased timeout to 60s for network request retry logic
   });
 });

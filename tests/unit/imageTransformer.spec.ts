@@ -6,25 +6,25 @@ describe("transformGoogleDriveUrl", () => {
     it("should transform /file/d/ format URL", () => {
       const input = "https://drive.google.com/file/d/1ABC123xyz_-/view";
       const output = transformGoogleDriveUrl(input);
-      expect(output).toBe("https://drive.google.com/uc?export=view&id=1ABC123xyz_-");
+      expect(output).toBe("https://www.googleapis.com/drive/v3/files/1ABC123xyz_-?alt=media");
     });
 
     it("should transform /file/d/ format URL with additional query params", () => {
       const input = "https://drive.google.com/file/d/1ABC123xyz_-/view?usp=sharing";
       const output = transformGoogleDriveUrl(input);
-      expect(output).toBe("https://drive.google.com/uc?export=view&id=1ABC123xyz_-");
+      expect(output).toBe("https://www.googleapis.com/drive/v3/files/1ABC123xyz_-?alt=media");
     });
 
     it("should transform /open?id= format URL", () => {
       const input = "https://drive.google.com/open?id=1XYZ789abc_-";
       const output = transformGoogleDriveUrl(input);
-      expect(output).toBe("https://drive.google.com/uc?export=view&id=1XYZ789abc_-");
+      expect(output).toBe("https://www.googleapis.com/drive/v3/files/1XYZ789abc_-?alt=media");
     });
 
     it("should transform /uc?id= format URL to normalized format", () => {
       const input = "https://drive.google.com/uc?id=1DEF456ghi_-";
       const output = transformGoogleDriveUrl(input);
-      expect(output).toBe("https://drive.google.com/uc?export=view&id=1DEF456ghi_-");
+      expect(output).toBe("https://www.googleapis.com/drive/v3/files/1DEF456ghi_-?alt=media");
     });
 
     it("should handle file IDs with various valid characters", () => {
@@ -38,7 +38,7 @@ describe("transformGoogleDriveUrl", () => {
       fileIds.forEach((fileId) => {
         const input = `https://drive.google.com/file/d/${fileId}/view`;
         const output = transformGoogleDriveUrl(input);
-        expect(output).toBe(`https://drive.google.com/uc?export=view&id=${fileId}`);
+        expect(output).toBe(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`);
       });
     });
   });
@@ -91,7 +91,7 @@ describe("transformGoogleDriveUrl", () => {
       const url2 = "https://drive.google.com/file/d/view";
       const output2 = transformGoogleDriveUrl(url2);
       // Pattern matches "view" as file ID, transforms
-      expect(output2).toBe("https://drive.google.com/uc?export=view&id=view");
+      expect(output2).toBe("https://www.googleapis.com/drive/v3/files/view?alt=media");
 
       // Empty ID parameter - doesn't match pattern
       const url3 = "https://drive.google.com/open?id=";
@@ -109,14 +109,14 @@ describe("transformGoogleDriveUrl", () => {
       const fileId = "a".repeat(28);
       const input = `https://drive.google.com/file/d/${fileId}/view`;
       const output = transformGoogleDriveUrl(input);
-      expect(output).toBe(`https://drive.google.com/uc?export=view&id=${fileId}`);
+      expect(output).toBe(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`);
     });
 
     it("should handle file IDs with maximum length (44 chars)", () => {
       const fileId = "a".repeat(44);
       const input = `https://drive.google.com/file/d/${fileId}/view`;
       const output = transformGoogleDriveUrl(input);
-      expect(output).toBe(`https://drive.google.com/uc?export=view&id=${fileId}`);
+      expect(output).toBe(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`);
     });
 
     it("should handle file ID that is too short (< 28 chars)", () => {
@@ -124,7 +124,7 @@ describe("transformGoogleDriveUrl", () => {
       const input = `https://drive.google.com/file/d/${fileId}/view`;
       const output = transformGoogleDriveUrl(input);
       // Should still transform since we're using flexible regex
-      expect(output).toBe(`https://drive.google.com/uc?export=view&id=${fileId}`);
+      expect(output).toBe(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`);
     });
   });
 });
