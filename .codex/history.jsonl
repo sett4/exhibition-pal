@@ -56,3 +56,4 @@
 {"session_id":"0199d2ff-36cf-7142-bdc4-eb58c5801d84","ts":1760186939,"text":"src/_data/entities/exhibition.ts のExhibitionViewModelにはartworkList: ArtworkViewModel[] を持たせてください。そして、 src/pages/_includes/layouts/exhibition-detail.njk では 作品リストのレンダリングに exhibition.artworkList を用いてください。"}
 {"session_id":"0199d2ff-36cf-7142-bdc4-eb58c5801d84","ts":1760187553,"text":"作品一覧で artworkIdを表示していますが、これをGoogle Spreadsheet上の展示IDにしてください。存在しない場合には空で良いです。"}
 {"session_id":"0199d2ff-36cf-7142-bdc4-eb58c5801d84","ts":1760187735,"text":"npx update-browserslist-db@latest を実行してください"}
+{"session_id":"0199d2ff-36cf-7142-bdc4-eb58c5801d84","ts":1760188106,"text":"npx update-browserslist-db@latest を実行してください"}
