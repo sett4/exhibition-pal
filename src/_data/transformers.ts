@@ -9,7 +9,7 @@ import {
 } from "./types.js";
 import { getLogger } from "../lib/logger.js";
 
-const DATE_PATTERN = /^\d{4}\/\d{2}\/\d{2}$/;
+const DATE_PATTERN = /^\d{4}\/\d{1,2}\/\d{1,2}$/;
 
 export interface ExhibitionContent {
   exhibition: ExhibitionViewModel;
