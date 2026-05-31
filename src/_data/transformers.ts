@@ -34,10 +34,16 @@ function ensureHttpsUrl(url: string, field: string): string {
 /**
  * Normalises related URL strings and validates each entry.
  * @param input Raw CSV or newline separated URLs.
+ * @param context Row-level metadata used for diagnostics.
  * @returns Unique array of http(s) URLs.
- * @throws {Error} When a URL does not use http/https.
  */
-export function parseRelatedUrls(input: string): string[] {
+export function parseRelatedUrls(
+  input: string,
+  context: {
+    rowNumber?: number;
+    exhibitionId?: string;
+  } = {}
+): string[] {
   if (!input) {
     return [];
   }
@@ -49,15 +55,26 @@ export function parseRelatedUrls(input: string): string[] {
     .filter((value) => value.length > 0);
 
   const unique = Array.from(new Set(urls));
+  const validUrls: string[] = [];
 
   unique.forEach((url) => {
-    if (!/^https?:\/\//i.test(url)) {
-      logger.error("Invalid URL in relatedUrls", { url });
-      throw new Error(`Invalid URL in relatedUrls: ${url}`);
+    if (/^https?:\/\//i.test(url)) {
+      validUrls.push(url);
+      return;
     }
+
+    logger.warn("Skipping invalid relatedUrls entry from Google Sheets exhibition data", {
+      rowNumber: context.rowNumber,
+      exhibitionId: context.exhibitionId,
+      sheetName: "展示会",
+      field: "relatedUrls",
+      rawValue: input,
+      invalidUrl: url,
+      action: "skipped_invalid_related_url",
+    });
   });
 
-  return unique;
+  return validUrls;
 }
 
 /**
@@ -190,7 +207,7 @@ interface MapRowOptions {
 /**
  * Maps a spreadsheet row to the intermediate exhibition source structure.
  */
-function mapRowToExhibitionSource(row: string[]): ExhibitionSource | null {
+function mapRowToExhibitionSource(row: string[], rowNumber?: number): ExhibitionSource | null {
   const logger = getLogger();
 
   const id = getCell(row, "id");
@@ -223,7 +240,12 @@ function mapRowToExhibitionSource(row: string[]): ExhibitionSource | null {
   const endDate = parseSheetDate(getCell(row, "endDate"));
   validateChronology(startDate, endDate);
 
-  const relatedUrls = toResourceLinks(parseRelatedUrls(getCell(row, "relatedUrls")));
+  const relatedUrls = toResourceLinks(
+    parseRelatedUrls(getCell(row, "relatedUrls"), {
+      rowNumber,
+      exhibitionId: id,
+    })
+  );
   const artworkList = toNullableString(getCell(row, "artworkListDriveUrl"));
   if (artworkList) {
     relatedUrls.unshift({ label: "作品一覧", url: artworkList });
@@ -342,9 +364,9 @@ function buildSections(source: ExhibitionSource, highlights: string[]): PageSect
  */
 export function mapRowToExhibitionContent(
   row: string[],
-  { now }: MapRowOptions
+  { now, rowNumber }: MapRowOptions & { rowNumber?: number }
 ): ExhibitionContent | null {
-  const source = mapRowToExhibitionSource(row);
+  const source = mapRowToExhibitionSource(row, rowNumber);
   if (!source) {
     return null;
   }
@@ -375,7 +397,7 @@ export function buildExhibitionsData(
 
   rows.forEach((row, index) => {
     try {
-      const mapped = mapRowToExhibitionContent(row, { now });
+      const mapped = mapRowToExhibitionContent(row, { now, rowNumber: index + 2 });
       if (mapped) {
         contents.push(mapped);
       }

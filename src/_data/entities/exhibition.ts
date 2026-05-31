@@ -1,5 +1,5 @@
-import { transformStandfmUrl } from "../transformers/standfmTransformer.js";
 import type { ArtworkViewModel } from "./artwork.js";
+import { transformStandfmUrl } from "../transformers/standfmTransformer.js";
 
 export type ExhibitionStatus = "past" | "current" | "upcoming";
 

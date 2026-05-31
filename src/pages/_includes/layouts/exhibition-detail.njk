@@ -33,32 +33,48 @@
       </section>
     {% endif %}
 
-    {% set overviewSection = sections | selectattr("slug", "equalto", "overview") | first %}
-    <section class="flex flex-col gap-6" data-testid="exhibition-section" data-section-slug="{{ overviewSection.slug }}">
-      <div class="flex items-center gap-3">
-        <h2 class="text-2xl font-bold md:text-3xl">{{ overviewSection.title }}</h2>
-      </div>
-      <p class="text-lg leading-relaxed text-neutral-700">
-        {{ overviewSection.body | safe }}
-      </p>
-      {% if exhibition.standfmEmbedCode %}
-        <div class="aspect-w-16 aspect-h-9">
-          {{ exhibition.standfmEmbedCode | safe }}
+    {% for section in sections %}
+      <section class="flex flex-col gap-6" data-testid="exhibition-section" data-section-slug="{{ section.slug }}">
+        <div class="flex items-center gap-3">
+          <h2 class="text-2xl font-bold md:text-3xl">{{ section.title }}</h2>
         </div>
-      {% endif %}
-    </section>
+        {% if section.body %}
+          <p class="text-lg leading-relaxed text-neutral-700">
+            {{ section.body | safe }}
+          </p>
+        {% endif %}
+        {% if section.slug == "overview" and exhibition.standfmEmbedCode %}
+          <div class="aspect-w-16 aspect-h-9">
+            {{ exhibition.standfmEmbedCode | safe }}
+          </div>
+        {% endif %}
+        {% if section.items and section.items | length > 0 %}
+          <div class="grid gap-4">
+            {% for item in section.items %}
+              <article class="rounded-2xl bg-white/70 p-5 shadow-card" data-testid="section-item">
+                {% if item.type == "resource" %}
+                  <a
+                    class="text-base font-semibold text-neutral-900 underline decoration-neutral-300 underline-offset-4 transition hover:text-brand"
+                    href="{{ item.url }}"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {{ item.label }}
+                  </a>
+                {% else %}
+                  <p class="text-base font-semibold text-neutral-900">{{ item.heading }}</p>
+                  {% if item.description %}
+                    <p class="mt-2 text-neutral-600">{{ item.description }}</p>
+                  {% endif %}
+                {% endif %}
+              </article>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </section>
+    {% endfor %}
 
     {{ renderArtworkList(exhibition.artworkList) }}
-
-    {% set accessSection = sections | selectattr("slug", "equalto", "access") | first %}
-    <section class="flex flex-col gap-6" data-testid="exhibition-section" data-section-slug="{{ accessSection.slug }}">
-      <div class="flex items-center gap-3">
-        <h2 class="text-2xl font-bold md:text-3xl">{{ accessSection.title }}</h2>
-      </div>
-      <p class="text-lg leading-relaxed text-neutral-700">
-        {{ accessSection.body | safe }}
-      </p>
-    </section>
 
   </div>
 {% endblock %}

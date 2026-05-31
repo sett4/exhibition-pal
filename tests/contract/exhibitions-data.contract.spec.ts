@@ -61,6 +61,32 @@ describe("exhibitions data contract", () => {
     ).toThrowError(/https/i);
   });
 
+  it("skips invalid relatedUrls values while keeping valid links", () => {
+    const mixedRelatedUrls = [...BASE_ROW];
+    mixedRelatedUrls[11] =
+      "https://example.com/resource-1\n-one-hundred-years-of-beauty\nftp://invalid";
+
+    const { contents } = buildExhibitionsData(
+      HEADER as unknown as string[],
+      [mixedRelatedUrls],
+      {
+        now: new Date("2025-10-05T00:00:00.000Z"),
+      }
+    );
+
+    expect(contents).toHaveLength(1);
+    expect(contents[0]?.exhibition.relatedUrls).toEqual([
+      {
+        label: "作品一覧",
+        url: "https://example.com/artworks.csv",
+      },
+      {
+        label: "example.com",
+        url: "https://example.com/resource-1",
+      },
+    ]);
+  });
+
   it("limits gallery images to six entries in the view model", () => {
     const source = {
       id: "gallery-test",
