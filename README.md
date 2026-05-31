@@ -26,6 +26,7 @@
    GOOGLE_ARTWORK_RANGE="Artworks!A:N"
    ```
    作品スプレッドシートの初期設定や必要な列については [`specs/004-google-spreadsheet-google/quickstart.md`](specs/004-google-spreadsheet-google/quickstart.md) を参照してください。
+   展示会データの `展示会関連のURLリスト` 列は、カンマ区切りまたは改行区切りの `http(s)` URL を想定しています。不正値が含まれていた場合、ビルドは継続されますが、その値は除外され warning ログに `rowNumber` と `exhibitionId` が出力されます。
 3. 動作確認を行います。
    ```bash
    npm run test
